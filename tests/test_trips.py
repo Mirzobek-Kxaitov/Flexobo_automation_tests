@@ -1,6 +1,11 @@
+import allure
 from playwright.sync_api import Page
 from pages.trips_page import TripsPage
 
+
+@allure.feature("Trips")
+@allure.story("Add trip")
+@allure.severity(allure.severity_level.CRITICAL)
 def test_add_trip(logged_in: Page):
     TripsPage(logged_in).create_trip(
         transport="Trailer 1",

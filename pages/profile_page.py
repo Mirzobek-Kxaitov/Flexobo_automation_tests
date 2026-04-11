@@ -50,19 +50,19 @@ class ProfilePage:
         expect(self.page).to_have_url("https://app.flexobo-mock.site/profile/root")
         return self
     
-    def expect_my_loads_page(self):
+    def expect_on_my_loads_page(self):
         expect(self.page).to_have_url("https://app.flexobo-mock.site/profile-load")
         return self
-    
-    def expect_fleet_page(self):
+
+    def expect_on_fleet_page(self):
         expect(self.page).to_have_url("https://app.flexobo-mock.site/tms/fleet")
         return self
 
-    def expect_my_trips_page(self):
+    def expect_on_my_trips_page(self):
         expect(self.page).to_have_url("https://app.flexobo-mock.site/profile-trips")
         return self
 
     def expect_logged_out(self):
-        expect(self.page).to_have_url("https://landing-dev.flexobo.com/", timeout=10000)
+        expect(self.page).to_have_url("https://landing-dev.flexobo.com/en", timeout=10000)
         return self
 
