@@ -23,7 +23,7 @@ def logged_in(page: Page):
     page.get_by_text("Sign In").click()
     page.get_by_placeholder("Email or phone number is required").fill(EMAIL)
     page.get_by_placeholder("Enter your password").fill(PASSWORD)
-    page.get_by_role("button", name="Sign In").click()
+    page.get_by_role("button", name="Sign In", exact=True).click()
     expect(page).to_have_url(BASE_URL)
 
     #coockie
