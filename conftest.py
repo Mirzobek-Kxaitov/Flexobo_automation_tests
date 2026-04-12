@@ -19,7 +19,7 @@ def open_page(page: Page):
 @pytest.fixture
 def logged_in(page: Page):
     """Login qilib, tayyor page qaytaradi"""
-    page.goto(BASE_URL)
+    page.goto(BASE_URL, wait_until="domcontentloaded")
     page.get_by_text("Sign In").click()
     page.get_by_placeholder("Email or phone number is required").fill(EMAIL)
     page.get_by_placeholder("Enter your password").fill(PASSWORD)
@@ -36,5 +36,5 @@ def logged_in(page: Page):
 @pytest.fixture
 def landing_page(page: Page):
     """will open the landing page without logging in"""
-    page.goto(BASE_URL)
+    page.goto(BASE_URL, wait_until="domcontentloaded")
     return page

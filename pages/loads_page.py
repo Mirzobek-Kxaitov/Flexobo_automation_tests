@@ -1,4 +1,11 @@
+import os
 from playwright.sync_api import Page, expect
+from dotenv import load_dotenv
+
+load_dotenv()
+
+APP_URL = os.getenv("APP_URL")
+
 
 class LoadsPage:
     def __init__(self, page: Page):
@@ -122,13 +129,12 @@ class LoadsPage:
         return self
     
     def expect_load_created(self):
-        expect(self.page).to_have_url("https://app.flexobo-mock.site/loads")
+        expect(self.page).to_have_url(f"{APP_URL}/loads")
         expect(self.success_message).to_be_visible()
         return self
 
-
     def expect_on_loads_page(self):
-        expect(self.page).to_have_url("https://app.flexobo-mock.site/profile-load")
+        expect(self.page).to_have_url(f"{APP_URL}/profile-load")
         expect(self.my_loads_heading).to_be_visible()
         return self
     

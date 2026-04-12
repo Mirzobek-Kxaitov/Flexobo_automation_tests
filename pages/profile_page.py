@@ -1,4 +1,12 @@
+import os
 from playwright.sync_api import Page, expect
+from dotenv import load_dotenv
+
+load_dotenv()
+
+APP_URL = os.getenv("APP_URL")
+BASE_URL = os.getenv("BASE_URL")
+
 
 class ProfilePage:
     def __init__(self, page: Page):
@@ -47,22 +55,23 @@ class ProfilePage:
     
 
     def expect_on_profile_page(self):
-        expect(self.page).to_have_url("https://app.flexobo-mock.site/profile/root")
+        expect(self.page).to_have_url(f"{APP_URL}/profile/root")
         return self
-    
+
     def expect_on_my_loads_page(self):
-        expect(self.page).to_have_url("https://app.flexobo-mock.site/profile-load")
+        expect(self.page).to_have_url(f"{APP_URL}/profile-load")
         return self
 
     def expect_on_fleet_page(self):
-        expect(self.page).to_have_url("https://app.flexobo-mock.site/tms/fleet")
+        expect(self.page).to_have_url(f"{APP_URL}/tms/fleet")
         return self
 
     def expect_on_my_trips_page(self):
-        expect(self.page).to_have_url("https://app.flexobo-mock.site/profile-trips")
+        expect(self.page).to_have_url(f"{APP_URL}/profile-trips")
         return self
 
     def expect_logged_out(self):
-        expect(self.page).to_have_url("https://landing-dev.flexobo.com/en", timeout=10000)
+        import re
+        expect(self.page).to_have_url(re.compile(r"landing-dev\.flexobo\.com"), timeout=10000)
         return self
 

@@ -1,9 +1,16 @@
+import os
 from playwright.sync_api import Page, expect
+from dotenv import load_dotenv
+
+load_dotenv()
+
+APP_URL = os.getenv("APP_URL")
+
 
 class TripsPage:
 
-    CREATE_URL = "https://app.flexobo-mock.site/trips/create"
-    LIST_URL = "https://app.flexobo-mock.site/trips"
+    CREATE_URL = f"{APP_URL}/trips/create"
+    LIST_URL = f"{APP_URL}/trips"
 
     def __init__(self, page: Page):
 
