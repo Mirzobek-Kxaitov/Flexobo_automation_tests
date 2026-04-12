@@ -12,7 +12,7 @@ class LoginPage:
         self.sign_in_link = page.get_by_text("Sign In")
         self.email_input = page.get_by_placeholder("Email or phone number is required")
         self.password_input = page.get_by_placeholder("Enter your password")
-        self.sign_in_button = page.get_by_role("button", name="Sign in")
+        self.sign_in_button = page.get_by_role("button", name="Sign in", exact=True)
         self.error_message = page.get_by_text("Invalid phone number or email")
 
     def open(self):
