@@ -22,7 +22,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install playwright pytest python-dotenv allure-pytest pytest-rerunfailures
+          pip install playwright pytest pytest-playwright python-dotenv allure-pytest pytest-rerunfailures
           playwright install chromium
           playwright install-deps chromium
 
