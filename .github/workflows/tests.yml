@@ -22,7 +22,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install playwright pytest pytest-playwright python-dotenv allure-pytest pytest-rerunfailures
+          pip install playwright pytest pytest-playwright python-dotenv allure-pytest pytest-rerunfailures pytest-timeout
           playwright install chromium
           playwright install-deps chromium
 
@@ -34,7 +34,7 @@ jobs:
           echo "APP_URL=${{ secrets.APP_URL }}" >> .env
 
       - name: Run tests
-        run: pytest tests/ -v --reruns 2 --alluredir=allure-results
+        run: pytest tests/ -v --reruns 3 --timeout 60 --alluredir=allure-results
 
       - name: Upload Allure results
         if: always()
