@@ -15,7 +15,7 @@ class LoadsPage:
         self.in_contract_filter = page.locator("button[value='in_contract']")
         self.in_transit_filter = page.locator("button[value='in_transit']")
         self.delivered_filter = page.locator("button[value='delivered']")  
-        self.my_loads_heading = page.get_by_text("My Loads")
+        self.my_loads_heading = page.get_by_role("heading", name="My loads")
         
         self.add_button = page.get_by_role("button", name="Add")    
         self.load_menu_item = page.get_by_role("menuitem", name="Load")
@@ -37,7 +37,9 @@ class LoadsPage:
         self.next_button = page.get_by_role("button", name="Next", exact=True)
         self.publish_button = page.get_by_role("button", name="Publish", exact=True)
         self.success_message = page.get_by_text("Load created successfully")
-
+        self.change_button = page.get_by_role("button", name="Change").first
+        self.delete_button = page.locator("button:has(svg path[d^='M19.5 5.5'])").first
+        self.confirm_yes_button = page.get_by_text("Delete")
 
     def toggle_in_contract_filter(self):
         self.in_contract_filter.click()
@@ -103,6 +105,8 @@ class LoadsPage:
         self.publish_button.click()
         return self 
     
+
+    
     def create_load(self,from_city,from_suggestion, to_city, to_suggestion, load_type, weight, day,body_type, price):
         self.open_create_load_form()
         self.fill_from(from_city, from_suggestion)
@@ -119,6 +123,37 @@ class LoadsPage:
         self.click_next()
         self.publish()
         return self
+    
+    def click_change_on_first_load(self):
+        self.change_button.click()
+        return self
+    
+    def change_load_type(self, current_type, new_type):
+        """Edit sahifasida load type o'zgartirish (hozirgi qiymat ko'rsatilgan)"""
+        self.page.locator(f"button:has-text('{current_type}')").click()
+        self.page.get_by_role("option", name=new_type).click()
+        return self
+
+    def edit_load(self, from_city, from_suggestion, to_city, to_suggestion,
+                  weight, price):
+        """Birinchi yukni tahrirlaydi — faqat o'zgaradigan maydonlar"""
+        self.click_change_on_first_load()
+        self.fill_from(from_city, from_suggestion)
+        self.fill_to(to_city, to_suggestion)
+        self.fill_weight(weight)
+        self.accept_cookies_if_visible()
+        self.click_next()
+        # Step 2 (Body) — tegmaymiz, avvalgi qiymat qoladi
+        self.click_next()
+        # Step 3 (Payment)
+        self.fill_price(price)
+        self.click_next()
+        # Step 4 (Confirmation)
+        self.publish()
+        return self
+
+
+
 
     def expect_on_body_step(self):
         expect(self.body_step_heading).to_be_visible()

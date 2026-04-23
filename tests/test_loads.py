@@ -47,3 +47,31 @@ def test_in_transit_filter_on_loads_page(logged_in: Page):
 def test_delivered_filter_on_loads_page(logged_in: Page):
     ProfilePage(logged_in).go_to_my_loads()
     LoadsPage(logged_in).toggle_delivered_filter().expect_delivered_checked()
+
+@allure.feature("Loads")
+@allure.story("Edit load")
+@allure.severity(allure.severity_level.CRITICAL)
+def test_edit_load(logged_in: Page):
+    LoadsPage(logged_in).create_load(
+        from_city="Toshkent",
+        from_suggestion="Tashkent, 100000, Uzbekistan",
+        to_city="Termez",
+        to_suggestion="Termez, Termiz District, Surxondaryo Province, Uzbekistan",
+        load_type="Metal aggregate",
+        weight="20",
+        day="15",
+        body_type="Mega truck",
+        price="1000",
+    ).expect_load_created()
+
+    ProfilePage(logged_in).go_to_my_loads()
+    LoadsPage(logged_in).edit_load(
+        from_city="Samarkand",
+        from_suggestion="Samarkand, Samarkand Province, 140000, Uzbekistan",
+        to_city="Tashkent",
+        to_suggestion="Tashkent, 100000, Uzbekistan",
+        weight="30",
+        price="2000",
+    ).expect_on_loads_page()
+
+    

@@ -23,7 +23,6 @@ class ProfilePage:
         self.confirm_yes_button = page.get_by_text("Yes")
     
     def open_menu(self):
-        self.sign_in_text.click()
         self.dropdown_menu_trigger.click()
         return self
     
