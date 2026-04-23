@@ -34,6 +34,11 @@ class TripsPage:
 
         self.next_button = self.page.get_by_role("button", name="Next")
 
+        # Edit/Delete locators (Trips ro'yxat sahifasida)
+        self.change_button = page.get_by_role("button", name="Change").first
+        self.delete_button = page.locator("button:has(svg path[d^='M19.5 5.5'])").first
+        self.confirm_delete_button = page.get_by_role("button", name="Delete", exact=True)
+
 
     def open_create_trip_form(self):
         self.page.goto(self.CREATE_URL)
@@ -51,7 +56,7 @@ class TripsPage:
     
     def select_unit_kg(self):
         self.page.get_by_role("combobox").filter(has_text="Choose").click()
-        self.page.get_by_text("en", exact=True).click()
+        self.page.get_by_text("12 tons").click()
         return self
     
 
@@ -111,6 +116,29 @@ class TripsPage:
         self.click_next()
         self.click_transport_tab()
         self.go_to_trips_list()
+        return self
+
+    def click_change_on_first_trip(self):
+        self.change_button.wait_for(state="visible", timeout=15000)
+        self.change_button.click()
+        return self
+
+    def edit_trip(self, price):
+        """Birinchi safarni tahrirlaydi — faqat narxni o'zgartiradi"""
+        self.click_change_on_first_trip()
+        self.click_next()
+        self.fill_price(price)
+        self.click_next()
+        return self
+
+    def delete_first_trip(self):
+        """Birinchi safarni o'chiradi (Delete → Confirm)"""
+        self.delete_button.click()
+        self.confirm_delete_button.click()
+        return self
+
+    def expect_on_trips_page(self):
+        expect(self.page).to_have_url(f"{APP_URL}/profile-trips")
         return self
 
     def expect_trip_in_list(self, price, city, transport):
