@@ -74,4 +74,26 @@ def test_edit_load(logged_in: Page):
         price="2000",
     ).expect_on_loads_page()
 
-    
+
+@allure.feature("Loads")
+@allure.story("Delete load")
+@allure.severity(allure.severity_level.CRITICAL)
+def test_delete_load(logged_in: Page):
+    # 1. Avval yangi yuk yaratamiz
+    LoadsPage(logged_in).create_load(
+        from_city="Toshkent",
+        from_suggestion="Tashkent, 100000, Uzbekistan",
+        to_city="Termez",
+        to_suggestion="Termez, Termiz District, Surxondaryo Province, Uzbekistan",
+        load_type="Metal aggregate",
+        weight="20",
+        day="15",
+        body_type="Mega truck",
+        price="1000",
+    ).expect_load_created()
+
+    # 2. My Loads ga o'tamiz
+    ProfilePage(logged_in).go_to_my_loads()
+
+    # 3. Birinchi yukni o'chiramiz
+    LoadsPage(logged_in).delete_first_load().expect_on_loads_page()

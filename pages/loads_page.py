@@ -39,7 +39,7 @@ class LoadsPage:
         self.success_message = page.get_by_text("Load created successfully")
         self.change_button = page.get_by_role("button", name="Change").first
         self.delete_button = page.locator("button:has(svg path[d^='M19.5 5.5'])").first
-        self.confirm_yes_button = page.get_by_text("Delete")
+        self.confirm_delete_button = page.get_by_role("button", name="Delete", exact=True)
 
     def toggle_in_contract_filter(self):
         self.in_contract_filter.click()
@@ -126,6 +126,12 @@ class LoadsPage:
     
     def click_change_on_first_load(self):
         self.change_button.click()
+        return self
+
+    def delete_first_load(self):
+        """Birinchi yukni o'chiradi (Delete → Confirm)"""
+        self.delete_button.click()
+        self.confirm_delete_button.click()
         return self
     
     def change_load_type(self, current_type, new_type):
