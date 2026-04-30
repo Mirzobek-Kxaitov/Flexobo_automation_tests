@@ -1,14 +1,21 @@
 import allure
+import pytest
 from playwright.sync_api import Page
 from pages.profile_page import ProfilePage
 from pages.loads_page import LoadsPage
 
 
+# Yuk yaratish/edit/delete uchun ruxsati bor role'lar
+LOAD_CAPABLE_ROLES = ["broker", "load_owner"]
+
+
 @allure.feature("Loads")
 @allure.story("Create load")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_create_load(logged_in: Page):
-    LoadsPage(logged_in).create_load(
+@pytest.mark.parametrize("role", LOAD_CAPABLE_ROLES)
+def test_create_load(request, role: str):
+    page: Page = request.getfixturevalue(f"logged_in_{role}")
+    LoadsPage(page).create_load(
         from_city="Toshkent",
         from_suggestion="Tashkent, 100000, Uzbekistan",
         to_city="Termez",
@@ -23,36 +30,47 @@ def test_create_load(logged_in: Page):
 
 @allure.feature("Loads")
 @allure.story("Loads page accessible")
-def test_loads_page_is_accessible(logged_in: Page):
-    ProfilePage(logged_in).go_to_my_loads()
-    LoadsPage(logged_in).expect_on_loads_page()
+@pytest.mark.parametrize("role", LOAD_CAPABLE_ROLES)
+def test_loads_page_is_accessible(request, role: str):
+    page: Page = request.getfixturevalue(f"logged_in_{role}")
+    ProfilePage(page).go_to_my_loads()
+    LoadsPage(page).expect_on_loads_page()
 
 
 @allure.feature("Loads")
 @allure.story("Filter: In Contract")
-def test_in_contract_filter_on_loads_page(logged_in: Page):
-    ProfilePage(logged_in).go_to_my_loads()
-    LoadsPage(logged_in).toggle_in_contract_filter().expect_in_contract_checked()
+@pytest.mark.parametrize("role", LOAD_CAPABLE_ROLES)
+def test_in_contract_filter_on_loads_page(request, role: str):
+    page: Page = request.getfixturevalue(f"logged_in_{role}")
+    ProfilePage(page).go_to_my_loads()
+    LoadsPage(page).toggle_in_contract_filter().expect_in_contract_checked()
 
 
 @allure.feature("Loads")
 @allure.story("Filter: In Transit")
-def test_in_transit_filter_on_loads_page(logged_in: Page):
-    ProfilePage(logged_in).go_to_my_loads()
-    LoadsPage(logged_in).toggle_in_transit_filter().expect_in_transit_checked()
+@pytest.mark.parametrize("role", LOAD_CAPABLE_ROLES)
+def test_in_transit_filter_on_loads_page(request, role: str):
+    page: Page = request.getfixturevalue(f"logged_in_{role}")
+    ProfilePage(page).go_to_my_loads()
+    LoadsPage(page).toggle_in_transit_filter().expect_in_transit_checked()
 
 
 @allure.feature("Loads")
 @allure.story("Filter: Delivered")
-def test_delivered_filter_on_loads_page(logged_in: Page):
-    ProfilePage(logged_in).go_to_my_loads()
-    LoadsPage(logged_in).toggle_delivered_filter().expect_delivered_checked()
+@pytest.mark.parametrize("role", LOAD_CAPABLE_ROLES)
+def test_delivered_filter_on_loads_page(request, role: str):
+    page: Page = request.getfixturevalue(f"logged_in_{role}")
+    ProfilePage(page).go_to_my_loads()
+    LoadsPage(page).toggle_delivered_filter().expect_delivered_checked()
+
 
 @allure.feature("Loads")
 @allure.story("Edit load")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_edit_load(logged_in: Page):
-    LoadsPage(logged_in).create_load(
+@pytest.mark.parametrize("role", LOAD_CAPABLE_ROLES)
+def test_edit_load(request, role: str):
+    page: Page = request.getfixturevalue(f"logged_in_{role}")
+    LoadsPage(page).create_load(
         from_city="Toshkent",
         from_suggestion="Tashkent, 100000, Uzbekistan",
         to_city="Termez",
@@ -64,8 +82,8 @@ def test_edit_load(logged_in: Page):
         price="1000",
     ).expect_load_created()
 
-    ProfilePage(logged_in).go_to_my_loads()
-    LoadsPage(logged_in).edit_load(
+    ProfilePage(page).go_to_my_loads()
+    LoadsPage(page).edit_load(
         from_city="Samarkand",
         from_suggestion="Samarkand, Samarkand Province, 140000, Uzbekistan",
         to_city="Tashkent",
@@ -78,9 +96,11 @@ def test_edit_load(logged_in: Page):
 @allure.feature("Loads")
 @allure.story("Delete load")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_delete_load(logged_in: Page):
-    # 1. Avval yangi yuk yaratamiz
-    LoadsPage(logged_in).create_load(
+@pytest.mark.parametrize("role", LOAD_CAPABLE_ROLES)
+def test_delete_load(request, role: str):
+    page: Page = request.getfixturevalue(f"logged_in_{role}")
+
+    LoadsPage(page).create_load(
         from_city="Toshkent",
         from_suggestion="Tashkent, 100000, Uzbekistan",
         to_city="Termez",
@@ -92,8 +112,5 @@ def test_delete_load(logged_in: Page):
         price="1000",
     ).expect_load_created()
 
-    # 2. My Loads ga o'tamiz
-    ProfilePage(logged_in).go_to_my_loads()
-
-    # 3. Birinchi yukni o'chiramiz
-    LoadsPage(logged_in).delete_first_load().expect_on_loads_page()
+    ProfilePage(page).go_to_my_loads()
+    LoadsPage(page).delete_first_load().expect_on_loads_page()

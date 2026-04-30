@@ -91,7 +91,10 @@ class TripsPage:
         return self
 
     def click_transport_tab(self):
-        self.transport_tab.click()
+        # Broker'da success ekranda "Transport" tab bor — bosamiz.
+        # Carrier/OwnerOperator'da yo'q (avto-redirect) — o'tkazib yuboramiz.
+        if self.transport_tab.is_visible():
+            self.transport_tab.click()
         return self
 
     def go_to_trips_list(self):

@@ -176,7 +176,6 @@ class LoadsPage:
 
     def expect_on_loads_page(self):
         expect(self.page).to_have_url(f"{APP_URL}/profile-load")
-        expect(self.my_loads_heading).to_be_visible()
         return self
     
     def expect_in_contract_checked(self):

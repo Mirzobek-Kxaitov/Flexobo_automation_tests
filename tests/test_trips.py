@@ -1,13 +1,25 @@
+import os
 import allure
+import pytest
 from playwright.sync_api import Page
+from dotenv import load_dotenv
 from pages.trips_page import TripsPage
+
+load_dotenv()
+APP_URL = os.getenv("APP_URL")
+
+
+# Trip yarata oladigan role'lar
+TRIP_CAPABLE_ROLES = ["broker", "carrier", "owner_operator"]
 
 
 @allure.feature("Trips")
 @allure.story("Add trip")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_add_trip(logged_in: Page):
-    TripsPage(logged_in).create_trip(
+@pytest.mark.parametrize("role", TRIP_CAPABLE_ROLES)
+def test_add_trip(request, role: str):
+    page: Page = request.getfixturevalue(f"logged_in_{role}")
+    TripsPage(page).create_trip(
         transport="Trailer 1",
         volume=10,
         loading_city="tashkent",
@@ -27,9 +39,10 @@ def test_add_trip(logged_in: Page):
 @allure.feature("Trips")
 @allure.story("Edit trip")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_edit_trip(logged_in: Page):
-    # 1. Avval trip yaratamiz
-    trips = TripsPage(logged_in)
+@pytest.mark.parametrize("role", TRIP_CAPABLE_ROLES)
+def test_edit_trip(request, role: str):
+    page: Page = request.getfixturevalue(f"logged_in_{role}")
+    trips = TripsPage(page)
     trips.create_trip(
         transport="Trailer 1",
         volume=10,
@@ -42,17 +55,17 @@ def test_edit_trip(logged_in: Page):
         price=1200,
     )
 
-    # 2. My Trips ga o'tamiz va birinchi trip narxini o'zgartiramiz
-    logged_in.goto(f"https://app.flexobo-mock.site/profile-trips")
+    page.goto(f"{APP_URL}/profile-trips")
     trips.edit_trip(price=2500).expect_on_trips_page()
 
 
 @allure.feature("Trips")
 @allure.story("Delete trip")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_delete_trip(logged_in: Page):
-    # 1. Avval trip yaratamiz
-    trips = TripsPage(logged_in)
+@pytest.mark.parametrize("role", TRIP_CAPABLE_ROLES)
+def test_delete_trip(request, role: str):
+    page: Page = request.getfixturevalue(f"logged_in_{role}")
+    trips = TripsPage(page)
     trips.create_trip(
         transport="Trailer 1",
         volume=10,
@@ -65,6 +78,5 @@ def test_delete_trip(logged_in: Page):
         price=1200,
     )
 
-    # 2. My Trips ga o'tamiz va birinchi tripni o'chiramiz
-    logged_in.goto(f"https://app.flexobo-mock.site/profile-trips")
+    page.goto(f"{APP_URL}/profile-trips")
     trips.delete_first_trip().expect_on_trips_page()
