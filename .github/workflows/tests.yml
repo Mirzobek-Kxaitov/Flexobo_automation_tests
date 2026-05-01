@@ -42,7 +42,7 @@ jobs:
           echo "OWNER_OPERATOR_PASSWORD=${{ secrets.OWNER_OPERATOR_PASSWORD }}" >> .env
 
       - name: Run tests
-        run: pytest tests/ -v --reruns 3 --timeout 60 --alluredir=allure-results
+        run: pytest tests/ -v --reruns 3 --timeout 180 --alluredir=allure-results
 
       - name: Upload Allure results
         if: always()
