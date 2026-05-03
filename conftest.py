@@ -26,12 +26,17 @@ OWNER_OPERATOR_PASSWORD = os.getenv("OWNER_OPERATOR_PASSWORD")
 
 
 def _login_as(page: Page, email: str, password: str) -> Page:
-    """Berilgan email/password bilan login qiladi va /loads sahifaga o'tgan page qaytaradi."""
+    """
+    Berilgan email/password bilan login qiladi.
+    Sayt login'dan keyin /loads yoki /profile/root ga tushiradi (role/account holatiga qarab).
+    Tekshirish: /sign-in dan chiqib ketgan bo'lsa — login muvaffaqiyatli.
+    """
+    import re
     page.goto(f"{APP_URL}/sign-in?lang=en")
     page.get_by_placeholder("Email or phone number is required").fill(email)
     page.get_by_placeholder("Enter your password").fill(password)
     page.get_by_role("button", name="Sign In", exact=True).click()
-    expect(page).to_have_url(f"{APP_URL}/loads", timeout=15000)
+    expect(page).not_to_have_url(re.compile(r".*sign-in.*"), timeout=15000)
 
     accept_button = page.get_by_role("button", name="Accept")
     if accept_button.is_visible():
