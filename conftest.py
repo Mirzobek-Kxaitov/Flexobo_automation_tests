@@ -45,6 +45,18 @@ def _login_as(page: Page, email: str, password: str) -> Page:
     return page
 
 
+def _logged_in_page(browser, browser_context_args, email, password):
+    """
+    Alohida browser context yaratib, login qiladi.
+    Multi-user testlarda 2+ fixture bir xil cookie/storage'ni baham ko'rmasligi uchun.
+    Caller yield qilgandan keyin context'ni close qilish kerak.
+    """
+    context = browser.new_context(**browser_context_args)
+    page = context.new_page()
+    _login_as(page, email, password)
+    return context, page
+
+
 @pytest.fixture
 def open_page(page: Page):
     """Login sahifasini ochadi, login qilmaydi"""
@@ -53,33 +65,43 @@ def open_page(page: Page):
 
 
 @pytest.fixture
-def logged_in(page: Page):
+def logged_in(browser, browser_context_args):
     """Broker bilan login qiladi (eski testlar uchun)."""
-    return _login_as(page, EMAIL, PASSWORD)
+    context, page = _logged_in_page(browser, browser_context_args, EMAIL, PASSWORD)
+    yield page
+    context.close()
 
 
 @pytest.fixture
-def logged_in_broker(page: Page):
-    """Broker role bilan login."""
-    return _login_as(page, BROKER_EMAIL, BROKER_PASSWORD)
+def logged_in_broker(browser, browser_context_args):
+    """Broker role bilan login (alohida browser context'da)."""
+    context, page = _logged_in_page(browser, browser_context_args, BROKER_EMAIL, BROKER_PASSWORD)
+    yield page
+    context.close()
 
 
 @pytest.fixture
-def logged_in_load_owner(page: Page):
-    """Load owner role bilan login."""
-    return _login_as(page, LOAD_OWNER_EMAIL, LOAD_OWNER_PASSWORD)
+def logged_in_load_owner(browser, browser_context_args):
+    """Load owner role bilan login (alohida browser context'da)."""
+    context, page = _logged_in_page(browser, browser_context_args, LOAD_OWNER_EMAIL, LOAD_OWNER_PASSWORD)
+    yield page
+    context.close()
 
 
 @pytest.fixture
-def logged_in_carrier(page: Page):
-    """Carrier role bilan login."""
-    return _login_as(page, CARRIER_EMAIL, CARRIER_PASSWORD)
+def logged_in_carrier(browser, browser_context_args):
+    """Carrier role bilan login (alohida browser context'da)."""
+    context, page = _logged_in_page(browser, browser_context_args, CARRIER_EMAIL, CARRIER_PASSWORD)
+    yield page
+    context.close()
 
 
 @pytest.fixture
-def logged_in_owner_operator(page: Page):
-    """Owner operator role bilan login."""
-    return _login_as(page, OWNER_OPERATOR_EMAIL, OWNER_OPERATOR_PASSWORD)
+def logged_in_owner_operator(browser, browser_context_args):
+    """Owner operator role bilan login (alohida browser context'da)."""
+    context, page = _logged_in_page(browser, browser_context_args, OWNER_OPERATOR_EMAIL, OWNER_OPERATOR_PASSWORD)
+    yield page
+    context.close()
 
 
 @pytest.fixture

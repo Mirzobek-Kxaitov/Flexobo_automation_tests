@@ -17,23 +17,38 @@ from playwright.sync_api import Page
 # 1. Screenshot on failure
 # ──────────────────────────────────────────────
 
+# Page yetkazib beradigan barcha fixture'lar — multi-user testlarda har biridan
+# alohida screenshot olinadi.
+PAGE_FIXTURES = (
+    "logged_in",
+    "logged_in_broker",
+    "logged_in_load_owner",
+    "logged_in_carrier",
+    "logged_in_owner_operator",
+    "open_page",
+    "landing_page",
+)
+
+
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
-    """Test fail bo'lsa, Playwright page'dan screenshot oladi va Allure'ga attach qiladi."""
+    """Test fail bo'lsa, har bir page-fixture'dan screenshot oladi va Allure'ga attach qiladi."""
     outcome = yield
     report = outcome.get_result()
 
-    if report.when == "call" and report.failed:
-        # Playwright fixture'dan page olish
-        page: Page | None = item.funcargs.get("logged_in") or item.funcargs.get("open_page") or item.funcargs.get("landing_page")
+    if report.when != "call" or not report.failed:
+        return
 
-        if page and not page.is_closed():
-            screenshot = page.screenshot(full_page=True)
-            allure.attach(
-                screenshot,
-                name=f"{item.name}_failure",
-                attachment_type=allure.attachment_type.PNG,
-            )
+    for fixture_name in PAGE_FIXTURES:
+        page: Page | None = item.funcargs.get(fixture_name)
+        if not page or page.is_closed():
+            continue
+        screenshot = page.screenshot(full_page=True)
+        allure.attach(
+            screenshot,
+            name=f"{item.name}__{fixture_name}",
+            attachment_type=allure.attachment_type.PNG,
+        )
 
 
 # ──────────────────────────────────────────────
