@@ -73,9 +73,9 @@ class TripsPage:
         self.loading_radius_input.fill(str(radius))
         return self     
     
-    def fill_unloading(self, city,suggestion):
+    def fill_unloading(self, city, suggestion):
         self.unloading_input.fill(city)
-        self.page.get_by_text(suggestion, exact=True).first.click()
+        self.page.get_by_text(suggestion).first.click()
         return self
     
     def fill_unloading_radius(self,radius):

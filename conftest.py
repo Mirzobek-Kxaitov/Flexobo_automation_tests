@@ -40,7 +40,7 @@ def _login_as(page: Page, email: str, password: str) -> Page:
 
     accept_button = page.get_by_role("button", name="Accept")
     if accept_button.is_visible():
-        accept_button.click()
+        accept_button.click(force=True)
 
     return page
 
