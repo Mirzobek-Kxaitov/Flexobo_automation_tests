@@ -1,17 +1,17 @@
 """
-Bookings limit enforcement testlari — Free plan'dagi cheklov.
+Bookings limit enforcement tests — Free plan restriction.
 
-Stsenariy:
-1. Broker 5 ta booking yaratadi (0 → 5/5)
-2. 6-chi bookingda "Limit reached" modal chiqadi
-3. Modal behavior: "Maybe later" (yopiladi), "Upgrade plan" (sahifa o'tadi)
+Scenario:
+1. Broker creates 5 bookings (0 -> 5/5).
+2. On the 6th booking attempt a 'Limit reached' modal appears.
+3. Modal behaviour: 'Maybe later' closes it, 'Upgrade plan' navigates away.
 
 Multi-user flow:
-- load_owner: yuk yaratadi, broker bid'ni accept qiladi
-- broker: bid yuboradi (booking broker'nikiga hisoblanadi)
+- load_owner: creates a load, accepts the broker's bid.
+- broker: places a bid (booking is counted against the broker).
 
-Sabab (backend): booking.created eventida customerId = bidderId (broker),
-shuning uchun broker'ning Bookings counter'i ortadi.
+Backend note: on the booking.created event customerId = bidderId (broker),
+so the broker's Bookings counter increments.
 
 Free plan: Bookings limit = 5.
 """
@@ -23,6 +23,7 @@ from playwright.sync_api import Page, expect
 from dotenv import load_dotenv
 
 from pages.loads_page import LoadsPage
+from helpers import read_usage_counter
 
 load_dotenv()
 APP_URL = os.getenv("APP_URL")
@@ -30,161 +31,148 @@ APP_URL = os.getenv("APP_URL")
 BOOKINGS_LIMIT = 5
 
 
-# ──────────────────── Helper funksiyalar ────────────────────
-
-
-def _read_bookings_count(page: Page) -> int:
-    """Broker'ning joriy 'Bookings' qiymatini Usage sahifasidan o'qish."""
-    page.goto(f"{APP_URL}/profile/root")
-    page.wait_for_timeout(2000)
-    page.get_by_text("Usage", exact=True).first.click()
-    page.wait_for_timeout(3000)
-    card = (
-        page.locator("div")
-        .filter(has_text="Bookings")
-        .filter(has_text=f"/ {BOOKINGS_LIMIT}")
-        .first
-    )
-    text = card.inner_text(timeout=10000)
-    match = re.search(rf"(\d+)\s*/\s*{BOOKINGS_LIMIT}", text)
-    assert match, f"'Bookings' formatida son topilmadi:\n{text}"
-    return int(match.group(1))
+# ---------------------------------------------------------------------------
+# Helper
+# ---------------------------------------------------------------------------
 
 
 def _create_booking(load_owner: Page, broker: Page, price: str) -> None:
-    """
-    1 ta booking yaratadi:
-    - load_owner yuk yaratadi
-    - broker bid yuboradi
-    - load_owner bid'ni accept qiladi
-    → broker'ning Bookings counter'i +1 bo'ladi
+    """Create one booking end-to-end.
+
+    Steps:
+    - load_owner creates a load with the given price.
+    - broker finds the load and places a bid.
+    - load_owner accepts the bid.
+    This causes the broker's Bookings counter to increment by 1.
     """
     price_pattern = re.compile(rf"USD\s*{int(price):,}")
 
-    # ─── load_owner: yuk yaratish ───────────────────────────
-    LoadsPage(load_owner).create_load(
-        from_city="Toshkent",
-        from_suggestion="Tashkent, 100000, Uzbekistan",
-        to_city="Termez",
-        to_suggestion="Termez, Termiz District, Surxondaryo Province, Uzbekistan",
-        load_type="Apple production",
-        weight="20",
-        day="20",
-        body_type="'/40' extendable semi-trailer",
-        price=price,
-        loading_type="Hydraulic",
-        unloading_type="Pneumatic",
+    with allure.step("Load owner creates a load"):
+        LoadsPage(load_owner).create_load(
+            from_city="Toshkent",
+            from_suggestion="Tashkent, 100000, Uzbekistan",
+            to_city="Termez",
+            to_suggestion="Termez, Termiz District, Surxondaryo Province, Uzbekistan",
+            load_type="Apple production",
+            weight="20",
+            day="20",
+            body_type="'/40' extendable semi-trailer",
+            price=price,
+            loading_type="Hydraulic",
+            unloading_type="Pneumatic",
+        )
+        load_owner.wait_for_timeout(3000)
+
+    with allure.step("Broker finds the load and places a bid"):
+        broker.goto(f"{APP_URL}/loads")
+        broker.wait_for_load_state("domcontentloaded")
+        broker.wait_for_timeout(3500)
+
+        broker.get_by_text(price_pattern).first.click()
+        broker.wait_for_timeout(2500)
+
+        broker.get_by_role("button", name="Place a bid").first.click()
+        broker.wait_for_timeout(2500)
+
+        broker.get_by_placeholder("Why is your offer better than others?").fill(
+            f"Bookings limit test — {price}"
+        )
+        broker.wait_for_timeout(500)
+
+        broker.get_by_role("button", name="Place a bid").last.click()
+        broker.wait_for_timeout(5000)
+
+    with allure.step("Load owner accepts the bid"):
+        load_owner.goto(f"{APP_URL}/profile/root")
+        load_owner.wait_for_timeout(3000)
+        load_owner.get_by_text("Received bids", exact=True).first.click()
+        load_owner.wait_for_timeout(5000)
+
+        load_owner.get_by_text(price_pattern).first.click()
+        load_owner.wait_for_timeout(2500)
+
+        bid_button = (
+            load_owner.get_by_role("button")
+            .filter(has_text=price_pattern)
+            .filter(has_text=re.compile(r"broker", re.IGNORECASE))
+            .first
+        )
+        bid_button.click()
+        load_owner.wait_for_timeout(2000)
+
+        load_owner.get_by_role("button", name="Accept").click()
+        load_owner.wait_for_timeout(5000)
+
+
+# ---------------------------------------------------------------------------
+# Tests
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.xfail(
+    reason=(
+        "Bookings limit enforcement is not working — backend bug: "
+        "bookings continue to be created even after reaching 5/5"
     )
-    load_owner.wait_for_timeout(3000)
-
-    # ─── broker: yukni topib bid yuborish ───────────────────
-    broker.goto(f"{APP_URL}/loads")
-    broker.wait_for_load_state("domcontentloaded")
-    broker.wait_for_timeout(3500)
-
-    broker.get_by_text(price_pattern).first.click()
-    broker.wait_for_timeout(2500)
-
-    broker.get_by_role("button", name="Place a bid").first.click()
-    broker.wait_for_timeout(2500)
-
-    broker.get_by_placeholder("Why is your offer better than others?").fill(
-        f"Bookings limit test — {price}"
-    )
-    broker.wait_for_timeout(500)
-
-    broker.get_by_role("button", name="Place a bid").last.click()
-    broker.wait_for_timeout(5000)
-
-    # ─── load_owner: bid'ni accept qilish ───────────────────
-    load_owner.goto(f"{APP_URL}/profile/root")
-    load_owner.wait_for_timeout(3000)
-    load_owner.get_by_text("Received bids", exact=True).first.click()
-    load_owner.wait_for_timeout(5000)
-
-    load_owner.get_by_text(price_pattern).first.click()
-    load_owner.wait_for_timeout(2500)
-
-    bid_button = (
-        load_owner.get_by_role("button")
-        .filter(has_text=price_pattern)
-        .filter(has_text=re.compile(r"broker", re.IGNORECASE))
-        .first
-    )
-    bid_button.click()
-    load_owner.wait_for_timeout(2000)
-
-    load_owner.get_by_role("button", name="Accept").click()
-    load_owner.wait_for_timeout(5000)
-
-
-# ──────────────────── Testlar ────────────────────────────────
-
-
-@pytest.mark.xfail(reason="Bookings limit enforcement ishlamayapti — backend bug: 5/5 dan oshsa ham booking o'tib ketmoqda")
+)
 @allure.feature("Plan Limits")
 @allure.story("Free plan: fill bookings to limit and verify 'Limit reached' modal")
 @allure.severity(allure.severity_level.CRITICAL)
 def test_bookings_limit_full_flow(
     logged_in_broker: Page, logged_in_load_owner: Page
 ):
-    """
-    Broker 5 ta booking yaratib, 6-chisida 'Limit reached' modal
-    chiqishini tekshiradi.
+    """Verify that a 'Limit reached' modal appears when the broker exceeds
+    the free-plan bookings limit.
 
-    1. Usage'dan hozirgi bookings sonini o'qish
-    2. 5 gacha to'ldirish (har biri: yuk → bid → accept)
-    3. 6-chi accept'da modal chiqishi kerak
+    Steps:
+    1. Read the current bookings counter from the Usage tab.
+    2. Fill up to the limit (each iteration: load -> bid -> accept).
+    3. Confirm the counter reached the limit.
+    4. Attempt one more booking and verify the modal is shown.
     """
     broker = logged_in_broker
     owner = logged_in_load_owner
     broker.set_default_timeout(60000)
     owner.set_default_timeout(60000)
 
-    # ─── Hozirgi holatni o'qish ─────────────────────────────
-    current = _read_bookings_count(broker)
-    needed = BOOKINGS_LIMIT - current
-    print(f"\n[BOOKINGS] Hozirgi: {current}/{BOOKINGS_LIMIT}, kerakli: {needed} ta booking")
+    with allure.step("Read current bookings counter from Usage tab"):
+        current = read_usage_counter(broker, "Bookings", BOOKINGS_LIMIT)
+        needed = BOOKINGS_LIMIT - current
 
-    # ─── Limit'gacha to'ldirish ──────────────────────────────
-    for i in range(needed):
-        booking_num = current + i + 1
-        price = str(10000 + booking_num)
-        print(f"[BOOKINGS] Booking #{booking_num}/{BOOKINGS_LIMIT} yaratilmoqda (price: {price})...")
-        _create_booking(owner, broker, price)
+    with allure.step(f"Fill bookings up to limit (current={current}, needed={needed})"):
+        for i in range(needed):
+            booking_num = current + i + 1
+            price = str(10000 + booking_num)
+            with allure.step(f"Create booking #{booking_num}/{BOOKINGS_LIMIT} (price={price})"):
+                _create_booking(owner, broker, price)
 
-    # ─── Limitga yetganini tasdiqlash ────────────────────────
-    final = _read_bookings_count(broker)
-    assert final >= BOOKINGS_LIMIT, (
-        f"Kutilgan >= {BOOKINGS_LIMIT}/{BOOKINGS_LIMIT}, haqiqiy {final}/{BOOKINGS_LIMIT}"
-    )
-    print(f"[BOOKINGS] Tasdiqlandi: {final}/{BOOKINGS_LIMIT}")
+    with allure.step("Confirm bookings counter reached the limit"):
+        final = read_usage_counter(broker, "Bookings", BOOKINGS_LIMIT)
+        assert final >= BOOKINGS_LIMIT, (
+            f"Expected >= {BOOKINGS_LIMIT}/{BOOKINGS_LIMIT}, got {final}/{BOOKINGS_LIMIT}"
+        )
 
-    # ─── 6-chi booking: modal chiqishi kerak ─────────────────
-    print("[BOOKINGS] 6-chi booking yaratilmoqda (modal kutilmoqda)...")
-    _create_booking(owner, broker, str(10000 + BOOKINGS_LIMIT + 1))
+    with allure.step("Attempt one more booking beyond the limit"):
+        _create_booking(owner, broker, str(10000 + BOOKINGS_LIMIT + 1))
 
-    # ─── Modal verifikatsiya ─────────────────────────────────
-    # Modal broker yoki load_owner sahifasida chiqishi mumkin
-    # (6-chi bid yuborishda broker bloklanadi, accept'da load_owner)
-    modal_page = None
-    for p in [broker, owner]:
-        try:
-            p.get_by_role("heading", name="Limit reached").wait_for(
-                state="visible", timeout=5000
-            )
-            modal_page = p
-            break
-        except Exception:
-            pass
+    with allure.step("Verify 'Limit reached' modal is displayed on broker or owner page"):
+        modal_page = None
+        for p in [broker, owner]:
+            try:
+                p.get_by_role("heading", name="Limit reached").wait_for(
+                    state="visible", timeout=5000
+                )
+                modal_page = p
+                break
+            except Exception:
+                pass
 
-    assert modal_page is not None, "Hech qaysi sahifada 'Limit reached' modal topilmadi"
-
-    expect(modal_page.get_by_text("You have reached your limit")).to_be_visible()
-    expect(modal_page.get_by_role("button", name="Upgrade plan")).to_be_visible()
-    expect(modal_page.get_by_role("button", name="Maybe later")).to_be_visible()
-
-    print(f"[BOOKINGS] ✅ 'Limit reached' modal muvaffaqiyatli ko'rindi!")
+        assert modal_page is not None, (
+            "'Limit reached' modal was not found on any page"
+        )
+        expect(modal_page.get_by_text("You have reached your limit")).to_be_visible()
+        expect(modal_page.get_by_role("button", name="Upgrade plan")).to_be_visible()
+        expect(modal_page.get_by_role("button", name="Maybe later")).to_be_visible()
 
 
 @allure.feature("Plan Limits")
@@ -193,38 +181,37 @@ def test_bookings_limit_full_flow(
 def test_bookings_modal_maybe_later(
     logged_in_broker: Page, logged_in_load_owner: Page
 ):
-    """
-    Broker bookings limit'da bo'lganda, 'Maybe later' bosilganda
-    modal yopilishini tekshiradi.
+    """Verify that clicking 'Maybe later' closes the bookings limit modal.
 
-    Pre-condition: broker 5/5 bo'lishi kerak.
+    Pre-condition: broker must already be at 5/5 bookings.
     """
     broker = logged_in_broker
     owner = logged_in_load_owner
     broker.set_default_timeout(60000)
     owner.set_default_timeout(60000)
 
-    current = _read_bookings_count(broker)
-    if current < BOOKINGS_LIMIT:
-        pytest.skip(
-            f"Broker {current}/{BOOKINGS_LIMIT} holatda. Avval "
-            f"test_bookings_limit_full_flow ni ishga tushiring."
-        )
+    with allure.step("Check broker is already at the bookings limit"):
+        current = read_usage_counter(broker, "Bookings", BOOKINGS_LIMIT)
+        if current < BOOKINGS_LIMIT:
+            pytest.skip(
+                f"Broker is at {current}/{BOOKINGS_LIMIT}. "
+                f"Run test_bookings_limit_full_flow first."
+            )
 
-    _create_booking(owner, broker, "19001")
+    with allure.step("Attempt a booking beyond the limit to trigger modal"):
+        _create_booking(owner, broker, "19001")
 
-    expect(
-        broker.get_by_role("heading", name="Limit reached")
-    ).to_be_visible(timeout=10000)
+    with allure.step("Verify 'Limit reached' modal is visible"):
+        expect(
+            broker.get_by_role("heading", name="Limit reached")
+        ).to_be_visible(timeout=10000)
 
-    broker.get_by_role("button", name="Maybe later").click()
-    broker.wait_for_timeout(1000)
-
-    expect(
-        broker.get_by_role("heading", name="Limit reached")
-    ).not_to_be_visible()
-
-    print("[MODAL] ✅ 'Maybe later' bosildi — modal yopildi!")
+    with allure.step("Click 'Maybe later' and verify modal is dismissed"):
+        broker.get_by_role("button", name="Maybe later").click()
+        broker.wait_for_timeout(1000)
+        expect(
+            broker.get_by_role("heading", name="Limit reached")
+        ).not_to_be_visible()
 
 
 @allure.feature("Plan Limits")
@@ -233,33 +220,34 @@ def test_bookings_modal_maybe_later(
 def test_bookings_modal_upgrade_plan(
     logged_in_broker: Page, logged_in_load_owner: Page
 ):
-    """
-    Broker bookings limit'da bo'lganda, 'Upgrade plan' bosilganda
-    upgrade sahifasiga o'tishini tekshiradi.
+    """Verify that clicking 'Upgrade plan' navigates to the pricing/upgrade page.
 
-    Pre-condition: broker 5/5 bo'lishi kerak.
+    Pre-condition: broker must already be at 5/5 bookings.
     """
     broker = logged_in_broker
     owner = logged_in_load_owner
     broker.set_default_timeout(60000)
     owner.set_default_timeout(60000)
 
-    current = _read_bookings_count(broker)
-    if current < BOOKINGS_LIMIT:
-        pytest.skip(
-            f"Broker {current}/{BOOKINGS_LIMIT} holatda. Avval "
-            f"test_bookings_limit_full_flow ni ishga tushiring."
+    with allure.step("Check broker is already at the bookings limit"):
+        current = read_usage_counter(broker, "Bookings", BOOKINGS_LIMIT)
+        if current < BOOKINGS_LIMIT:
+            pytest.skip(
+                f"Broker is at {current}/{BOOKINGS_LIMIT}. "
+                f"Run test_bookings_limit_full_flow first."
+            )
+
+    with allure.step("Attempt a booking beyond the limit to trigger modal"):
+        _create_booking(owner, broker, "19002")
+
+    with allure.step("Verify 'Limit reached' modal is visible"):
+        expect(
+            broker.get_by_role("heading", name="Limit reached")
+        ).to_be_visible(timeout=10000)
+
+    with allure.step("Click 'Upgrade plan' and verify navigation to pricing page"):
+        broker.get_by_role("button", name="Upgrade plan").click()
+        broker.wait_for_timeout(3000)
+        expect(broker).to_have_url(
+            re.compile(r".*(pricing|upgrade|plan).*"), timeout=10000
         )
-
-    _create_booking(owner, broker, "19002")
-
-    expect(
-        broker.get_by_role("heading", name="Limit reached")
-    ).to_be_visible(timeout=10000)
-
-    broker.get_by_role("button", name="Upgrade plan").click()
-    broker.wait_for_timeout(3000)
-
-    expect(broker).to_have_url(re.compile(r".*(pricing|upgrade|plan).*"), timeout=10000)
-
-    print("[MODAL] ✅ 'Upgrade plan' bosildi — upgrade sahifaga o'tildi!")

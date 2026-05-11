@@ -1,10 +1,10 @@
 """
-Carrier — Company employees limit enforcement testlari.
+Carrier — Company employees limit enforcement tests.
 
-Stsenariy:
-1. Carrier 2 ta employee qo'shadi (0 → 2/2)
-2. 3-chi employee qo'shishda "Limit reached" modal chiqadi
-3. Modal behavior: "Maybe later" (yopiladi), "Upgrade plan" (sahifa o'tadi)
+Scenario:
+1. Carrier invites 2 employees (0 -> 2/2).
+2. On the 3rd invitation attempt a 'Limit reached' modal appears.
+3. Modal behaviour: 'Maybe later' closes it, 'Upgrade plan' navigates away.
 
 Free plan: Company employees limit = 2.
 """
@@ -15,160 +15,125 @@ import pytest
 from playwright.sync_api import Page, expect
 from dotenv import load_dotenv
 
+from helpers import invite_employee, read_usage_counter
+
 load_dotenv()
 APP_URL = os.getenv("APP_URL")
 
 EMPLOYEES_LIMIT = 2
 
 
-# ──────────────────── Helper funksiyalar ────────────────────
+# ---------------------------------------------------------------------------
+# Tests
+# ---------------------------------------------------------------------------
 
 
-def _read_company_employees_count(page: Page) -> int:
-    """Carrier'ning joriy 'Company employees' qiymatini Usage sahifasidan o'qish."""
-    page.goto(f"{APP_URL}/profile/root")
-    page.wait_for_timeout(2000)
-    page.get_by_text("Usage", exact=True).first.click()
-    page.wait_for_timeout(3000)
-    card = (
-        page.locator("div")
-        .filter(has_text="Company employees")
-        .filter(has_text=f"/ {EMPLOYEES_LIMIT}")
-        .first
-    )
-    text = card.inner_text(timeout=10000)
-    match = re.search(rf"(\d+)\s*/\s*{EMPLOYEES_LIMIT}", text)
-    assert match, f"'Company employees' formatida son topilmadi:\n{text}"
-    return int(match.group(1))
-
-
-def _add_one_employee(page: Page, index: int) -> None:
-    """Profile → Users tab → employee qo'shadi."""
-    page.goto(f"{APP_URL}/profile/root")
-    page.wait_for_load_state("domcontentloaded")
-    page.wait_for_timeout(2000)
-
-    page.get_by_role("tab", name="Users").click()
-    page.wait_for_timeout(1500)
-
-    page.get_by_role("button", name="Invite User").click()
-    page.wait_for_timeout(1500)
-
-    # Phone or Email
-    page.get_by_role("textbox", name="Phone or Email").fill(
-        f"carrier_emp_{index}@test.com"
-    )
-    page.wait_for_timeout(500)
-
-    # Role tanlash
-    page.get_by_role("combobox", name="Role").click()
-    page.get_by_role("option").first.click()
-    page.wait_for_timeout(500)
-
-    # Submit
-    page.get_by_role("button", name="Send Invitation").click()
-    page.wait_for_timeout(3000)
-
-
-# ──────────────────── Testlar ────────────────────────────────
-
-
-@pytest.mark.xfail(reason="BUG: Company employees Usage counter ishlamayapti — invite yuboriladi lekin counter 0 qoladi")
+@pytest.mark.xfail(reason="BUG: Company employees usage counter not incrementing after invitation")
 @allure.feature("Plan Limits")
 @allure.story("Carrier Free plan: company employees limit enforcement")
 @allure.severity(allure.severity_level.CRITICAL)
 def test_carrier_company_employees_limit_full_flow(logged_in_carrier: Page):
     """
-    Carrier 2 ta employee qo'shib, 3-chisida 'Limit reached' modal
-    chiqishini tekshiradi.
+    Verify that the carrier cannot invite more than EMPLOYEES_LIMIT employees
+    on the free plan and that a 'Limit reached' modal is shown on the
+    (EMPLOYEES_LIMIT+1)th attempt.
+
+    Steps:
+    1. Read the current employees counter from the Usage tab.
+    2. Fill up to the limit by inviting employees.
+    3. Confirm the counter reached the limit.
+    4. Attempt one more invitation and verify the modal.
     """
     page = logged_in_carrier
     page.set_default_timeout(60000)
 
-    current = _read_company_employees_count(page)
-    needed = max(0, EMPLOYEES_LIMIT - current)
-    print(f"\n[EMPLOYEES] Hozirgi: {current}/{EMPLOYEES_LIMIT}, kerakli: {needed}")
+    with allure.step("Read current company employees counter from Usage tab"):
+        current = read_usage_counter(page, "Company employees", EMPLOYEES_LIMIT)
+        needed = max(0, EMPLOYEES_LIMIT - current)
 
-    for i in range(needed):
-        num = current + i + 1
-        print(f"[EMPLOYEES] Employee #{num}/{EMPLOYEES_LIMIT} qo'shilmoqda...")
-        _add_one_employee(page, num)
+    with allure.step(f"Fill employees up to limit (current={current}, needed={needed})"):
+        for i in range(needed):
+            num = current + i + 1
+            with allure.step(f"Invite employee #{num}/{EMPLOYEES_LIMIT}"):
+                invite_employee(page, num, prefix="carrier_emp")
 
-    final = _read_company_employees_count(page)
-    assert final >= EMPLOYEES_LIMIT, (
-        f"Kutilgan >= {EMPLOYEES_LIMIT}/{EMPLOYEES_LIMIT}, haqiqiy {final}/{EMPLOYEES_LIMIT}"
-    )
-    print(f"[EMPLOYEES] Tasdiqlandi: {final}/{EMPLOYEES_LIMIT}")
+    with allure.step("Confirm employees counter reached the limit"):
+        final = read_usage_counter(page, "Company employees", EMPLOYEES_LIMIT)
+        assert final >= EMPLOYEES_LIMIT, (
+            f"Expected >= {EMPLOYEES_LIMIT}/{EMPLOYEES_LIMIT}, got {final}/{EMPLOYEES_LIMIT}"
+        )
 
-    print("[EMPLOYEES] 3-chi employee qo'shilmoqda (modal kutilmoqda)...")
-    _add_one_employee(page, EMPLOYEES_LIMIT + 1)
+    with allure.step("Attempt one more invitation beyond the limit"):
+        invite_employee(page, EMPLOYEES_LIMIT + 1, prefix="carrier_emp")
 
-    expect(
-        page.get_by_role("heading", name="Limit reached")
-    ).to_be_visible(timeout=10000)
-
-    expect(page.get_by_text("You have reached your limit")).to_be_visible()
-    expect(page.get_by_role("button", name="Upgrade plan")).to_be_visible()
-    expect(page.get_by_role("button", name="Maybe later")).to_be_visible()
-
-    print("[EMPLOYEES] ✅ 'Limit reached' modal muvaffaqiyatli ko'rindi!")
+    with allure.step("Verify 'Limit reached' modal is displayed"):
+        expect(
+            page.get_by_role("heading", name="Limit reached")
+        ).to_be_visible(timeout=10000)
+        expect(page.get_by_text("You have reached your limit")).to_be_visible()
+        expect(page.get_by_role("button", name="Upgrade plan")).to_be_visible()
+        expect(page.get_by_role("button", name="Maybe later")).to_be_visible()
 
 
 @allure.feature("Plan Limits")
 @allure.story("Carrier: company employees limit modal — 'Maybe later' dismisses")
 @allure.severity(allure.severity_level.NORMAL)
 def test_carrier_company_employees_modal_maybe_later(logged_in_carrier: Page):
-    """'Maybe later' bosilganda modal yopilishini tekshiradi."""
+    """Verify that clicking 'Maybe later' closes the limit modal."""
     page = logged_in_carrier
     page.set_default_timeout(60000)
 
-    current = _read_company_employees_count(page)
-    if current < EMPLOYEES_LIMIT:
-        pytest.skip(
-            f"Carrier {current}/{EMPLOYEES_LIMIT} holatda. Avval "
-            f"test_carrier_company_employees_limit_full_flow ni ishga tushiring."
-        )
+    with allure.step("Check carrier is already at the employees limit"):
+        current = read_usage_counter(page, "Company employees", EMPLOYEES_LIMIT)
+        if current < EMPLOYEES_LIMIT:
+            pytest.skip(
+                f"Carrier is at {current}/{EMPLOYEES_LIMIT}. "
+                f"Run test_carrier_company_employees_limit_full_flow first."
+            )
 
-    _add_one_employee(page, 9001)
+    with allure.step("Attempt an invitation beyond the limit to trigger modal"):
+        invite_employee(page, 9001, prefix="carrier_emp")
 
-    expect(
-        page.get_by_role("heading", name="Limit reached")
-    ).to_be_visible(timeout=10000)
+    with allure.step("Verify 'Limit reached' modal is visible"):
+        expect(
+            page.get_by_role("heading", name="Limit reached")
+        ).to_be_visible(timeout=10000)
 
-    page.get_by_role("button", name="Maybe later").click()
-    page.wait_for_timeout(1000)
-
-    expect(
-        page.get_by_role("heading", name="Limit reached")
-    ).not_to_be_visible()
-
-    print("[MODAL] ✅ 'Maybe later' bosildi — modal yopildi!")
+    with allure.step("Click 'Maybe later' and verify modal is dismissed"):
+        page.get_by_role("button", name="Maybe later").click()
+        page.wait_for_timeout(1000)
+        expect(
+            page.get_by_role("heading", name="Limit reached")
+        ).not_to_be_visible()
 
 
 @allure.feature("Plan Limits")
 @allure.story("Carrier: company employees limit modal — 'Upgrade plan' navigates")
 @allure.severity(allure.severity_level.NORMAL)
 def test_carrier_company_employees_modal_upgrade_plan(logged_in_carrier: Page):
-    """'Upgrade plan' bosilganda upgrade sahifasiga o'tishini tekshiradi."""
+    """Verify that clicking 'Upgrade plan' navigates to the pricing/upgrade page."""
     page = logged_in_carrier
     page.set_default_timeout(60000)
 
-    current = _read_company_employees_count(page)
-    if current < EMPLOYEES_LIMIT:
-        pytest.skip(
-            f"Carrier {current}/{EMPLOYEES_LIMIT} holatda. Avval "
-            f"test_carrier_company_employees_limit_full_flow ni ishga tushiring."
+    with allure.step("Check carrier is already at the employees limit"):
+        current = read_usage_counter(page, "Company employees", EMPLOYEES_LIMIT)
+        if current < EMPLOYEES_LIMIT:
+            pytest.skip(
+                f"Carrier is at {current}/{EMPLOYEES_LIMIT}. "
+                f"Run test_carrier_company_employees_limit_full_flow first."
+            )
+
+    with allure.step("Attempt an invitation beyond the limit to trigger modal"):
+        invite_employee(page, 9002, prefix="carrier_emp")
+
+    with allure.step("Verify 'Limit reached' modal is visible"):
+        expect(
+            page.get_by_role("heading", name="Limit reached")
+        ).to_be_visible(timeout=10000)
+
+    with allure.step("Click 'Upgrade plan' and verify navigation to pricing page"):
+        page.get_by_role("button", name="Upgrade plan").click()
+        page.wait_for_timeout(3000)
+        expect(page).to_have_url(
+            re.compile(r".*(pricing|upgrade|plan).*"), timeout=10000
         )
-
-    _add_one_employee(page, 9002)
-
-    expect(
-        page.get_by_role("heading", name="Limit reached")
-    ).to_be_visible(timeout=10000)
-
-    page.get_by_role("button", name="Upgrade plan").click()
-    page.wait_for_timeout(3000)
-
-    expect(page).to_have_url(re.compile(r".*(pricing|upgrade|plan).*"), timeout=10000)
-
-    print("[MODAL] ✅ 'Upgrade plan' bosildi — upgrade sahifaga o'tildi!")

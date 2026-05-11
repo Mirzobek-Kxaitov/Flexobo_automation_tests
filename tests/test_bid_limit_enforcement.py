@@ -1,13 +1,12 @@
 """
-Bid limit enforcement testlari — Free plan'dagi cheklov amalda ishlashini
-tasdiqlash.
+Bid limit enforcement tests — verifies that Free plan limit is enforced in practice.
 
-Stsenariy:
-1. Broker'ni 20/20 bid limitiga yetkazish (load_owner yuk yaratadi, broker bid yuboradi)
-2. 21-chi bid yuborishga harakat → "Limit reached" modal chiqadi
-3. Modal behavior: "Maybe later" (yopiladi), "Upgrade plan" (sahifa o'tadi)
+Scenario:
+1. Bring the broker to the 20/20 bid limit (load_owner creates loads, broker bids)
+2. Attempt to place bid #21 -> "Limit reached" modal appears
+3. Modal behavior: "Maybe later" (closes modal), "Upgrade plan" (navigates to upgrade page)
 
-Pre-condition: load_owner da yetarli yuk yaratish imkoni bo'lishi kerak.
+Pre-condition: load_owner must be able to create enough loads.
 """
 import os
 import re
@@ -17,6 +16,7 @@ from playwright.sync_api import Page, expect
 from dotenv import load_dotenv
 
 from pages.loads_page import LoadsPage
+from helpers import read_usage_counter
 
 load_dotenv()
 APP_URL = os.getenv("APP_URL")
@@ -24,30 +24,9 @@ APP_URL = os.getenv("APP_URL")
 BID_LIMIT = 20
 
 
-# ──────────────────── Helper funksiyalar ────────────────────
-
-
-def _read_bids_placed(page: Page) -> int:
-    """Joriy 'Bids placed' qiymatini Usage sahifasidan o'qish."""
-    page.goto(f"{APP_URL}/profile/root")
-    page.wait_for_timeout(2000)
-    page.get_by_text("Usage", exact=True).first.click()
-    page.wait_for_timeout(3000)
-    card = (
-        page.locator("div")
-        .filter(has_text="Bids placed")
-        .filter(has_text=f"/ {BID_LIMIT}")
-        .first
-    )
-    text = card.inner_text(timeout=10000)
-    match = re.search(rf"(\d+)\s*/\s*{BID_LIMIT}", text)
-    assert match, f"'Bids placed' formatida son topilmadi:\n{text}"
-    return int(match.group(1))
-
-
 def _create_load_and_get_price(load_owner_page: Page, index: int) -> str:
-    """Load_owner yangi yuk yaratadi va uning unique narxini qaytaradi."""
-    price = str(10000 + index)  # 10001, 10002, ... — har biri unique
+    """Create a load as load_owner and return its unique price string."""
+    price = str(10000 + index)  # 10001, 10002, ... — each is unique
     LoadsPage(load_owner_page).create_load(
         from_city="Toshkent",
         from_suggestion="Tashkent, 100000, Uzbekistan",
@@ -64,7 +43,7 @@ def _create_load_and_get_price(load_owner_page: Page, index: int) -> str:
 
 
 def _place_bid_on_load(broker_page: Page, price: str, note: str) -> None:
-    """Broker berilgan narxli yukni topib, bid yuboradi."""
+    """Find the load by price on the broker's loads page and place a bid."""
     price_pattern = re.compile(rf"USD\s*{int(price):,}")
 
     broker_page.goto(f"{APP_URL}/loads")
@@ -84,9 +63,6 @@ def _place_bid_on_load(broker_page: Page, price: str, note: str) -> None:
     broker_page.wait_for_timeout(5000)
 
 
-# ──────────────────── Testlar ────────────────────────────────
-
-
 @allure.feature("Plan Limits")
 @allure.story("Free plan: fill to limit and verify 'Limit reached' modal")
 @allure.severity(allure.severity_level.CRITICAL)
@@ -94,61 +70,57 @@ def test_bid_limit_full_flow(
     logged_in_broker: Page, logged_in_load_owner: Page
 ):
     """
-    Broker'ni 20/20 ga yetkazib, 21-chi bidda 'Limit reached' modal
-    chiqishini tekshiradi.
+    Bring broker to 20/20 bids and verify that bid #21 triggers
+    the 'Limit reached' modal.
 
-    1. Usage'dan hozirgi bid sonini o'qish
-    2. Yetishmagan miqdorcha yuk yaratib, bid yuborish
-    3. 21-chi bid → modal chiqishi kerak
+    Steps:
+    1. Read current bid count from Usage page
+    2. Fill up to the limit by creating loads and placing bids
+    3. Confirm counter reached the limit
+    4. Place one more bid and verify the modal appears
     """
     broker = logged_in_broker
     owner = logged_in_load_owner
     broker.set_default_timeout(60000)
     owner.set_default_timeout(60000)
 
-    # ─── Hozirgi holatni o'qish ─────────────────────────────
-    current = _read_bids_placed(broker)
-    needed = BID_LIMIT - current
-    print(f"\n[BID LIMIT] Hozirgi: {current}/{BID_LIMIT}, kerakli: {needed} ta bid")
+    with allure.step("Read current bids placed from Usage page"):
+        current = read_usage_counter(broker, "Bids placed", BID_LIMIT)
+        needed = BID_LIMIT - current
 
-    # ─── Limit'gacha to'ldirish ──────────────────────────────
-    for i in range(needed):
-        bid_num = current + i + 1
-        print(f"[BID LIMIT] Bid #{bid_num}/{BID_LIMIT} yuborilmoqda...")
+    with allure.step(f"Fill up to limit: {current}/{BID_LIMIT}, need {needed} more bids"):
+        for i in range(needed):
+            bid_num = current + i + 1
+            with allure.step(f"Place bid #{bid_num}/{BID_LIMIT}"):
+                price = _create_load_and_get_price(owner, bid_num)
+                _place_bid_on_load(broker, price, f"Fill bid #{bid_num}")
 
-        price = _create_load_and_get_price(owner, bid_num)
-        _place_bid_on_load(broker, price, f"Fill bid #{bid_num}")
+    with allure.step("Confirm counter reached the limit"):
+        final = read_usage_counter(broker, "Bids placed", BID_LIMIT)
+        assert final == BID_LIMIT, (
+            f"Expected {BID_LIMIT}/{BID_LIMIT}, got {final}/{BID_LIMIT}"
+        )
 
-    # ─── Limitga yetganini tasdiqlash ────────────────────────
-    final = _read_bids_placed(broker)
-    assert final == BID_LIMIT, (
-        f"Kutilgan {BID_LIMIT}/{BID_LIMIT}, haqiqiy {final}/{BID_LIMIT}"
-    )
-    print(f"[BID LIMIT] Tasdiqlandi: {final}/{BID_LIMIT}")
+    with allure.step("Place one over-limit bid and expect 'Limit reached' modal"):
+        extra_price = _create_load_and_get_price(owner, BID_LIMIT + 1)
+        _place_bid_on_load(broker, extra_price, "Over limit bid")
 
-    # ─── 21-chi bid: modal chiqishi kerak ────────────────────
-    print("[BID LIMIT] 21-chi bid yuborilmoqda (modal kutilmoqda)...")
-    extra_price = _create_load_and_get_price(owner, BID_LIMIT + 1)
-    _place_bid_on_load(broker, extra_price, "Over limit bid")
+    with allure.step("Verify 'Limit reached' modal is visible with expected buttons"):
+        expect(
+            broker.get_by_role("heading", name="Limit reached")
+        ).to_be_visible(timeout=10000)
 
-    # ─── Modal verifikatsiya ─────────────────────────────────
-    expect(
-        broker.get_by_role("heading", name="Limit reached")
-    ).to_be_visible(timeout=10000)
+        expect(
+            broker.get_by_text("You have reached your limit")
+        ).to_be_visible()
 
-    expect(
-        broker.get_by_text("You have reached your limit")
-    ).to_be_visible()
+        expect(
+            broker.get_by_role("button", name="Upgrade plan")
+        ).to_be_visible()
 
-    expect(
-        broker.get_by_role("button", name="Upgrade plan")
-    ).to_be_visible()
-
-    expect(
-        broker.get_by_role("button", name="Maybe later")
-    ).to_be_visible()
-
-    print("[BID LIMIT] ✅ 'Limit reached' modal muvaffaqiyatli ko'rindi!")
+        expect(
+            broker.get_by_role("button", name="Maybe later")
+        ).to_be_visible()
 
 
 @allure.feature("Plan Limits")
@@ -158,42 +130,40 @@ def test_limit_modal_maybe_later(
     logged_in_broker: Page, logged_in_load_owner: Page
 ):
     """
-    Broker limit'da bo'lganda bid yuborib, modal'dagi 'Maybe later'
-    bosilganda modal yopilishini tekshiradi.
+    When the broker is at the bid limit and places another bid,
+    clicking 'Maybe later' on the modal should close it.
 
-    Pre-condition: broker 20/20 bo'lishi kerak.
+    Pre-condition: broker must already be at 20/20.
     """
     broker = logged_in_broker
     owner = logged_in_load_owner
     broker.set_default_timeout(60000)
     owner.set_default_timeout(60000)
 
-    current = _read_bids_placed(broker)
-    if current < BID_LIMIT:
-        pytest.skip(
-            f"Broker {current}/{BID_LIMIT} holatda. Avval test_bid_limit_full_flow "
-            f"ni ishga tushiring."
-        )
+    with allure.step("Check that broker is already at the bid limit"):
+        current = read_usage_counter(broker, "Bids placed", BID_LIMIT)
+        if current < BID_LIMIT:
+            pytest.skip(
+                f"Broker is at {current}/{BID_LIMIT}. "
+                f"Run test_bid_limit_full_flow first."
+            )
 
-    # Yangi yuk yaratib, bid yuborish → modal chiqadi
-    price = _create_load_and_get_price(owner, 9001)
-    _place_bid_on_load(broker, price, "Maybe later test")
+    with allure.step("Create a new load and attempt to place an over-limit bid"):
+        price = _create_load_and_get_price(owner, 9001)
+        _place_bid_on_load(broker, price, "Maybe later test")
 
-    # Modal ko'ringanini tasdiqlash
-    expect(
-        broker.get_by_role("heading", name="Limit reached")
-    ).to_be_visible(timeout=10000)
+    with allure.step("Verify 'Limit reached' modal appears"):
+        expect(
+            broker.get_by_role("heading", name="Limit reached")
+        ).to_be_visible(timeout=10000)
 
-    # "Maybe later" bosish
-    broker.get_by_role("button", name="Maybe later").click()
-    broker.wait_for_timeout(1000)
+    with allure.step("Click 'Maybe later' and verify modal closes"):
+        broker.get_by_role("button", name="Maybe later").click()
+        broker.wait_for_timeout(1000)
 
-    # Modal yopilganini tasdiqlash
-    expect(
-        broker.get_by_role("heading", name="Limit reached")
-    ).not_to_be_visible()
-
-    print("[MODAL] ✅ 'Maybe later' bosildi — modal yopildi!")
+        expect(
+            broker.get_by_role("heading", name="Limit reached")
+        ).not_to_be_visible()
 
 
 @allure.feature("Plan Limits")
@@ -203,37 +173,35 @@ def test_limit_modal_upgrade_plan(
     logged_in_broker: Page, logged_in_load_owner: Page
 ):
     """
-    Broker limit'da bo'lganda bid yuborib, modal'dagi 'Upgrade plan'
-    bosilganda upgrade sahifasiga o'tishini tekshiradi.
+    When the broker is at the bid limit and places another bid,
+    clicking 'Upgrade plan' should navigate to the pricing/upgrade page.
 
-    Pre-condition: broker 20/20 bo'lishi kerak.
+    Pre-condition: broker must already be at 20/20.
     """
     broker = logged_in_broker
     owner = logged_in_load_owner
     broker.set_default_timeout(60000)
     owner.set_default_timeout(60000)
 
-    current = _read_bids_placed(broker)
-    if current < BID_LIMIT:
-        pytest.skip(
-            f"Broker {current}/{BID_LIMIT} holatda. Avval test_bid_limit_full_flow "
-            f"ni ishga tushiring."
-        )
+    with allure.step("Check that broker is already at the bid limit"):
+        current = read_usage_counter(broker, "Bids placed", BID_LIMIT)
+        if current < BID_LIMIT:
+            pytest.skip(
+                f"Broker is at {current}/{BID_LIMIT}. "
+                f"Run test_bid_limit_full_flow first."
+            )
 
-    # Yangi yuk yaratib, bid yuborish → modal chiqadi
-    price = _create_load_and_get_price(owner, 9002)
-    _place_bid_on_load(broker, price, "Upgrade plan test")
+    with allure.step("Create a new load and attempt to place an over-limit bid"):
+        price = _create_load_and_get_price(owner, 9002)
+        _place_bid_on_load(broker, price, "Upgrade plan test")
 
-    # Modal ko'ringanini tasdiqlash
-    expect(
-        broker.get_by_role("heading", name="Limit reached")
-    ).to_be_visible(timeout=10000)
+    with allure.step("Verify 'Limit reached' modal appears"):
+        expect(
+            broker.get_by_role("heading", name="Limit reached")
+        ).to_be_visible(timeout=10000)
 
-    # "Upgrade plan" bosish
-    broker.get_by_role("button", name="Upgrade plan").click()
-    broker.wait_for_timeout(3000)
+    with allure.step("Click 'Upgrade plan' and verify navigation to pricing page"):
+        broker.get_by_role("button", name="Upgrade plan").click()
+        broker.wait_for_timeout(3000)
 
-    # URL'da pricing/upgrade bo'lishi kerak
-    expect(broker).to_have_url(re.compile(r".*(pricing|upgrade|plan).*"), timeout=10000)
-
-    print("[MODAL] ✅ 'Upgrade plan' bosildi — upgrade sahifaga o'tildi!")
+        expect(broker).to_have_url(re.compile(r".*(pricing|upgrade|plan).*"), timeout=10000)

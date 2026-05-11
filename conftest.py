@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-# Eski testlar EMAIL/PASSWORD ishlatadi — backward-compat uchun saqlanmoqda
+# Legacy tests use EMAIL/PASSWORD — kept for backward compatibility
 EMAIL = os.getenv("EMAIL")
 PASSWORD = os.getenv("PASSWORD")
 
@@ -26,10 +26,11 @@ OWNER_OPERATOR_PASSWORD = os.getenv("OWNER_OPERATOR_PASSWORD")
 
 
 def _login_as(page: Page, email: str, password: str) -> Page:
-    """
-    Berilgan email/password bilan login qiladi.
-    Sayt login'dan keyin /loads yoki /profile/root ga tushiradi (role/account holatiga qarab).
-    Tekshirish: /sign-in dan chiqib ketgan bo'lsa — login muvaffaqiyatli.
+    """Log in with the given email and password.
+
+    After login the site redirects to /loads or /profile/root depending on
+    the role and account state. Success is confirmed by verifying that the
+    URL no longer contains /sign-in.
     """
     import re
     page.goto(f"{APP_URL}/sign-in?lang=en")
@@ -46,10 +47,11 @@ def _login_as(page: Page, email: str, password: str) -> Page:
 
 
 def _logged_in_page(browser, browser_context_args, email, password):
-    """
-    Alohida browser context yaratib, login qiladi.
-    Multi-user testlarda 2+ fixture bir xil cookie/storage'ni baham ko'rmasligi uchun.
-    Caller yield qilgandan keyin context'ni close qilish kerak.
+    """Create a separate browser context and log in.
+
+    Multi-user tests require isolated contexts so that two fixtures do not
+    share the same cookies/storage. The caller is responsible for closing
+    the context after yielding.
     """
     context = browser.new_context(**browser_context_args)
     page = context.new_page()
@@ -59,14 +61,14 @@ def _logged_in_page(browser, browser_context_args, email, password):
 
 @pytest.fixture
 def open_page(page: Page):
-    """Login sahifasini ochadi, login qilmaydi"""
+    """Open the login page without performing a login."""
     page.goto(f"{APP_URL}/sign-in?lang=en")
     return page
 
 
 @pytest.fixture
 def logged_in(browser, browser_context_args):
-    """Broker bilan login qiladi (eski testlar uchun)."""
+    """Log in as broker using the legacy EMAIL/PASSWORD credentials."""
     context, page = _logged_in_page(browser, browser_context_args, EMAIL, PASSWORD)
     yield page
     context.close()
@@ -74,7 +76,7 @@ def logged_in(browser, browser_context_args):
 
 @pytest.fixture
 def logged_in_broker(browser, browser_context_args):
-    """Broker role bilan login (alohida browser context'da)."""
+    """Log in as broker in an isolated browser context."""
     context, page = _logged_in_page(browser, browser_context_args, BROKER_EMAIL, BROKER_PASSWORD)
     yield page
     context.close()
@@ -82,7 +84,7 @@ def logged_in_broker(browser, browser_context_args):
 
 @pytest.fixture
 def logged_in_load_owner(browser, browser_context_args):
-    """Load owner role bilan login (alohida browser context'da)."""
+    """Log in as load owner in an isolated browser context."""
     context, page = _logged_in_page(browser, browser_context_args, LOAD_OWNER_EMAIL, LOAD_OWNER_PASSWORD)
     yield page
     context.close()
@@ -90,7 +92,7 @@ def logged_in_load_owner(browser, browser_context_args):
 
 @pytest.fixture
 def logged_in_carrier(browser, browser_context_args):
-    """Carrier role bilan login (alohida browser context'da)."""
+    """Log in as carrier in an isolated browser context."""
     context, page = _logged_in_page(browser, browser_context_args, CARRIER_EMAIL, CARRIER_PASSWORD)
     yield page
     context.close()
@@ -98,7 +100,7 @@ def logged_in_carrier(browser, browser_context_args):
 
 @pytest.fixture
 def logged_in_owner_operator(browser, browser_context_args):
-    """Owner operator role bilan login (alohida browser context'da)."""
+    """Log in as owner operator in an isolated browser context."""
     context, page = _logged_in_page(browser, browser_context_args, OWNER_OPERATOR_EMAIL, OWNER_OPERATOR_PASSWORD)
     yield page
     context.close()
@@ -106,6 +108,6 @@ def logged_in_owner_operator(browser, browser_context_args):
 
 @pytest.fixture
 def landing_page(page: Page):
-    """Landing sahifani login qilmasdan ochadi."""
+    """Open the landing page without logging in."""
     page.goto(BASE_URL, wait_until="domcontentloaded")
     return page
