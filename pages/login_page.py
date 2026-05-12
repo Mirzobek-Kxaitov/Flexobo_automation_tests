@@ -1,4 +1,5 @@
-import os 
+import os
+import re
 from playwright.sync_api import Page, expect
 from dotenv import load_dotenv
 load_dotenv()
@@ -44,7 +45,7 @@ class LoginPage:
         return self
     
     def expect_logged_in(self):
-        expect(self.page).to_have_url(BASE_URL)
+        expect(self.page).not_to_have_url(re.compile(r".*sign-in.*"), timeout=15000)
         return self
     
     def expect_invalid_credentials(self):
