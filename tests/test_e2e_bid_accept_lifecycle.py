@@ -1,111 +1,109 @@
 """
-E2E Multi-user Bid Accept Lifecycle (Phase 5) — bid lifecycle davomi.
-
-Stsenariy:
-1. Load_owner unique-price'li yuk yaratadi
-2. Carrier bid yuboradi
-3. Load_owner Received bids → o'sha bid'ni Accept qiladi
-4. Verifikatsiya: carrier /my-bids/Accepted filterda bid'ini ko'radi
-
-Texnika: 2 ta fixture (alohida browser context'da). Sidebar navigation
-ishlatiladi (direct goto SPA state'ni buzadi).
+E2E bid accept lifecycle: load_owner creates a load, carrier places a bid,
+load_owner accepts the bid, carrier sees it as Accepted in My bids.
 """
 import os
 import re
+import pytest
 import allure
 from playwright.sync_api import Page, expect
 from dotenv import load_dotenv
 
-from pages.loads_page import LoadsPage
+from helpers import create_load, navigate_to_loads, pick_future_date
 
 load_dotenv()
 APP_URL = os.getenv("APP_URL")
 
+UNIQUE_PRICE = 27381
+
 
 @allure.feature("E2E Bid Lifecycle")
-@allure.story("Phase 5: load_owner accepts carrier's bid → carrier sees Accepted")
+@allure.story("Load owner accepts bid — carrier sees Accepted")
 @allure.severity(allure.severity_level.CRITICAL)
 def test_load_owner_accepts_bid_and_carrier_sees_accepted(
     logged_in_load_owner: Page, logged_in_carrier: Page
 ):
     """
     Multi-user E2E:
-    - load_owner yuk yaratadi
-    - carrier bid yuboradi
-    - load_owner bid'ni Accept qiladi
-    - carrier /my-bids/Accepted da bid'ni ko'radi
+    1. Load owner creates a load
+    2. Carrier places a bid
+    3. Load owner accepts the bid from Received bids
+    4. Carrier sees the bid as Accepted in My bids
     """
-    UNIQUE_PRICE = "27381"  # test_e2e_bid_accept_flow.py "23579" dan farq qilsin
-    BID_NOTE = "E2E Lifecycle Accept bid"
-    price_pattern = re.compile(rf"USD\s*{int(UNIQUE_PRICE):,}")
+    owner = logged_in_load_owner
+    carrier = logged_in_carrier
+    owner.set_default_timeout(60000)
+    carrier.set_default_timeout(60000)
 
-    # ─── 1. Load_owner: yuk yaratish ────────────────────────────────────
-    logged_in_load_owner.set_default_timeout(60000)
-    LoadsPage(logged_in_load_owner).create_load(
-        from_city="Toshkent",
-        from_suggestion="Tashkent, 100000, Uzbekistan",
-        to_city="Termez",
-        to_suggestion="Termez, Termiz District, Surxondaryo Province, Uzbekistan",
-        load_type="Metal aggregate",
-        weight="20",
-        day="15",
-        body_type="Mega truck",
-        price=UNIQUE_PRICE,
-    )
-    logged_in_load_owner.wait_for_timeout(3000)
+    thousands = UNIQUE_PRICE // 1000
+    remainder = UNIQUE_PRICE % 1000
+    price_pattern = re.compile(rf"USD[\s]+{thousands}[,\s]{remainder:03d}")
 
-    # ─── 2. Carrier: bid yuborish ───────────────────────────────────────
-    logged_in_carrier.set_default_timeout(60000)
-    logged_in_carrier.goto(f"{APP_URL}/loads")
-    logged_in_carrier.wait_for_timeout(3000)
+    # Step 1: Load owner creates a load
+    with allure.step(f"Load owner creates a load with price {UNIQUE_PRICE}"):
+        create_load(owner, UNIQUE_PRICE)
 
-    logged_in_carrier.get_by_text(price_pattern).first.click()
-    logged_in_carrier.wait_for_timeout(2500)
+    # Step 2: Carrier places a bid
+    with allure.step("Carrier finds the load and places a bid"):
+        navigate_to_loads(carrier)
+        carrier.get_by_text(price_pattern).first.click()
+        carrier.wait_for_timeout(2500)
 
-    logged_in_carrier.get_by_role("button", name="Place a bid").first.click()
-    logged_in_carrier.wait_for_timeout(2500)
+        carrier.get_by_role("button", name="Place a bid").first.click()
+        carrier.wait_for_timeout(2000)
 
-    logged_in_carrier.get_by_placeholder("Why is your offer better than others?").fill(BID_NOTE)
-    logged_in_carrier.wait_for_timeout(500)
+        carrier.get_by_role("button", name="Date").click()
+        pick_future_date(carrier)
 
-    logged_in_carrier.get_by_role("button", name="Place a bid").last.click()
-    logged_in_carrier.wait_for_timeout(5000)
+        note_field = carrier.get_by_role("textbox", name="Why is your offer better than")
+        if note_field.is_visible(timeout=2000):
+            note_field.fill("E2E lifecycle accept bid")
+            carrier.wait_for_timeout(500)
 
-    # ─── 3. Load_owner: Received bids → bid'ni Accept qilish ───────────
-    logged_in_load_owner.goto(f"{APP_URL}/profile/root")
-    logged_in_load_owner.wait_for_timeout(3000)
-    logged_in_load_owner.get_by_text("Received bids", exact=True).first.click()
-    logged_in_load_owner.wait_for_timeout(5000)
+        carrier.get_by_role("button", name="Place a bid").last.click()
+        carrier.wait_for_timeout(3000)
 
-    # Yuk kartochkasini topib bosish (UNIQUE_PRICE bo'yicha — kengaytiriladi)
-    logged_in_load_owner.get_by_text(price_pattern).first.click()
-    logged_in_load_owner.wait_for_timeout(2500)
+        limit_modal = carrier.get_by_text("Limit reached")
+        if limit_modal.is_visible(timeout=3000):
+            carrier.get_by_role("button", name="Maybe later").click()
+            pytest.skip("Carrier daily bid limit reached — reset the account or run tomorrow")
 
-    # Carrier bid kartochkasini topish: button + price + "carrier" matni
-    # (codegen ko'rsatdi: bid button name'da "USD <amount>" va role nomi bor)
-    bid_button = (
-        logged_in_load_owner.get_by_role("button")
-        .filter(has_text=price_pattern)
-        .filter(has_text=re.compile(r"carrier", re.IGNORECASE))
-        .first
-    )
-    bid_button.click()
-    logged_in_load_owner.wait_for_timeout(2000)
+        carrier.wait_for_timeout(2000)
 
-    # Accept tugmasini bosish
-    logged_in_load_owner.get_by_role("button", name="Accept").click()
-    logged_in_load_owner.wait_for_timeout(5000)
+    # Step 3: Load owner accepts the bid
+    with allure.step("Load owner navigates to Received bids"):
+        owner.goto(f"{APP_URL}/profile/root")
+        owner.wait_for_timeout(3000)
+        owner.get_by_text("Received bids", exact=True).first.click()
+        owner.wait_for_timeout(5000)
 
-    # ─── 4. Carrier: /my-bids/Accepted da bid'ni ko'rish ───────────────
-    logged_in_carrier.goto(f"{APP_URL}/my-bids")
-    logged_in_carrier.wait_for_load_state("domcontentloaded")
-    logged_in_carrier.wait_for_timeout(3000)
+    with allure.step("Load owner finds the bid card and clicks it"):
+        owner.get_by_text(price_pattern).first.click()
+        owner.wait_for_timeout(2500)
 
-    # "Accepted" filter tab
-    logged_in_carrier.get_by_text("Accepted", exact=True).first.click()
-    logged_in_carrier.wait_for_timeout(3000)
+    with allure.step("Load owner clicks Accept on the carrier's bid"):
+        bid_card = (
+            owner.get_by_role("button")
+            .filter(has_text=price_pattern)
+            .filter(has_text=re.compile(r"carrier", re.IGNORECASE))
+            .first
+        )
+        bid_card.click()
+        owner.wait_for_timeout(2000)
 
-    # Accepted ro'yxatda bizning yuk (UNIQUE_PRICE) ko'rinishi kerak
-    expect(
-        logged_in_carrier.get_by_text(price_pattern).first
-    ).to_be_visible(timeout=15000)
+        owner.get_by_role("button", name="Accept").click()
+        owner.wait_for_timeout(5000)
+
+    # Step 4: Carrier verifies bid is Accepted
+    with allure.step("Carrier navigates to My bids and filters by Accepted"):
+        carrier.goto(f"{APP_URL}/my-bids")
+        carrier.wait_for_load_state("domcontentloaded")
+        carrier.wait_for_timeout(3000)
+
+        carrier.get_by_text("Accepted", exact=True).first.click()
+        carrier.wait_for_timeout(3000)
+
+    with allure.step("Verify the accepted bid is visible"):
+        expect(
+            carrier.get_by_text(price_pattern).first
+        ).to_be_visible(timeout=15000)

@@ -2,6 +2,7 @@
 import os
 import re
 
+import pytest
 import allure
 from playwright.sync_api import Page, expect
 from dotenv import load_dotenv
@@ -152,11 +153,21 @@ def place_bid_on_load(bidder: Page, price: int) -> None:
     bidder.get_by_role("button", name="Place a bid").first.click()
     bidder.wait_for_timeout(2000)
 
+    dismiss_cookie_banner(bidder)
+
     bidder.get_by_role("button", name="Date").click()
     pick_future_date(bidder)
 
     bidder.get_by_role("button", name="Place a bid").last.click()
-    bidder.wait_for_timeout(5000)
+    bidder.wait_for_timeout(3000)
+
+    # Detect bid limit modal
+    limit_modal = bidder.get_by_text("Limit reached")
+    if limit_modal.is_visible(timeout=3000):
+        bidder.get_by_role("button", name="Maybe later").click()
+        pytest.skip("Carrier daily bid limit reached — reset the account or run tomorrow")
+
+    bidder.wait_for_timeout(2000)
 
 
 def create_load_and_place_bid(
