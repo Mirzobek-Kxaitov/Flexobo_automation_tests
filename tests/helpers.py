@@ -125,6 +125,7 @@ def create_load(load_owner: Page, price: int) -> None:
     load_owner.get_by_role("button", name="Next").click()
     load_owner.wait_for_timeout(500)
 
+    # Payment page: price is now on this step
     load_owner.get_by_role("textbox", name="Price").fill(str(price))
     load_owner.get_by_role("button", name="Next").click()
     load_owner.wait_for_timeout(500)

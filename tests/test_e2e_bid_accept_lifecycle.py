@@ -85,7 +85,6 @@ def test_load_owner_accepts_bid_and_carrier_sees_accepted(
         bid_card = (
             owner.get_by_role("button")
             .filter(has_text=price_pattern)
-            .filter(has_text=re.compile(r"carrier", re.IGNORECASE))
             .first
         )
         bid_card.click()
