@@ -1,8 +1,11 @@
 import os
+import sys
 import pytest
 from playwright.sync_api import Page, expect
 from dotenv import load_dotenv
 load_dotenv()
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "scripts"))
 
 
 # Legacy tests use EMAIL/PASSWORD — kept for backward compatibility
@@ -57,6 +60,21 @@ def _logged_in_page(browser, browser_context_args, email, password):
     page = context.new_page()
     _login_as(page, email, password)
     return context, page
+
+
+def pytest_addoption(parser):
+    parser.addoption(
+        "--reset-usage", action="store_true", default=False,
+        help="Reset all test user usage counters via admin panel before tests",
+    )
+
+
+@pytest.fixture(scope="session", autouse=True)
+def reset_usage_if_requested(request):
+    """Reset all user usage counters when --reset-usage flag is passed."""
+    if request.config.getoption("--reset-usage"):
+        from reset_usage import reset_all_users
+        reset_all_users()
 
 
 @pytest.fixture
