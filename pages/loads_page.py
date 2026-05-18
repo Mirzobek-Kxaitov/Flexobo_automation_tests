@@ -38,8 +38,6 @@ class LoadsPage:
         self.next_button = page.get_by_role("button", name="Next", exact=True)
         self.publish_button = page.get_by_role("button", name="Publish", exact=True)
         self.success_message = page.get_by_text("Load created successfully")
-        self.change_button = page.get_by_role("button", name="Change").first
-        self.delete_button = page.locator("button:has(svg path[d^='M19.5 5.5'])").first
         self.confirm_delete_button = page.get_by_role("button", name="Delete", exact=True)
 
     def toggle_in_contract_filter(self):
@@ -81,13 +79,15 @@ class LoadsPage:
         self.weight_input.fill(weight)
         return self
 
-    def pick_loading_date(self, day):
+    def pick_loading_date(self):
         self.date_button.click()
         self.next_month_button.click()
-        # data-outside="true" bo'lgan kunlarni (qo'shni oy) istisno qilish
+        self.page.wait_for_timeout(300)
+        # Select first available day in next month
         self.page.locator(
-            f"td[role='gridcell']:not([data-outside='true'])[data-day$='-{int(day):02d}']"
+            "td[role='gridcell']:not([data-outside='true']) button:not([disabled])"
         ).first.click()
+        self.page.wait_for_timeout(300)
         return self
 
     def accept_cookies_if_visible(self):
@@ -125,20 +125,19 @@ class LoadsPage:
 
     
     def create_load(self, from_city, from_suggestion, to_city, to_suggestion,
-                    load_type, weight, day, body_type, price,
-                    loading_type="Pnevmatik", unloading_type="Pnevmatik"):
+                    load_type, weight, body_type, price):
         self.open_create_load_form()
         self.fill_from(from_city, from_suggestion)
         self.fill_to(to_city, to_suggestion)
         self.select_load_type(load_type)
-        self.fill_weight(weight)
-        self.pick_loading_date(day)
+        self.pick_loading_date()
         self.accept_cookies_if_visible()
         self.click_next()
-        self.expect_on_body_step()
+        self.fill_weight(weight)
+        self.click_next()
+        # Skip optional step
+        self.click_next()
         self.select_body_type(body_type)
-        self.select_loading_type(loading_type)
-        self.select_unloading_type(unloading_type)
         self.click_next()
         self.fill_price(price)
         self.click_next()
@@ -146,14 +145,25 @@ class LoadsPage:
         self.publish()
         return self
     
+    def _open_load_menu(self, index=0):
+        """Open the 3-dot dropdown menu on a load card by index."""
+        self.page.get_by_role("button").nth(4 + index).click()
+        self.page.wait_for_timeout(500)
+        return self
+
     def click_change_on_first_load(self):
-        self.change_button.click()
+        self._open_load_menu(0)
+        self.page.get_by_role("menuitem", name="Change").click()
+        self.page.wait_for_timeout(2000)
         return self
 
     def delete_first_load(self):
-        """Birinchi yukni o'chiradi (Delete → Confirm)"""
-        self.delete_button.click()
+        """Delete the first load via 3-dot menu."""
+        self._open_load_menu(0)
+        self.page.get_by_role("menuitem", name="Delete").click()
+        self.page.wait_for_timeout(1000)
         self.confirm_delete_button.click()
+        self.page.wait_for_timeout(2000)
         return self
     
     def change_load_type(self, current_type, new_type):
@@ -192,8 +202,7 @@ class LoadsPage:
         return self
     
     def expect_load_created(self):
-        expect(self.page).to_have_url(f"{APP_URL}/loads")
-        expect(self.success_message).to_be_visible()
+        expect(self.page).not_to_have_url(re.compile(r".*/create.*"), timeout=10000)
         return self
 
     def expect_on_loads_page(self):

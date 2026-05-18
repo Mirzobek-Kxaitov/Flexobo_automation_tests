@@ -22,7 +22,6 @@ def test_create_load(request, role: str):
         to_suggestion="Termez, Termiz District, Surxondaryo Province, Uzbekistan",
         load_type="Metal aggregate",
         weight="20",
-        day="15",
         body_type="Mega truck",
         price="1000",
     ).expect_load_created()
@@ -77,7 +76,6 @@ def test_edit_load(request, role: str):
         to_suggestion="Termez, Termiz District, Surxondaryo Province, Uzbekistan",
         load_type="Metal aggregate",
         weight="20",
-        day="15",
         body_type="Mega truck",
         price="1000",
     ).expect_load_created()
@@ -107,7 +105,6 @@ def test_delete_load(request, role: str):
         to_suggestion="Termez, Termiz District, Surxondaryo Province, Uzbekistan",
         load_type="Metal aggregate",
         weight="20",
-        day="15",
         body_type="Mega truck",
         price="1000",
     ).expect_load_created()
