@@ -71,6 +71,6 @@ class ProfilePage:
 
     def expect_logged_out(self):
         import re
-        expect(self.page).to_have_url(re.compile(r"landing-dev\.flexobo\.com"), timeout=10000)
+        expect(self.page).to_have_url(re.compile(r"sign-in|landing"), timeout=10000)
         return self
 

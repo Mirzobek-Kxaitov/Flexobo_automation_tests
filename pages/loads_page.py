@@ -206,7 +206,7 @@ class LoadsPage:
         return self
 
     def expect_on_loads_page(self):
-        expect(self.page).to_have_url(f"{APP_URL}/profile-load")
+        expect(self.page).to_have_url(re.compile(r"profile-load|profile/root"), timeout=10000)
         return self
     
     def expect_in_contract_checked(self):

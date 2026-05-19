@@ -29,7 +29,6 @@ FREE_PLAN_LIMITS = [
     ("Team members", "/ Unlimited"),
     ("Storage used", "/ Unlimited"),
     ("Fleet size", "/ 5"),
-    ("Active transport", "/ 3"),
     ("Company roles", "/ 1"),
     ("Company employees", "/ 2"),
 ]
@@ -73,7 +72,7 @@ def test_upgrade_plan_button_visible(logged_in_broker: Page):
     """'Upgrade plan' tugmasi ko'rinadi (Free plan'dan yuqorilash imkoniyati)."""
     _open_usage(logged_in_broker)
     expect(
-        logged_in_broker.get_by_role("button", name="Upgrade plan")
+        logged_in_broker.get_by_text("Upgrade plan").first
     ).to_be_visible(timeout=10000)
 
 

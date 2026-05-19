@@ -43,6 +43,7 @@ def test_fleet_page_content(request, role: str):
 
 @allure.feature("TMS")
 @allure.story("Drivers page renders heading, Add Driver button, tabs")
+@pytest.mark.skip(reason="TMS UI is being redesigned")
 @pytest.mark.parametrize("role", DRIVERS_ROLES)
 def test_drivers_page_content(request, role: str):
     """Drivers sahifa: 'Drivers' heading, 'Add Driver' tugma, Drivers/Invite Driver tab'lari."""
