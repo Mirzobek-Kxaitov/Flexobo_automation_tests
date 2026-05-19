@@ -34,7 +34,6 @@ def _create_load_and_get_price(load_owner_page: Page, index: int) -> str:
         to_suggestion="Termez, Termiz District, Surxondaryo Province, Uzbekistan",
         load_type="Metal aggregate",
         weight="20",
-        day="15",
         body_type="Mega truck",
         price=price,
     )

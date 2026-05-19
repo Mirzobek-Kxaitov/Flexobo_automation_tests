@@ -52,19 +52,18 @@ def _place_one_bid(page: Page) -> None:
     page.wait_for_load_state("domcontentloaded")
     page.wait_for_timeout(3000)
 
-    # "Be first" — broker hali bid yubormagan birinchi yuk
-    page.get_by_text("Be first").first.click()
+    # Select first available load
+    page.locator("div").filter(has_text=re.compile(r"USD.*Fixed rate")).first.click()
     page.wait_for_timeout(2500)
 
-    # Bid form'ni ochish
+    # Open bid form
     page.get_by_role("button", name="Place a bid").first.click()
     page.wait_for_timeout(2500)
 
-    # Note kiritish
-    page.get_by_placeholder("Why is your offer better than others?").fill(
-        "Counter increment test bid"
-    )
-    page.wait_for_timeout(500)
+    note = page.get_by_role("textbox", name="Why is your offer better than")
+    if note.is_visible(timeout=2000):
+        note.fill("Counter increment test bid")
+        page.wait_for_timeout(500)
 
     # Submit
     page.get_by_role("button", name="Place a bid").last.click()

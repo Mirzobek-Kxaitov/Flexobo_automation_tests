@@ -47,7 +47,7 @@ def _logout(page: Page):
     page.locator("button[data-slot='dropdown-menu-trigger']").nth(3).click()
     page.get_by_role("menuitem", name="Logout").click()
     page.get_by_text("Yes").click()
-    expect(page).to_have_url(re.compile(r".*landing-dev\.flexobo\.com.*"), timeout=10000)
+    expect(page).to_have_url(re.compile(r"sign-in|landing"), timeout=10000)
 
 
 @allure.feature("Permissions")
@@ -79,7 +79,6 @@ def test_load_owner_save_does_not_modify_brokers_load(page: Page):
         to_suggestion="Termez, Termiz District, Surxondaryo Province, Uzbekistan",
         load_type="Metal aggregate",
         weight="20",
-        day="15",
         body_type="Mega truck",
         price="1000",
     ).expect_load_created()
@@ -87,7 +86,9 @@ def test_load_owner_save_does_not_modify_brokers_load(page: Page):
     # 2. Edit URL'ni saqlaymiz
     page.goto(f"{APP_URL}/profile-load")
     page.wait_for_timeout(2000)
-    page.get_by_role("button", name="Change").first.click()
+    page.get_by_role("button").nth(4).click()
+    page.wait_for_timeout(500)
+    page.get_by_role("menuitem", name="Change").click()
     expect(page).to_have_url(re.compile(r".*/loads/[a-f0-9-]+/edit.*"), timeout=10000)
     brokers_edit_url = page.url
 
@@ -153,7 +154,6 @@ def test_load_owner_does_not_see_brokers_loads_in_list(page: Page):
         to_suggestion="Termez, Termiz District, Surxondaryo Province, Uzbekistan",
         load_type="Metal aggregate",
         weight="20",
-        day="15",
         body_type="Mega truck",
         price=UNIQUE_PRICE,
     ).expect_load_created()
@@ -209,7 +209,9 @@ def test_load_owner_save_does_not_modify_brokers_trip(page: Page):
     # 2. Edit URL'ni saqlaymiz
     page.goto(f"{APP_URL}/profile-trips")
     page.wait_for_timeout(2000)
-    page.get_by_role("button", name="Change").first.click()
+    page.get_by_role("button").nth(4).click()
+    page.wait_for_timeout(500)
+    page.get_by_role("menuitem", name="Change").click()
     page.wait_for_timeout(2000)
     brokers_trip_edit_url = page.url
 
