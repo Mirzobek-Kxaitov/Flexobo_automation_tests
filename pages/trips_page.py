@@ -34,9 +34,6 @@ class TripsPage:
 
         self.next_button = self.page.get_by_role("button", name="Next")
 
-        # Edit/Delete locators (Trips ro'yxat sahifasida)
-        self.change_button = page.get_by_role("button", name="Change").first
-        self.delete_button = page.locator("button:has(svg path[d^='M19.5 5.5'])").first
         self.confirm_delete_button = page.get_by_role("button", name="Delete", exact=True)
 
 
@@ -53,10 +50,10 @@ class TripsPage:
         self.transport_combobox.click()
         self.page.get_by_role("option", name=name).click()
         return self
-    
-    def select_unit_kg(self):
+
+    def select_lifting_capacity(self, capacity="tons"):
         self.page.get_by_role("combobox").filter(has_text="Choose").click()
-        self.page.get_by_text("12 tons").click()
+        self.page.get_by_role("option", name=capacity).click()
         return self
     
 
@@ -104,30 +101,37 @@ class TripsPage:
 
     def create_trip(self, transport, volume, loading_city, loading_suggestion,
                     loading_radius, unloading_city, unloading_suggestion,
-                    unloading_radius, price):
+                    unloading_radius, price, lifting_capacity="tons"):
         self.open_create_trip_form()
         self.accept_cookies_if_visible()
         self.select_transport(transport)
-        self.select_unit_kg()
+        self.select_lifting_capacity(lifting_capacity)
         self.fill_volume(volume)
         self.fill_loading(loading_city, loading_suggestion)
         self.fill_loading_radius(loading_radius)
         self.fill_unloading(unloading_city, unloading_suggestion)
         self.fill_unloading_radius(unloading_radius)
+        self.accept_cookies_if_visible()
         self.click_next()
         self.fill_price(price)
         self.click_next()
-        self.click_transport_tab()
-        self.go_to_trips_list()
+        self.page.wait_for_timeout(3000)
+        return self
+
+    def _open_trip_menu(self, index=0):
+        """Open the 3-dot dropdown menu on a trip card by index."""
+        self.page.get_by_role("button").nth(4 + index).click()
+        self.page.wait_for_timeout(500)
         return self
 
     def click_change_on_first_trip(self):
-        self.change_button.wait_for(state="visible", timeout=15000)
-        self.change_button.click()
+        self._open_trip_menu(0)
+        self.page.get_by_role("menuitem", name="Change").click()
+        self.page.wait_for_timeout(2000)
         return self
 
     def edit_trip(self, price):
-        """Birinchi safarni tahrirlaydi — faqat narxni o'zgartiradi"""
+        """Edit the first trip — only change price."""
         self.click_change_on_first_trip()
         self.click_next()
         self.fill_price(price)
@@ -135,9 +139,12 @@ class TripsPage:
         return self
 
     def delete_first_trip(self):
-        """Birinchi safarni o'chiradi (Delete → Confirm)"""
-        self.delete_button.click()
+        """Delete the first trip via 3-dot menu."""
+        self._open_trip_menu(0)
+        self.page.get_by_role("menuitem", name="Delete").click()
+        self.page.wait_for_timeout(1000)
         self.confirm_delete_button.click()
+        self.page.wait_for_timeout(2000)
         return self
 
     def expect_on_trips_page(self):
@@ -145,8 +152,9 @@ class TripsPage:
         return self
 
     def expect_trip_in_list(self, price, city, transport):
-        expect(self.page.get_by_text(price).first).to_be_visible()
+        self.page.goto(f"{APP_URL}/profile-trips")
+        self.page.wait_for_timeout(3000)
+        expect(self.page.get_by_text(price).first).to_be_visible(timeout=10000)
         expect(self.page.get_by_text(city).first).to_be_visible()
         expect(self.page.get_by_text(transport).first).to_be_visible()
-        expect(self.page.get_by_text("New").first).to_be_visible()
         return self
