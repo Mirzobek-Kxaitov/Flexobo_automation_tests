@@ -7,7 +7,7 @@ e2e-tests:
   timeout: 60 minutes
 
   before_script:
-    - pip install playwright pytest pytest-playwright python-dotenv allure-pytest pytest-rerunfailures
+    - pip install playwright pytest pytest-playwright python-dotenv allure-pytest pytest-rerunfailures pytest-timeout
     - playwright install chromium
     - playwright install-deps chromium
     # .env faylni GitLab CI/CD variables dan yaratish
