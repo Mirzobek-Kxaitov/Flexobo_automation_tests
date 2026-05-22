@@ -1,16 +1,14 @@
 stages:
+  - setup
   - test
 
-e2e-tests:
-  stage: test
+# Umumiy sozlamalar
+.base:
   image: python:3.12
-  timeout: 60 minutes
-
   before_script:
     - pip install playwright pytest pytest-playwright python-dotenv allure-pytest pytest-rerunfailures pytest-timeout
     - playwright install chromium
     - playwright install-deps chromium
-    # .env faylni GitLab CI/CD variables dan yaratish
     - echo "EMAIL=$EMAIL" >> .env
     - echo "PASSWORD=$PASSWORD" >> .env
     - echo "BASE_URL=$BASE_URL" >> .env
@@ -23,17 +21,106 @@ e2e-tests:
     - echo "CARRIER_PASSWORD=$CARRIER_PASSWORD" >> .env
     - echo "OWNER_OPERATOR_EMAIL=$OWNER_OPERATOR_EMAIL" >> .env
     - echo "OWNER_OPERATOR_PASSWORD=$OWNER_OPERATOR_PASSWORD" >> .env
-
-  script:
-    - pytest tests/ -v --reruns 2 --timeout 300 --alluredir=allure-results
-
+    - echo "ADMIN_URL=$ADMIN_URL" >> .env
+    - echo "ADMIN_EMAIL=$ADMIN_EMAIL" >> .env
+    - echo "ADMIN_PASSWORD=$ADMIN_PASSWORD" >> .env
   artifacts:
     when: always
     paths:
       - allure-results/
     expire_in: 7 days
-
   rules:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "main"
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_PIPELINE_SOURCE == "web"  # Qo'lda ishga tushirish
+    - if: $CI_PIPELINE_SOURCE == "web"
+
+# 1-job: Usage reset (limit testlardan oldin)
+reset-usage:
+  stage: setup
+  extends: .base
+  timeout: 5 minutes
+  script:
+    - python scripts/reset_usage.py
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "main"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == "web"
+
+# 2-job: Tez testlar (login, loads, trips, fleet, profile, permissions, bids)
+fast-tests:
+  stage: test
+  extends: .base
+  timeout: 45 minutes
+  script:
+    - >
+      pytest tests/ -v
+      --ignore=tests/test_bid_limit_enforcement.py
+      --ignore=tests/test_bookings_limit_enforcement.py
+      --ignore=tests/test_carrier_bids_limit.py
+      --ignore=tests/test_carrier_company_employees_limit.py
+      --ignore=tests/test_carrier_company_roles_limit.py
+      --ignore=tests/test_carrier_fleet_limit.py
+      --ignore=tests/test_company_roles_limit_enforcement.py
+      --ignore=tests/test_fleet_limit_enforcement.py
+      --ignore=tests/test_load_owner_bids_limit.py
+      --ignore=tests/test_load_owner_company_roles_limit.py
+      --ignore=tests/test_oo_active_transport_limit.py
+      --ignore=tests/test_oo_bids_limit.py
+      --ignore=tests/test_e2e_bid_accept_flow.py
+      --ignore=tests/test_e2e_bid_accept_lifecycle.py
+      --ignore=tests/test_e2e_bid_flow.py
+      --ignore=tests/test_e2e_bid_reject_lifecycle.py
+      --ignore=tests/test_e2e_broker_bid_accept_lifecycle.py
+      --ignore=tests/test_e2e_broker_bid_flow.py
+      --ignore=tests/test_e2e_broker_bid_reject_lifecycle.py
+      --ignore=tests/test_e2e_oo_bid_accept_lifecycle.py
+      --ignore=tests/test_e2e_oo_bid_flow.py
+      --ignore=tests/test_e2e_oo_bid_reject_lifecycle.py
+      --reruns 1 --timeout 180
+      --alluredir=allure-results
+
+# 3-job: Limit testlar (usage reset keyin)
+limit-tests:
+  stage: test
+  extends: .base
+  timeout: 45 minutes
+  needs: ["reset-usage"]
+  script:
+    - >
+      pytest
+      tests/test_bid_limit_enforcement.py
+      tests/test_bookings_limit_enforcement.py
+      tests/test_carrier_bids_limit.py
+      tests/test_carrier_company_employees_limit.py
+      tests/test_carrier_company_roles_limit.py
+      tests/test_carrier_fleet_limit.py
+      tests/test_company_roles_limit_enforcement.py
+      tests/test_fleet_limit_enforcement.py
+      tests/test_load_owner_bids_limit.py
+      tests/test_load_owner_company_roles_limit.py
+      tests/test_oo_active_transport_limit.py
+      tests/test_oo_bids_limit.py
+      -v --reruns 1 --timeout 180
+      --alluredir=allure-results
+
+# 4-job: E2E bid testlar
+e2e-tests:
+  stage: test
+  extends: .base
+  timeout: 45 minutes
+  needs: ["reset-usage"]
+  script:
+    - >
+      pytest
+      tests/test_e2e_bid_accept_flow.py
+      tests/test_e2e_bid_accept_lifecycle.py
+      tests/test_e2e_bid_flow.py
+      tests/test_e2e_bid_reject_lifecycle.py
+      tests/test_e2e_broker_bid_accept_lifecycle.py
+      tests/test_e2e_broker_bid_flow.py
+      tests/test_e2e_broker_bid_reject_lifecycle.py
+      tests/test_e2e_oo_bid_accept_lifecycle.py
+      tests/test_e2e_oo_bid_flow.py
+      tests/test_e2e_oo_bid_reject_lifecycle.py
+      -v --reruns 1 --timeout 180
+      --alluredir=allure-results

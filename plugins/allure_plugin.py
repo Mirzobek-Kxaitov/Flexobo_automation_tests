@@ -43,12 +43,15 @@ def pytest_runtest_makereport(item, call):
         page: Page | None = item.funcargs.get(fixture_name)
         if not page or page.is_closed():
             continue
-        screenshot = page.screenshot(full_page=True)
-        allure.attach(
-            screenshot,
-            name=f"{item.name}__{fixture_name}",
-            attachment_type=allure.attachment_type.PNG,
-        )
+        try:
+            screenshot = page.screenshot(full_page=True)
+            allure.attach(
+                screenshot,
+                name=f"{item.name}__{fixture_name}",
+                attachment_type=allure.attachment_type.PNG,
+            )
+        except Exception:
+            pass
 
 
 # ──────────────────────────────────────────────
