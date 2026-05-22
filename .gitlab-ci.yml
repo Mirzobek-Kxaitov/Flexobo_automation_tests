@@ -1,0 +1,39 @@
+stages:
+  - test
+
+e2e-tests:
+  stage: test
+  image: python:3.12
+  timeout: 60 minutes
+
+  before_script:
+    - pip install playwright pytest pytest-playwright python-dotenv allure-pytest pytest-rerunfailures
+    - playwright install chromium
+    - playwright install-deps chromium
+    # .env faylni GitLab CI/CD variables dan yaratish
+    - echo "EMAIL=$EMAIL" >> .env
+    - echo "PASSWORD=$PASSWORD" >> .env
+    - echo "BASE_URL=$BASE_URL" >> .env
+    - echo "APP_URL=$APP_URL" >> .env
+    - echo "BROKER_EMAIL=$BROKER_EMAIL" >> .env
+    - echo "BROKER_PASSWORD=$BROKER_PASSWORD" >> .env
+    - echo "LOAD_OWNER_EMAIL=$LOAD_OWNER_EMAIL" >> .env
+    - echo "LOAD_OWNER_PASSWORD=$LOAD_OWNER_PASSWORD" >> .env
+    - echo "CARRIER_EMAIL=$CARRIER_EMAIL" >> .env
+    - echo "CARRIER_PASSWORD=$CARRIER_PASSWORD" >> .env
+    - echo "OWNER_OPERATOR_EMAIL=$OWNER_OPERATOR_EMAIL" >> .env
+    - echo "OWNER_OPERATOR_PASSWORD=$OWNER_OPERATOR_PASSWORD" >> .env
+
+  script:
+    - pytest tests/ -v --reruns 2 --timeout 300 --alluredir=allure-results
+
+  artifacts:
+    when: always
+    paths:
+      - allure-results/
+    expire_in: 7 days
+
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "main"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == "web"  # Qo'lda ishga tushirish
