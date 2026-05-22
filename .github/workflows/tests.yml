@@ -5,10 +5,10 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-  schedule:
-    # Kuniga 2 marta: 08:00 va 18:00 Toshkent vaqti (UTC+5)
-    - cron: "0 3 * * *"   # 03:00 UTC = 08:00 Toshkent
-    - cron: "0 13 * * *"  # 13:00 UTC = 18:00 Toshkent
+  # schedule o'chirildi — free tier minutlarni tejash uchun
+  # schedule:
+  #   - cron: "0 3 * * *"   # 08:00 Toshkent
+  #   - cron: "0 13 * * *"  # 18:00 Toshkent
   workflow_dispatch: # Qo'lda ishga tushirish imkoniyati
 
 jobs:
