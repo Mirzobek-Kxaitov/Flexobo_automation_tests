@@ -27,6 +27,16 @@ CARRIER_PASSWORD = os.getenv("CARRIER_PASSWORD")
 OWNER_OPERATOR_EMAIL = os.getenv("OWNER_OPERATOR_EMAIL")
 OWNER_OPERATOR_PASSWORD = os.getenv("OWNER_OPERATOR_PASSWORD")
 
+# FREE plan users (limit testlar uchun)
+FREE_BROKER_EMAIL = os.getenv("FREE_BROKER_EMAIL")
+FREE_BROKER_PASSWORD = os.getenv("FREE_BROKER_PASSWORD")
+FREE_LOAD_OWNER_EMAIL = os.getenv("FREE_LOAD_OWNER_EMAIL")
+FREE_LOAD_OWNER_PASSWORD = os.getenv("FREE_LOAD_OWNER_PASSWORD")
+FREE_CARRIER_EMAIL = os.getenv("FREE_CARRIER_EMAIL")
+FREE_CARRIER_PASSWORD = os.getenv("FREE_CARRIER_PASSWORD")
+FREE_OWNER_OPERATOR_EMAIL = os.getenv("FREE_OWNER_OPERATOR_EMAIL")
+FREE_OWNER_OPERATOR_PASSWORD = os.getenv("FREE_OWNER_OPERATOR_PASSWORD")
+
 
 def _login_as(page: Page, email: str, password: str) -> Page:
     """Log in with the given email and password.
@@ -120,6 +130,36 @@ def logged_in_carrier(browser, browser_context_args):
 def logged_in_owner_operator(browser, browser_context_args):
     """Log in as owner operator in an isolated browser context."""
     context, page = _logged_in_page(browser, browser_context_args, OWNER_OPERATOR_EMAIL, OWNER_OPERATOR_PASSWORD)
+    yield page
+    context.close()
+
+
+# === FREE plan fixtures (limit testlar uchun) ===
+
+@pytest.fixture
+def free_broker(browser, browser_context_args):
+    context, page = _logged_in_page(browser, browser_context_args, FREE_BROKER_EMAIL, FREE_BROKER_PASSWORD)
+    yield page
+    context.close()
+
+
+@pytest.fixture
+def free_load_owner(browser, browser_context_args):
+    context, page = _logged_in_page(browser, browser_context_args, FREE_LOAD_OWNER_EMAIL, FREE_LOAD_OWNER_PASSWORD)
+    yield page
+    context.close()
+
+
+@pytest.fixture
+def free_carrier(browser, browser_context_args):
+    context, page = _logged_in_page(browser, browser_context_args, FREE_CARRIER_EMAIL, FREE_CARRIER_PASSWORD)
+    yield page
+    context.close()
+
+
+@pytest.fixture
+def free_owner_operator(browser, browser_context_args):
+    context, page = _logged_in_page(browser, browser_context_args, FREE_OWNER_OPERATOR_EMAIL, FREE_OWNER_OPERATOR_PASSWORD)
     yield page
     context.close()
 

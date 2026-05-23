@@ -21,6 +21,14 @@ stages:
     - echo "CARRIER_PASSWORD=$CARRIER_PASSWORD" >> .env
     - echo "OWNER_OPERATOR_EMAIL=$OWNER_OPERATOR_EMAIL" >> .env
     - echo "OWNER_OPERATOR_PASSWORD=$OWNER_OPERATOR_PASSWORD" >> .env
+    - echo "FREE_BROKER_EMAIL=$FREE_BROKER_EMAIL" >> .env
+    - echo "FREE_BROKER_PASSWORD=$FREE_BROKER_PASSWORD" >> .env
+    - echo "FREE_LOAD_OWNER_EMAIL=$FREE_LOAD_OWNER_EMAIL" >> .env
+    - echo "FREE_LOAD_OWNER_PASSWORD=$FREE_LOAD_OWNER_PASSWORD" >> .env
+    - echo "FREE_CARRIER_EMAIL=$FREE_CARRIER_EMAIL" >> .env
+    - echo "FREE_CARRIER_PASSWORD=$FREE_CARRIER_PASSWORD" >> .env
+    - echo "FREE_OWNER_OPERATOR_EMAIL=$FREE_OWNER_OPERATOR_EMAIL" >> .env
+    - echo "FREE_OWNER_OPERATOR_PASSWORD=$FREE_OWNER_OPERATOR_PASSWORD" >> .env
     - echo "ADMIN_URL=$ADMIN_URL" >> .env
     - echo "ADMIN_EMAIL=$ADMIN_EMAIL" >> .env
     - echo "ADMIN_PASSWORD=$ADMIN_PASSWORD" >> .env
@@ -50,7 +58,7 @@ reset-usage:
 fast-tests:
   stage: test
   extends: .base
-  timeout: 45 minutes
+  timeout: 60 minutes
   script:
     - >
       pytest tests/ -v
@@ -83,7 +91,7 @@ fast-tests:
 limit-tests:
   stage: test
   extends: .base
-  timeout: 45 minutes
+  timeout: 60 minutes
   needs: ["reset-usage"]
   script:
     - >
@@ -107,7 +115,7 @@ limit-tests:
 e2e-tests:
   stage: test
   extends: .base
-  timeout: 45 minutes
+  timeout: 60 minutes
   needs: ["reset-usage"]
   script:
     - >

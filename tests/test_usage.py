@@ -58,11 +58,11 @@ def test_usage_page_accessible(request, role: str):
 
 @allure.feature("Usage")
 @allure.story("Current plan: Free")
-def test_current_plan_is_free(logged_in_broker: Page):
+def test_current_plan_is_free(free_broker: Page):
     """Test foydalanuvchi Free planda ekanligini ko'rsatishi kerak."""
-    _open_usage(logged_in_broker)
+    _open_usage(free_broker)
     expect(
-        logged_in_broker.get_by_text("Current plan: Free")
+        free_broker.get_by_text("Current plan: Free")
     ).to_be_visible(timeout=10000)
 
 
@@ -80,13 +80,12 @@ def test_upgrade_plan_button_visible(logged_in_broker: Page):
 @allure.story("Free plan: metric card with correct limit")
 @pytest.mark.parametrize("metric,limit", FREE_PLAN_LIMITS)
 def test_free_plan_metric_with_limit(
-    logged_in_broker: Page, metric: str, limit: str
+    free_broker: Page, metric: str, limit: str
 ):
     """Har bir metrika kartasi label va Free plan limit qiymatini ko'rsatishi kerak."""
-    _open_usage(logged_in_broker)
-    # Karta — div ichida ham metric label, ham limit qiymati bo'lishi kerak
+    _open_usage(free_broker)
     card = (
-        logged_in_broker.locator("div")
+        free_broker.locator("div")
         .filter(has_text=metric)
         .filter(has_text=limit)
         .first

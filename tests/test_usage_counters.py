@@ -73,7 +73,7 @@ def _place_one_bid(page: Page) -> None:
 @allure.feature("Usage Counter")
 @allure.story("Bids placed counter increments by 1 after placing a bid")
 @allure.severity(allure.severity_level.CRITICAL)
-def test_bids_placed_counter_increments_by_one(logged_in_broker: Page):
+def test_bids_placed_counter_increments_by_one(free_broker: Page):
     """
     Broker bid yuborganda 'Bids placed' counter aniq 1 ga ortadi.
 
@@ -82,7 +82,7 @@ def test_bids_placed_counter_increments_by_one(logged_in_broker: Page):
     2. Bittagina bid yuborish
     3. Yangi qiymat N+1 ekanligini tasdiqlash
     """
-    page = logged_in_broker
+    page = free_broker
     page.set_default_timeout(60000)
 
     initial_count = _read_bids_placed_count(page)

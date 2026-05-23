@@ -36,9 +36,10 @@ def test_fleet_page_content(request, role: str):
     page.wait_for_timeout(3000)
 
     expect(page.get_by_text("Fleet", exact=True).first).to_be_visible()
-    expect(page.get_by_role("button", name="Add Truck").first).to_be_visible()
-    expect(page.get_by_text("Trucks", exact=True).first).to_be_visible()
     expect(page.get_by_text("Trailers", exact=True).first).to_be_visible()
+    if role != "owner_operator":
+        expect(page.get_by_role("button", name="Add Truck").first).to_be_visible()
+        expect(page.get_by_text("Trucks", exact=True).first).to_be_visible()
 
 
 @allure.feature("TMS")

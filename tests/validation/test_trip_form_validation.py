@@ -33,7 +33,7 @@ def test_missing_volume_blocks_next(logged_in_broker: Page):
     trips.accept_cookies_if_visible()
 
     trips.select_transport("Trailer 1")
-    trips.select_unit_kg()
+    trips.select_lifting_capacity()
     # volume to'ldirilmadi
     trips.fill_loading("tashkent", "Tashkent")
     trips.fill_loading_radius(12)
@@ -54,7 +54,7 @@ def test_zero_volume_blocks_next(logged_in_broker: Page):
     trips.accept_cookies_if_visible()
 
     trips.select_transport("Trailer 1")
-    trips.select_unit_kg()
+    trips.select_lifting_capacity()
     trips.fill_volume(0)
     trips.fill_loading("tashkent", "Tashkent")
     trips.fill_loading_radius(12)
@@ -74,8 +74,9 @@ def test_negative_volume_blocks_next(logged_in_broker: Page):
     logged_in_broker.wait_for_timeout(2000)
     trips.accept_cookies_if_visible()
 
+    logged_in_broker.wait_for_timeout(1000)
     trips.select_transport("Trailer 1")
-    trips.select_unit_kg()
+    trips.select_lifting_capacity()
     trips.fill_volume(-10)
     trips.fill_loading("tashkent", "Tashkent")
     trips.fill_loading_radius(12)
