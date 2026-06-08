@@ -32,21 +32,25 @@ def _login(page: Page, email: str, password: str):
     (turli rolelar /loads yoki /profile/root ga tushishi mumkin).
     """
     page.goto(f"{APP_URL}/sign-in?lang=en")
-    page.get_by_placeholder("Email or phone number is required").fill(email)
-    page.get_by_placeholder("Enter your password").fill(password)
-    page.get_by_role("button", name="Sign In", exact=True).click()
+    page.get_by_test_id("login_email_input").fill(email)
+    page.get_by_test_id("login_password_input").fill(password)
+    page.get_by_test_id("login_submit_button").click()
     expect(page).not_to_have_url(re.compile(r".*sign-in.*"), timeout=15000)
 
-    accept = page.get_by_role("button", name="Accept")
+    accept = page.get_by_test_id("global_cookie_accept_button")
     if accept.is_visible():
         accept.click()
 
 
 def _logout(page: Page):
     """Profile dropdown orqali logout."""
-    page.locator("button[data-slot='dropdown-menu-trigger']").nth(3).click()
-    page.get_by_role("menuitem", name="Logout").click()
-    page.get_by_text("Yes").click()
+    page.get_by_test_id("global_user_menu_button").click()
+    page.get_by_test_id("global_logout_menu_item").or_(
+        page.get_by_role("menuitem", name="Logout")
+    ).first.click()
+    page.get_by_test_id("global_logout_confirm_button").or_(
+        page.get_by_text("Yes")
+    ).first.click()
     expect(page).to_have_url(re.compile(r"sign-in|landing"), timeout=10000)
 
 

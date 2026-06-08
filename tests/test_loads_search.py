@@ -28,9 +28,9 @@ def test_search_form_visible(request, role: str):
     page.wait_for_load_state("domcontentloaded")
     page.wait_for_timeout(3000)
 
-    expect(page.get_by_placeholder("From").first).to_be_visible()
-    expect(page.get_by_placeholder("To").first).to_be_visible()
-    expect(page.get_by_role("button", name="Search").first).to_be_visible()
+    expect(page.get_by_test_id("loads_search_from_input")).to_be_visible()
+    expect(page.get_by_test_id("loads_search_to_input")).to_be_visible()
+    expect(page.get_by_test_id("loads_search_button")).to_be_visible()
 
 
 @allure.feature("Loads search")
@@ -42,13 +42,13 @@ def test_search_by_from_city_returns_matching_loads(logged_in_broker: Page):
     page.wait_for_load_state("domcontentloaded")
     page.wait_for_timeout(3000)
 
-    page.get_by_placeholder("From").fill("Tashkent")
+    page.get_by_test_id("loads_search_from_input").fill("Tashkent")
     page.wait_for_timeout(2000)
     # Suggestion ro'yxatidan birinchisini tanlash
     page.get_by_text("Tashkent", exact=False).first.click()
     page.wait_for_timeout(1000)
 
-    page.get_by_role("button", name="Search").first.click()
+    page.get_by_test_id("loads_search_button").click()
     page.wait_for_timeout(3000)
 
     # Natijada hech bo'lmasa bitta "Tashkent" matni bo'lishi kerak
@@ -64,7 +64,7 @@ def test_filter_button_opens_panel(logged_in_broker: Page):
     page.wait_for_load_state("domcontentloaded")
     page.wait_for_timeout(3000)
 
-    page.get_by_role("button", name="Filter").first.click()
+    page.get_by_test_id("loads_filter_button").click()
     page.wait_for_timeout(1500)
 
     # Filter panel ochilganini tasdiqlash uchun, masalan, "Weight" yoki "Reset" yoki

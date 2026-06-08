@@ -16,34 +16,54 @@ class FleetPage:
         self.page = page
 
         # Tabs
-        self.trucks_tab = page.get_by_role("tab", name="Trucks")
-        self.trailers_tab = page.get_by_role("tab", name="Trailers")
+        self.trucks_tab = page.get_by_test_id("fleet_trucks_tab")
+        self.trailers_tab = page.get_by_test_id("fleet_trailers_tab")
 
         # Truck form
-        self.add_truck_button = page.get_by_role("button", name="Add Truck")
-        self.select_country = page.get_by_text("Select country")
-        self.country_search = page.get_by_placeholder("Search country...")
-        self.gov_number_input = page.get_by_role("textbox", name="Gov. Number*")
-        self.technical_passport_input = page.get_by_role("textbox", name="Technical Passport")
-        self.add_button = page.get_by_role("button", name="Add")
-        self.save_button = page.get_by_role("button", name="Save")
+        self.add_truck_button = page.get_by_test_id("fleet_add_truck_button")
+        self.select_country = page.get_by_test_id("fleet_country_select")
+        self.country_search = (
+            page.get_by_test_id("fleet_country_search_input")
+            .or_(page.get_by_placeholder("Search country..."))
+            .first
+        )
+        self.gov_number_input = page.get_by_test_id("fleet_gov_number_input")
+        self.technical_passport_input = page.get_by_test_id("fleet_technical_passport_input")
+        self.add_button = page.get_by_test_id("fleet_form_submit_button")
+        self.save_button = (
+            page.get_by_test_id("fleet_form_submit_button")
+            .or_(page.get_by_role("button", name="Save"))
+            .first
+        )
 
         # Trailer form
-        self.add_trailer_button = page.get_by_role("button", name="Add Trailer")
-        self.volume_input = page.get_by_role("spinbutton", name="Volume (m³)")
-        self.length_input = page.get_by_role("spinbutton", name="Length (m)")
-        self.width_input = page.get_by_role("spinbutton", name="Width (m)")
-        self.height_input = page.get_by_role("spinbutton", name="Height (m)")
+        self.add_trailer_button = page.get_by_test_id("fleet_add_trailer_button")
+        self.volume_input = page.get_by_test_id("fleet_volume_input")
+        self.length_input = page.get_by_test_id("fleet_length_input")
+        self.width_input = page.get_by_test_id("fleet_width_input")
+        self.height_input = page.get_by_test_id("fleet_height_input")
 
         # Confirm dialogs
-        self.confirm_delete_button = page.get_by_role("button", name="Delete")
-        self.confirm_deactivate_button = page.get_by_role("button", name="Deactivate")
-        self.confirm_detach_trailer_button = page.get_by_role("button", name="Detach Trailer")
-        self.confirm_detach_driver_button = page.get_by_role("button", name="Detach Driver")
-        self.cancel_button = page.get_by_role("button", name="Cancel")
+        self.confirm_delete_button = (
+            page.get_by_test_id("fleet_delete_confirm_button")
+            .or_(page.get_by_role("button", name="Delete"))
+            .first
+        )
+        self.confirm_deactivate_button = (
+            page.get_by_test_id("fleet_deactivate_confirm_button")
+            .or_(page.get_by_role("button", name="Deactivate"))
+            .first
+        )
+        self.confirm_detach_trailer_button = page.get_by_test_id("fleet_detach_trailer_confirm_button")
+        self.confirm_detach_driver_button = page.get_by_test_id("fleet_detach_driver_confirm_button")
+        self.cancel_button = page.get_by_test_id("fleet_form_cancel_button")
 
         # Success messages
-        self.truck_updated_message = page.get_by_text("Truck updated successfully")
+        self.truck_updated_message = (
+            page.get_by_test_id("fleet_success_message")
+            .or_(page.get_by_text("Truck updated successfully"))
+            .first
+        )
         self.truck_deleted_message = page.get_by_text("Transport deleted successfully")
         self.trailer_deleted_message = page.get_by_text("Trailer deleted successfully")
         self.trailer_detached_message = page.get_by_text("Trailer detached successfully")
@@ -83,19 +103,19 @@ class FleetPage:
         return self
 
     def select_brand(self, brand):
-        self.page.get_by_role("combobox").filter(has_text="Brand").click()
+        self.page.get_by_test_id("fleet_brand_select").click()
         self.page.get_by_role("option", name=brand).click()
         self.page.wait_for_timeout(500)
         return self
 
     def select_year(self, year):
-        self.page.get_by_role("combobox").filter(has_text=re.compile(r"^$")).click()
+        self.page.get_by_test_id("fleet_year_select").click()
         self.page.get_by_role("option", name=year).click()
         self.page.wait_for_timeout(500)
         return self
 
     def select_lifting_capacity(self, capacity="tons"):
-        self.page.get_by_role("combobox").filter(has_text="Lifting Capacity").click()
+        self.page.get_by_test_id("fleet_lifting_capacity_select").click()
         self.page.get_by_role("option", name=capacity).click()
         self.page.wait_for_timeout(500)
         return self
@@ -126,7 +146,12 @@ class FleetPage:
         return self.page.get_by_role("row", name=f"{brand} {gov_number}").first
 
     def _open_truck_menu(self, brand, gov_number):
-        self._get_truck_row(brand, gov_number).get_by_role("button").last.click()
+        row = self._get_truck_row(brand, gov_number)
+        actions = row.locator("[data-testid^='fleet_truck_actions_button_']")
+        if actions.count() > 0:
+            actions.first.click()
+        else:
+            row.get_by_role("button").last.click()
         self.page.wait_for_timeout(500)
         return self
 
@@ -156,7 +181,7 @@ class FleetPage:
     # ── Trailer CRUD ────────────────────────────────────────────
 
     def select_trailer_type(self, trailer_type):
-        self.page.get_by_role("combobox").filter(has_text="Trailer Type").click()
+        self.page.get_by_test_id("fleet_trailer_type_select").click()
         self.page.get_by_role("option", name=trailer_type).click()
         self.page.wait_for_timeout(500)
         return self
@@ -173,7 +198,7 @@ class FleetPage:
         return self
 
     def select_loading_types(self, loading_type):
-        self.page.get_by_role("button", name="Loading Types").click()
+        self.page.get_by_test_id("fleet_loading_types_select").click()
         self.page.get_by_role("option", name=loading_type).click()
         self.page.keyboard.press("Escape")
         self.page.wait_for_timeout(500)
@@ -201,7 +226,12 @@ class FleetPage:
         return self.page.get_by_role("row", name=gov_number).first
 
     def _open_trailer_menu(self, gov_number):
-        self._get_trailer_row(gov_number).get_by_role("button").last.click()
+        row = self._get_trailer_row(gov_number)
+        actions = row.locator("[data-testid^='fleet_trailer_actions_button_']")
+        if actions.count() > 0:
+            actions.first.click()
+        else:
+            row.get_by_role("button").last.click()
         self.page.wait_for_timeout(500)
         return self
 

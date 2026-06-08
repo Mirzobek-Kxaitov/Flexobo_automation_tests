@@ -10,11 +10,19 @@ class LoginPage:
     def __init__(self, page: Page):
         self.page = page
         #locators
-        self.sign_in_link = page.get_by_text("Sign In")
-        self.email_input = page.get_by_placeholder("Email or phone number is required")
-        self.password_input = page.get_by_placeholder("Enter your password")
-        self.sign_in_button = page.get_by_role("button", name="Sign In", exact=True)
-        self.error_message = page.get_by_text("Invalid phone number or email")
+        self.sign_in_link = (
+            page.get_by_test_id("landing_sign_in_button")
+            .or_(page.get_by_text("Sign In").first)
+            .first
+        )
+        self.email_input = page.get_by_test_id("login_email_input")
+        self.password_input = page.get_by_test_id("login_password_input")
+        self.sign_in_button = page.get_by_test_id("login_submit_button")
+        self.error_message = (
+            page.get_by_test_id("login_error_message")
+            .or_(page.get_by_text("Invalid phone number or email"))
+            .first
+        )
 
     def open(self):
         self.page.goto(BASE_URL, wait_until="domcontentloaded")

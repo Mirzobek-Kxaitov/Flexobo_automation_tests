@@ -1,0 +1,20 @@
+{
+  "name": "flexobo-local-marketplace",
+  "interface": {
+    "displayName": "Flexobo Local Plugins"
+  },
+  "plugins": [
+    {
+      "name": "flexobo-qa",
+      "source": {
+        "source": "local",
+        "path": "./.agents/plugins/flexobo-qa"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

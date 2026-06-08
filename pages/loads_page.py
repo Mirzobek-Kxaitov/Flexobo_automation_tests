@@ -18,27 +18,47 @@ class LoadsPage:
         self.delivered_filter = page.locator("button[value='delivered']")  
         self.my_loads_heading = page.get_by_role("heading", name="My loads")
         
-        self.add_button = page.get_by_role("button", name="Add")    
-        self.load_menu_item = page.get_by_role("menuitem", name="Load")
+        self.add_button = page.get_by_test_id("global_add_button")
+        self.load_menu_item = page.get_by_test_id("global_add_load_menu_item")
           
-        self.from_input = page.get_by_placeholder("From")
-        self.to_input = page.get_by_placeholder("To")
-        self.load_type_button = page.locator("button:has-text('Load type')")
-        self.weight_input = page.get_by_placeholder("Load weight")
-        self.date_button = page.get_by_role("button", name="Date")
-        self.next_month_button = page.get_by_role("button", name="Next month")
-        self.cookie_accept_button = page.get_by_role("button", name="Accept")
+        self.from_input = page.get_by_test_id("loads_from_input")
+        self.to_input = page.get_by_test_id("loads_to_input")
+        self.load_type_button = page.get_by_test_id("loads_load_type_select")
+        self.weight_input = page.get_by_test_id("loads_weight_input")
+        self.date_button = page.get_by_test_id("loads_date_button")
+        self.next_month_button = (
+            page.get_by_test_id("calendar_next_month_button")
+            .or_(page.get_by_role("button", name="Next month"))
+            .first
+        )
+        self.cookie_accept_button = page.get_by_test_id("global_cookie_accept_button")
 
-        self.body_type_button = page.locator("button:has-text('Transport type')")
-        self.body_step_heading = page.get_by_text("Body", exact=True)
+        self.body_type_button = (
+            page.get_by_test_id("loads_transport_type_select")
+            .or_(page.locator("button:has-text('Transport type')"))
+            .first
+        )
+        self.body_step_heading = (
+            page.get_by_test_id("loads_body_step")
+            .or_(page.get_by_text("Body", exact=True))
+            .first
+        )
 
-        self.price_input = page.get_by_placeholder("Price")
-        self.payment_step_heading = page.get_by_text("Payment", exact=True)
+        self.price_input = page.get_by_test_id("loads_price_input")
+        self.payment_step_heading = (
+            page.get_by_test_id("loads_payment_step")
+            .or_(page.get_by_text("Payment", exact=True))
+            .first
+        )
 
-        self.next_button = page.get_by_role("button", name="Next", exact=True)
-        self.publish_button = page.get_by_role("button", name="Publish", exact=True)
-        self.success_message = page.get_by_text("Load created successfully")
-        self.confirm_delete_button = page.get_by_role("button", name="Delete", exact=True)
+        self.next_button = page.get_by_test_id("loads_next_button")
+        self.publish_button = page.get_by_test_id("loads_publish_button")
+        self.success_message = (
+            page.get_by_test_id("loads_success_message")
+            .or_(page.get_by_text("Load created successfully"))
+            .first
+        )
+        self.confirm_delete_button = page.get_by_test_id("loads_delete_confirm_button")
 
     def toggle_in_contract_filter(self):
         self.in_contract_filter.click()
@@ -100,17 +120,21 @@ class LoadsPage:
         return self 
     
     def select_body_type(self, body_type):
-        self.page.get_by_role("combobox").filter(has_text="Transport type").click()
+        self.body_type_button.click()
         self.page.get_by_role("option", name=body_type).click()
         return self
 
     def select_loading_type(self, loading_type):
-        self.page.get_by_role("combobox").filter(has_text=re.compile(r"^Loading type$")).click()
+        self.page.get_by_test_id("loads_loading_type_select").or_(
+            self.page.get_by_role("combobox").filter(has_text=re.compile(r"^Loading type$"))
+        ).first.click()
         self.page.get_by_role("option", name=loading_type).click()
         return self
 
     def select_unloading_type(self, unloading_type):
-        self.page.get_by_role("combobox").filter(has_text=re.compile(r"^Unloading type$")).click()
+        self.page.get_by_test_id("loads_unloading_type_select").or_(
+            self.page.get_by_role("combobox").filter(has_text=re.compile(r"^Unloading type$"))
+        ).first.click()
         self.page.get_by_role("option", name=unloading_type).click()
         return self
     
@@ -147,7 +171,11 @@ class LoadsPage:
     
     def _open_load_menu(self, index=0):
         """Open the 3-dot dropdown menu on a load card by index."""
-        self.page.get_by_role("button").nth(4 + index).click()
+        actions = self.page.locator("[data-testid^='loads_load_actions_button_']")
+        if actions.count() > index:
+            actions.nth(index).click()
+        else:
+            self.page.get_by_role("button").nth(4 + index).click()
         self.page.wait_for_timeout(500)
         return self
 

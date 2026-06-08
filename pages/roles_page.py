@@ -16,16 +16,22 @@ class RolesPage:
         self.page = page
 
         # Tabs
-        self.roles_tab = page.get_by_role("tab", name="Roles")
-        self.users_tab = page.get_by_role("tab", name="Users")
+        self.roles_tab = page.get_by_test_id("profile_roles_tab")
+        self.users_tab = page.get_by_test_id("profile_users_tab")
 
         # Role form
-        self.create_role_button = page.get_by_role("button", name="Create role")
-        self.role_name_input = page.get_by_role("textbox", name="Role name")
-        self.update_role_button = page.get_by_role("button", name="Update Role")
+        self.create_role_button = page.get_by_test_id("roles_create_button")
+        self.role_name_input = page.get_by_test_id("roles_name_input").or_(
+            page.get_by_role("textbox", name="Role name")
+        ).first
+        self.update_role_button = page.get_by_test_id("roles_submit_button").or_(
+            page.get_by_role("button", name="Update Role")
+        ).first
 
         # Confirm dialogs
-        self.confirm_delete_button = page.get_by_role("button", name="Delete")
+        self.confirm_delete_button = page.get_by_test_id("roles_delete_confirm_button").or_(
+            page.get_by_role("button", name="Delete")
+        ).first
 
     # ── Navigation ──────────────────────────────────────────────
 
@@ -40,7 +46,7 @@ class RolesPage:
     # ── CRUD ────────────────────────────────────────────────────
 
     def _dismiss_cookie_banner(self):
-        btn = self.page.get_by_role("button", name="Accept")
+        btn = self.page.get_by_test_id("global_cookie_accept_button")
         if btn.is_visible(timeout=1000):
             btn.click(force=True)
             self.page.wait_for_timeout(500)
@@ -52,7 +58,7 @@ class RolesPage:
         self.create_role_button.click()
         self.page.wait_for_timeout(1000)
         self.role_name_input.fill(name)
-        self.create_role_button.click(force=True)
+        self.update_role_button.click(force=True)
         self.page.wait_for_timeout(3000)
         return self
 
@@ -62,7 +68,11 @@ class RolesPage:
     def _open_role_delete(self, name):
         """Click the delete (trash) button on a role card."""
         card = self._get_role_card(name)
-        card.locator("button[data-slot='alert-dialog-trigger']").click()
+        delete_button = card.locator("[data-testid^='roles_delete_button_']")
+        if delete_button.count() > 0:
+            delete_button.first.click()
+        else:
+            card.locator("button[data-slot='alert-dialog-trigger']").click()
         self.page.wait_for_timeout(500)
         return self
 

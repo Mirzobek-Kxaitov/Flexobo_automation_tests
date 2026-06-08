@@ -29,9 +29,15 @@ def test_add_menu_item_visibility(request, role: str, menu_item: str):
     """Add menyudagi har item'ning role bo'yicha ko'rinishini tekshiradi."""
     page: Page = request.getfixturevalue(f"logged_in_{role}")
     should_be_visible = ADD_MENU_PERMISSIONS[menu_item][role]
+    item_test_ids = {
+        "Load": "global_add_load_menu_item",
+        "Transport": "global_add_transport_menu_item",
+    }
 
-    page.get_by_role("button", name="Add").click()
-    item = page.get_by_role("menuitem", name=menu_item)
+    page.get_by_test_id("global_add_button").click()
+    item = page.get_by_test_id(item_test_ids[menu_item]).or_(
+        page.get_by_role("menuitem", name=menu_item)
+    ).first
 
     if should_be_visible:
         expect(item).to_be_visible()

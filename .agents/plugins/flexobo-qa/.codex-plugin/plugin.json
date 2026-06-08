@@ -1,0 +1,42 @@
+{
+  "name": "flexobo-qa",
+  "version": "0.1.0",
+  "description": "Run and analyze Flexobo Python Playwright QA automation from Codex.",
+  "author": {
+    "name": "Mirzobek",
+    "email": "",
+    "url": ""
+  },
+  "homepage": "",
+  "repository": "",
+  "license": "UNLICENSED",
+  "keywords": [
+    "qa",
+    "playwright",
+    "pytest",
+    "allure",
+    "flexobo"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Flexobo QA",
+    "shortDescription": "Run Flexobo Playwright tests and summarize failures.",
+    "longDescription": "A Codex plugin for the Flexobo QA automation project. It guides Codex to run the existing Python pytest + Playwright suite through the local QA runner, collect Allure results, preserve Playwright traces, and report failures with practical debugging notes.",
+    "developerName": "Mirzobek",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Run tests",
+      "Analyze failures",
+      "Generate QA reports"
+    ],
+    "websiteURL": "",
+    "privacyPolicyURL": "",
+    "termsOfServiceURL": "",
+    "defaultPrompt": [
+      "Run the Flexobo QA smoke tests and summarize failures.",
+      "Run the Flexobo login tests headed and tell me what breaks.",
+      "Analyze the latest Flexobo QA report and suggest fixes."
+    ],
+    "brandColor": "#2563EB"
+  }
+}

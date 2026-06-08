@@ -18,23 +18,41 @@ class TripsPage:
 
         self.page = page
         
-        self.cookie_accept_button = self.page.get_by_role("button", name="Accept")
+        self.cookie_accept_button = self.page.get_by_test_id("global_cookie_accept_button")
 
-        self.transport_combobox = page.get_by_role("combobox").first
-        self.unit_combobox = page.get_by_role("combobox").filter(has_text="Choose")
-        self.volume_input = page.get_by_role("textbox", name="Volume*")
-        self.loading_input = page.get_by_role("textbox", name="Loading", exact=True)
-        self.loading_radius_input = page.get_by_role("textbox", name="Loading radius", exact=True)
-        self.unloading_input = page.get_by_role("textbox", name="Unloading", exact=True)
-        self.unloading_radius_input = page.get_by_role("textbox", name="Unloading radius")
+        self.transport_combobox = (
+            page.get_by_test_id("trips_transport_select")
+            .or_(page.get_by_role("combobox").first)
+            .first
+        )
+        self.unit_combobox = (
+            page.get_by_test_id("trips_unit_select")
+            .or_(page.get_by_role("combobox").filter(has_text="Choose"))
+            .first
+        )
+        self.volume_input = page.get_by_test_id("trips_volume_input")
+        self.loading_input = page.get_by_test_id("trips_loading_input")
+        self.loading_radius_input = page.get_by_test_id("trips_loading_radius_input")
+        self.unloading_input = page.get_by_test_id("trips_unloading_input")
+        self.unloading_radius_input = page.get_by_test_id("trips_unloading_radius_input")
 
-        self.price_input = page.get_by_role("textbox", name="Price*")
+        self.price_input = (
+            page.get_by_test_id("trips_price_input")
+            .or_(page.get_by_role("textbox", name="Price*"))
+            .first
+        )
 
-        self.transport_tab = self.page.get_by_role("tab", name="Transport")
+        self.transport_tab = self.page.get_by_test_id("loads_tab_transport_button").or_(
+            self.page.get_by_role("tab", name="Transport")
+        ).first
 
-        self.next_button = self.page.get_by_role("button", name="Next")
+        self.next_button = self.page.get_by_test_id("trips_next_button")
 
-        self.confirm_delete_button = page.get_by_role("button", name="Delete", exact=True)
+        self.confirm_delete_button = (
+            page.get_by_test_id("trips_delete_confirm_button")
+            .or_(page.get_by_role("button", name="Delete", exact=True))
+            .first
+        )
 
 
     def open_create_trip_form(self):
@@ -52,7 +70,7 @@ class TripsPage:
         return self
 
     def select_lifting_capacity(self, capacity="tons"):
-        self.page.get_by_role("combobox").filter(has_text="Choose").click()
+        self.unit_combobox.click()
         self.page.get_by_role("option", name=capacity).click()
         return self
     
@@ -120,7 +138,11 @@ class TripsPage:
 
     def _open_trip_menu(self, index=0):
         """Open the 3-dot dropdown menu on a trip card by index."""
-        self.page.get_by_role("button").nth(4 + index).click()
+        actions = self.page.locator("[data-testid^='trips_trip_actions_button_']")
+        if actions.count() > index:
+            actions.nth(index).click()
+        else:
+            self.page.get_by_role("button").nth(4 + index).click()
         self.page.wait_for_timeout(500)
         return self
 

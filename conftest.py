@@ -47,12 +47,12 @@ def _login_as(page: Page, email: str, password: str) -> Page:
     """
     import re
     page.goto(f"{APP_URL}/sign-in?lang=en")
-    page.get_by_placeholder("Email or phone number is required").fill(email)
-    page.get_by_placeholder("Enter your password").fill(password)
-    page.get_by_role("button", name="Sign In", exact=True).click()
+    page.get_by_test_id("login_email_input").fill(email)
+    page.get_by_test_id("login_password_input").fill(password)
+    page.get_by_test_id("login_submit_button").click()
     expect(page).not_to_have_url(re.compile(r".*sign-in.*"), timeout=15000)
 
-    accept_button = page.get_by_role("button", name="Accept")
+    accept_button = page.get_by_test_id("global_cookie_accept_button")
     if accept_button.is_visible():
         accept_button.click(force=True)
 
