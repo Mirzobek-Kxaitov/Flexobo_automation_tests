@@ -35,11 +35,11 @@ FREE_PLAN_LIMITS = [
 
 
 def _open_usage(page: Page) -> Page:
-    """Sidebar orqali Usage sahifasiga o'tish (direct goto SPA state'ni buzishi mumkin)."""
-    page.goto(f"{APP_URL}/profile/root")
-    page.wait_for_timeout(2000)
-    page.get_by_text("Usage", exact=True).first.click()
-    page.wait_for_timeout(3000)
+    page.goto(f"{APP_URL}/profile/root", wait_until="domcontentloaded")
+    usage_link = page.get_by_text("Usage", exact=True).first
+    expect(usage_link).to_be_visible(timeout=10000)
+    usage_link.click()
+    expect(page.get_by_test_id("usage_page")).to_be_visible(timeout=15000)
     return page
 
 

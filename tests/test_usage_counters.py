@@ -6,14 +6,11 @@ Strategiya: before/after pattern.
 1. Action'dan oldin counter qiymatini o'qish (N)
 2. Action'ni bajarish (masalan, bid yuborish)
 3. Counter endi N+1 ekanligini tasdiqlash
-
-Bu testlar broker (Free plan) uchun yozilgan, chunki broker'da real
-limitlar bor (Bids placed / 20).
 """
 import os
 import re
 import allure
-from playwright.sync_api import Page
+from playwright.sync_api import Page, expect
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -21,20 +18,16 @@ APP_URL = os.getenv("APP_URL")
 
 
 def _open_usage(page: Page) -> None:
-    """Sidebar orqali Usage sahifasiga o'tish."""
-    page.goto(f"{APP_URL}/profile/root")
-    page.wait_for_timeout(2000)
-    page.get_by_test_id("sidebar_usage_link").or_(
+    page.goto(f"{APP_URL}/profile/root", wait_until="domcontentloaded")
+    usage_link = page.get_by_test_id("sidebar_usage_link").or_(
         page.get_by_text("Usage", exact=True)
-    ).first.click()
-    page.wait_for_timeout(3000)
+    ).first
+    expect(usage_link).to_be_visible(timeout=10000)
+    usage_link.click()
+    expect(page.get_by_test_id("usage_bids_placed_card")).to_be_visible(timeout=15000)
 
 
 def _read_bids_placed_count(page: Page) -> int:
-    """
-    Usage sahifasidan 'Bids placed' kartasidagi joriy sonni o'qish.
-    Free plan format: 'X / 20', funksiya X ni qaytaradi.
-    """
     _open_usage(page)
     card = page.get_by_test_id("usage_bids_placed_card")
     text = card.inner_text(timeout=10000)
@@ -44,41 +37,29 @@ def _read_bids_placed_count(page: Page) -> int:
 
 
 def _place_one_bid(page: Page) -> None:
-    """/loads sahifaga o'tib bittagina bid yuborish."""
-    page.goto(f"{APP_URL}/loads")
-    page.wait_for_load_state("domcontentloaded")
-    page.wait_for_timeout(3000)
+    page.goto(f"{APP_URL}/loads", wait_until="domcontentloaded")
 
-    # Select a load that does not have bids yet, so the bid form is available.
-    page.get_by_text("Be first").first.click()
-    page.wait_for_timeout(2500)
+    be_first = page.get_by_text("Be first").first
+    expect(be_first).to_be_visible(timeout=20000)
+    be_first.click()
 
-    # Open bid form
-    page.get_by_test_id("bid_place_open_button").click()
-    page.get_by_test_id("bid_form_container").wait_for(timeout=10000)
+    bid_btn = page.get_by_test_id("bid_place_open_button")
+    expect(bid_btn).to_be_visible(timeout=10000)
+    bid_btn.click()
+    expect(page.get_by_test_id("bid_form_container")).to_be_visible(timeout=10000)
 
     note = page.get_by_test_id("bid_form_note_input")
     if note.is_visible(timeout=2000):
         note.fill("Counter increment test bid")
-        page.wait_for_timeout(500)
 
-    # Submit
     page.get_by_test_id("bid_form_submit_button").click()
-    page.wait_for_timeout(5000)
+    page.wait_for_timeout(3000)
 
 
 @allure.feature("Usage Counter")
 @allure.story("Bids placed counter increments by 1 after placing a bid")
 @allure.severity(allure.severity_level.CRITICAL)
 def test_bids_placed_counter_increments_by_one(free_broker: Page):
-    """
-    Broker bid yuborganda 'Bids placed' counter aniq 1 ga ortadi.
-
-    Stsenariy:
-    1. Joriy 'Bids placed' qiymatini o'qish (N)
-    2. Bittagina bid yuborish
-    3. Yangi qiymat N+1 ekanligini tasdiqlash
-    """
     page = free_broker
     page.set_default_timeout(60000)
 

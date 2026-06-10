@@ -17,9 +17,7 @@ APP_URL = os.getenv("APP_URL")
 
 def _open_bid_form(page: Page, price: int):
     """Load owner yaratgan loadni topib bid form'ni ochadi."""
-    page.goto(f"{APP_URL}/loads")
-    page.wait_for_load_state("domcontentloaded")
-    page.wait_for_timeout(3000)
+    page.goto(f"{APP_URL}/loads", wait_until="domcontentloaded")
 
     thousands = price // 1000
     remainder = price % 1000
@@ -42,9 +40,9 @@ def test_empty_bid_form_blocks_submit(logged_in_carrier: Page, fresh_load_for_bi
 
     submit_btn = page.get_by_test_id("bid_form_submit_button")
     submit_btn.click(force=True, timeout=5000)
-    page.wait_for_timeout(2000)
 
-    expect(page).to_have_url(re.compile(r".*/loads/[a-f0-9-]{36}$"))
+    # Submit ishlamagan bo'lsa, sahifa hali detail URL'da qolishi kerak
+    expect(page).to_have_url(re.compile(r".*/loads/[a-f0-9-]{36}$"), timeout=5000)
 
 
 @allure.feature("Place a Bid")

@@ -42,9 +42,8 @@ def test_profile_action_button_visibility(request, role: str, button_name: str):
     Kamida bitta False (negativ) holat bor — owner_operator uchun "Apply for Company" yashirin.
     """
     page: Page = request.getfixturevalue(f"logged_in_{role}")
-    page.goto(f"{APP_URL}/profile/root")
-    page.wait_for_load_state("domcontentloaded")
-    page.wait_for_timeout(3000)
+    page.goto(f"{APP_URL}/profile/root", wait_until="domcontentloaded")
+    expect(page.get_by_role("button", name="Update Password").first).to_be_visible(timeout=15000)
 
     button = page.get_by_role("button", name=button_name).first
     expected_visible = BUTTON_VISIBILITY[button_name][role]

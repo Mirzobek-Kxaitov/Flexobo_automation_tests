@@ -21,9 +21,7 @@ APP_URL = os.getenv("APP_URL")
 
 def _navigate_to_load(page: Page, price: int):
     """Navigate to /loads and click on load with given price."""
-    page.goto(f"{APP_URL}/loads")
-    page.wait_for_load_state("domcontentloaded")
-    page.wait_for_timeout(3000)
+    page.goto(f"{APP_URL}/loads", wait_until="domcontentloaded")
 
     thousands = price // 1000
     remainder = price % 1000
@@ -31,7 +29,7 @@ def _navigate_to_load(page: Page, price: int):
     load_card = page.get_by_text(price_pattern).first
     expect(load_card).to_be_visible(timeout=20000)
     load_card.click()
-    page.wait_for_timeout(2500)
+    expect(page).to_have_url(re.compile(r".*/loads/[a-f0-9-]{36}"), timeout=15000)
 
 
 @allure.feature("Place a Bid")

@@ -25,33 +25,32 @@ def test_actor_places_bid_and_sees_in_my_bids(request, bidder_role: str):
     page: Page = request.getfixturevalue(f"logged_in_{bidder_role}")
     page.set_default_timeout(60000)
 
-    with allure.step("Navigate to /loads and select first available load"):
-        navigate_to_loads(page)
-        dismiss_cookie_banner(page)
-        page.locator("div").filter(has_text=re.compile(r"USD.*Fixed rate")).first.click()
-        page.wait_for_timeout(2000)
+    navigate_to_loads(page)
+    dismiss_cookie_banner(page)
+    page.locator("div").filter(has_text=re.compile(r"USD.*Fixed rate")).first.click()
 
-    with allure.step("Open Place a bid form and submit"):
-        page.get_by_role("button", name="Place a bid").first.click()
-        page.wait_for_timeout(2000)
+    bid_btn = page.get_by_role("button", name="Place a bid").first
+    expect(bid_btn).to_be_visible(timeout=10000)
+    bid_btn.click()
 
-        note_field = page.get_by_role("textbox", name="Why is your offer better than")
-        if note_field.is_visible(timeout=2000):
-            note_field.fill(f"E2E {bidder_role} bid")
+    note_field = page.get_by_role("textbox", name="Why is your offer better than")
+    if note_field.is_visible(timeout=2000):
+        note_field.fill(f"E2E {bidder_role} bid")
 
-        page.get_by_role("button", name="Place a bid").last.click()
-        page.wait_for_timeout(3000)
+    page.get_by_role("button", name="Place a bid").last.click()
 
-        limit_modal = page.get_by_text("Limit reached")
-        if limit_modal.is_visible(timeout=3000):
-            page.get_by_role("button", name="Maybe later").click()
-            pytest.skip(f"{bidder_role} bid limit reached")
+    limit_modal = page.get_by_text("Limit reached")
+    if limit_modal.is_visible(timeout=3000):
+        page.get_by_role("button", name="Maybe later").click()
+        pytest.skip(f"{bidder_role} bid limit reached")
 
-    with allure.step("Navigate to /my-bids and verify bid is listed"):
-        page.goto(f"{APP_URL}/my-bids", wait_until="domcontentloaded")
-        page.wait_for_timeout(3000)
+    page.goto(f"{APP_URL}/my-bids", wait_until="domcontentloaded")
+    page.wait_for_function(
+        "() => document.body.innerText.trim().length > 50",
+        timeout=15000,
+    )
 
-        body = page.locator("body").inner_text()
-        assert any(word in body for word in ["Pending", "USD", "Active"]), (
-            f"No bids found on /my-bids page for {bidder_role}"
-        )
+    body = page.locator("body").inner_text()
+    assert any(word in body for word in ["Pending", "USD", "Active"]), (
+        f"No bids found on /my-bids page for {bidder_role}"
+    )
