@@ -48,7 +48,7 @@ def _required_env(name: str, value: str | None) -> str:
     )
 
 
-def _login_as(page: Page, email: str | None, password: str | None, label: str) -> Page:
+def login_as(page: Page, email: str | None, password: str | None, label: str = "") -> Page:
     """Log in with the given email and password.
 
     After login the site redirects to /loads or /profile/root depending on
@@ -85,7 +85,7 @@ def _logged_in_page(browser, browser_context_args, email, password, label):
     """
     context = browser.new_context(**browser_context_args)
     page = context.new_page()
-    _login_as(page, email, password, label)
+    login_as(page, email, password, label)
     return context, page
 
 

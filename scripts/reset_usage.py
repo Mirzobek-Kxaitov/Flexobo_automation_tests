@@ -69,7 +69,8 @@ def reset_all_users(roles: list[str] | None = None) -> None:
         page.wait_for_timeout(2000)
 
         for role, email in targets.items():
-            print(f"Resetting {role} ({email})...")
+            masked = email[0] + "***@" + email.split("@")[-1] if email else "???"
+            print(f"Resetting {role} ({masked})...")
             reset_user_usage(page, email)
             print(f"  Done.")
 

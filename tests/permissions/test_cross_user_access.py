@@ -12,6 +12,7 @@ import allure
 from playwright.sync_api import Page, expect
 from dotenv import load_dotenv
 
+from conftest import login_as
 from pages.loads_page import LoadsPage
 from pages.trips_page import TripsPage
 
@@ -21,18 +22,6 @@ BROKER_EMAIL = os.getenv("BROKER_EMAIL")
 BROKER_PASSWORD = os.getenv("BROKER_PASSWORD")
 LOAD_OWNER_EMAIL = os.getenv("LOAD_OWNER_EMAIL")
 LOAD_OWNER_PASSWORD = os.getenv("LOAD_OWNER_PASSWORD")
-
-
-def _login(page: Page, email: str, password: str):
-    page.goto(f"{APP_URL}/sign-in?lang=en")
-    page.get_by_test_id("login_email_input").fill(email)
-    page.get_by_test_id("login_password_input").fill(password)
-    page.get_by_test_id("login_submit_button").click()
-    expect(page).not_to_have_url(re.compile(r".*sign-in.*"), timeout=30000)
-
-    accept = page.get_by_test_id("global_cookie_accept_button")
-    if accept.is_visible():
-        accept.click()
 
 
 def _logout(page: Page):
@@ -46,7 +35,7 @@ def _switch_user(page: Page, email: str, password: str):
     """Logout current user, clear cookies, login as new user."""
     _logout(page)
     page.context.clear_cookies()
-    _login(page, email, password)
+    login_as(page,email, password)
 
 
 @allure.feature("Permissions")
@@ -65,7 +54,7 @@ def test_load_owner_save_does_not_modify_brokers_load(page: Page):
     ORIGINAL_WEIGHT = "20"
 
     # 1. Broker login va yuk yaratish
-    _login(page, BROKER_EMAIL, BROKER_PASSWORD)
+    login_as(page,BROKER_EMAIL, BROKER_PASSWORD)
     page.goto(f"{APP_URL}/loads")
     page.wait_for_load_state("domcontentloaded")
     LoadsPage(page).create_load(
@@ -137,7 +126,7 @@ def test_load_owner_does_not_see_brokers_loads_in_list(page: Page):
     UNIQUE_PRICE = str(random.randint(40000, 49999))
 
     # 1. Broker login + yuk yaratish
-    _login(page, BROKER_EMAIL, BROKER_PASSWORD)
+    login_as(page,BROKER_EMAIL, BROKER_PASSWORD)
     page.goto(f"{APP_URL}/loads")
     page.wait_for_load_state("domcontentloaded")
     LoadsPage(page).create_load(
@@ -182,7 +171,7 @@ def test_load_owner_save_does_not_modify_brokers_trip(page: Page):
     HACK_PRICE = "99999"
 
     # 1. Broker login va trip yaratish
-    _login(page, BROKER_EMAIL, BROKER_PASSWORD)
+    login_as(page,BROKER_EMAIL, BROKER_PASSWORD)
     page.goto(f"{APP_URL}/loads")
     page.wait_for_load_state("domcontentloaded")
     TripsPage(page).create_trip(

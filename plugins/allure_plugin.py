@@ -6,6 +6,7 @@ Pytest buni avtomatik yuklaydi (pytest.ini dagi -p plugins.allure_plugin orqali)
 
 import json
 import os
+import platform
 from pathlib import Path
 
 import allure
@@ -67,7 +68,7 @@ def pytest_sessionfinish(session, exitstatus):
     env_data = {
         "Base URL": os.getenv("BASE_URL", ""),
         "Browser": "Chromium (Playwright)",
-        "Python": f"{session.config._inicache.get('python', '')}",
+        "Python": platform.python_version(),
         "OS": os.name,
     }
     env_file = allure_dir / "environment.properties"
