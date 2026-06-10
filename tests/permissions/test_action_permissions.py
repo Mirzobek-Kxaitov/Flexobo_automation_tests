@@ -1,3 +1,9 @@
+"""
+Profile sahifasidagi action tugmalarining role bo'yicha ko'rinishi.
+
+Bu test real permission farqlarini tekshiradi — hamma role uchun
+bir xil bo'lgan tugmalar ham, farqli bo'lganlari ham.
+"""
 import os
 import allure
 import pytest
@@ -8,7 +14,7 @@ load_dotenv()
 APP_URL = os.getenv("APP_URL")
 
 
-# Profile sahifasidagi action tugmalarining role bo'yicha ko'rinishi
+# Real permission matritsasi:
 # True = ko'rinishi kerak, False = yashirin bo'lishi kerak
 BUTTON_VISIBILITY = {
     "Update Password": {
@@ -20,6 +26,9 @@ BUTTON_VISIBILITY = {
     "Enable 2FA": {
         "broker": True, "load_owner": True, "carrier": True, "owner_operator": True,
     },
+    "Apply for Company": {
+        "broker": True, "load_owner": True, "carrier": True, "owner_operator": False,
+    },
 }
 
 
@@ -30,6 +39,7 @@ BUTTON_VISIBILITY = {
 def test_profile_action_button_visibility(request, role: str, button_name: str):
     """
     Profile sahifasidagi har action tugmasining role bo'yicha to'g'ri ko'rinishi.
+    Kamida bitta False (negativ) holat bor — owner_operator uchun "Apply for Company" yashirin.
     """
     page: Page = request.getfixturevalue(f"logged_in_{role}")
     page.goto(f"{APP_URL}/profile/root")
@@ -40,6 +50,6 @@ def test_profile_action_button_visibility(request, role: str, button_name: str):
     expected_visible = BUTTON_VISIBILITY[button_name][role]
 
     if expected_visible:
-        expect(button).to_be_visible()
+        expect(button).to_be_visible(timeout=5000)
     else:
-        expect(button).not_to_be_visible()
+        expect(button).not_to_be_visible(timeout=5000)
