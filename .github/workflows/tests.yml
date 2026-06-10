@@ -7,7 +7,12 @@ on:
     branches: [main]
   schedule:
     - cron: "0 3 * * *"   # 08:00 Toshkent
-  workflow_dispatch: # Qo'lda ishga tushirish imkoniyati
+  workflow_dispatch:
+    inputs:
+      test_targets:
+        description: "Test fayllar (bo'sh = default stable pack)"
+        required: false
+        default: ""
 
 jobs:
   test:
@@ -86,13 +91,14 @@ jobs:
         env:
           PLAYWRIGHT_SLOW_MO: "500"
           TEST_TARGETS: >-
-            tests/test_usage.py
+            ${{ github.event.inputs.test_targets ||
+            'tests/test_usage.py
             tests/test_usage_counters.py
             tests/test_loads_search.py
             tests/test_place_bid_flow.py
             tests/test_place_bid_submit.py
             tests/permissions/test_add_menu_permissions.py
-            tests/permissions/test_cross_user_access.py::test_load_owner_save_does_not_modify_brokers_load
+            tests/permissions/test_cross_user_access.py::test_load_owner_save_does_not_modify_brokers_load' }}
 
       - name: Upload Allure results
         if: always()
