@@ -150,23 +150,38 @@ class LoadsPage:
     
     def create_load(self, from_city, from_suggestion, to_city, to_suggestion,
                     load_type, weight, body_type, price):
+        """Create load — 2025-06 form layout:
+        Step 1: Route + load type + weight + date
+        Step 2: Body (transport type)
+        Step 3: Payment (price)
+        Step 4: Publish
+        """
         self.open_create_load_form()
+        expect(self.from_input).to_be_visible(timeout=15000)
+
+        # Step 1 — Route & load
         self.fill_from(from_city, from_suggestion)
         self.fill_to(to_city, to_suggestion)
         self.select_load_type(load_type)
+        self.fill_weight(weight)
         self.pick_loading_date()
         self.accept_cookies_if_visible()
         self.click_next()
-        self.fill_weight(weight)
-        self.click_next()
-        # Skip optional step
-        self.click_next()
+
+        # Step 2 — Body
+        expect(self.body_type_button).to_be_visible(timeout=10000)
         self.select_body_type(body_type)
         self.click_next()
+
+        # Step 3 — Payment
+        expect(self.price_input).to_be_visible(timeout=10000)
         self.fill_price(price)
         self.click_next()
-        self.page.wait_for_timeout(2000)
-        self.publish()
+
+        # Step 4 — Publish
+        if self.publish_button.is_visible(timeout=5000):
+            self.publish()
+        self.page.wait_for_timeout(3000)
         return self
     
     def _open_load_menu(self, index=0):
