@@ -565,10 +565,93 @@ Belgilar:
 | Element | Turi | `data-testid` nomi |
 |---------|------|----------------|
 | Sign In link/button | link | `landing_sign_in_button` |
-| From input | input | `landing_from_input` |
-| To input | input | `landing_to_input` |
-| When button | button | `landing_when_button` |
+| From input | input | `landing_search_from_input` |
+| To input | input | `landing_search_to_input` |
+| When button | button | `landing_search_date_button` |
 | Search button | button | `landing_search_button` |
+
+---
+
+## Bugungi live audit blockerlar (2026-06-10)
+
+Quyidagi `data-testid`lar hujjatda bor, lekin bugungi live DOM auditda topilmadi.
+Frontend qo'shilmaguncha QA testlarda text/role fallbackni to'liq olib tashlamaymiz.
+
+Audit komandasi:
+
+```bash
+.venv/bin/python scripts/data_testid_audit.py login landing profile fleet_broker fleet_carrier fleet_owner_operator my_bids_broker my_bids_load_owner my_bids_carrier my_bids_owner_operator trips_create_broker loads_calendar_broker usage_counters_owner_operator
+```
+
+### Login
+
+- `login_error_message`
+
+### Landing
+
+- `landing_sign_in_button`
+- `landing_search_from_input`
+- `landing_search_to_input`
+- `landing_search_date_button`
+- `landing_search_button`
+
+### Profile / Sidebar
+
+- `sidebar_profile_link`
+- `sidebar_my_loads_link`
+- `sidebar_my_trips_link`
+- `sidebar_fleet_link`
+- `sidebar_my_bids_link`
+- `sidebar_received_bids_link`
+- `sidebar_usage_link`
+- `profile_roles_tab`
+- `profile_users_tab`
+
+### Fleet
+
+- `fleet_page`
+- `fleet_trucks_tab`
+- `fleet_trailers_tab`
+- `fleet_add_truck_button`
+- `fleet_add_trailer_button`
+
+### My Bids
+
+- `my_bids_page`
+- `my_bids_all_tab`
+- `my_bids_pending_tab`
+- `my_bids_accepted_tab`
+- `my_bids_rejected_tab`
+- `my_bids_on_the_way_tab`
+- `my_bids_delivered_tab`
+
+### Trips Create
+
+- `trips_transport_select`
+- `trips_unit_select`
+- `trips_volume_input`
+- `trips_loading_input`
+- `trips_loading_radius_input`
+- `trips_unloading_input`
+- `trips_unloading_radius_input`
+- `trips_next_button`
+
+### Calendar
+
+- `calendar_next_month_button`
+
+### Usage
+
+- `usage_active_transport_card`
+
+## Migratsiya checkpoint
+
+- Global Add menu: `data-testid`ga o'tkazilgan va regression testlardan o'tgan.
+- Logout flow: `global_logout_menu_item` va `global_logout_confirm_button` strict ishlatyapti.
+- Loads search/filter: search input/button va filter panel `data-testid` bilan tekshirilmoqda.
+- Place Bid form: carrier flowda `bid_place_open_button`, `bid_form_*` strict ishlatyapti.
+- Usage sahifa: asosiy cardlar `usage_*_card` bilan tekshirilmoqda.
+- `scripts/data_testid_audit.py` live DOM coverage gate sifatida qo'shildi.
 
 ---
 

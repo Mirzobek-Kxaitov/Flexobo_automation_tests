@@ -23,14 +23,14 @@ ROLES = ["broker", "load_owner", "carrier", "owner_operator"]
 
 # Free plan metrika kartalari va ularning limitlari (UI ko'rsatkichi)
 FREE_PLAN_LIMITS = [
-    ("Bids placed", "/ 20"),
-    ("Bookings", "/ 5"),
-    ("Contacts viewed", "/ Unlimited"),
-    ("Team members", "/ Unlimited"),
-    ("Storage used", "/ Unlimited"),
-    ("Fleet size", "/ 5"),
-    ("Company roles", "/ 1"),
-    ("Company employees", "/ 2"),
+    ("usage_bids_placed_card", "/ 20"),
+    ("usage_bookings_card", "/ 5"),
+    ("usage_contacts_viewed_card", "/ Unlimited"),
+    ("usage_team_members_card", "/ Unlimited"),
+    ("usage_storage_used_card", "/ Unlimited"),
+    ("usage_fleet_size_card", "/ 5"),
+    ("usage_company_roles_card", "/ 1"),
+    ("usage_company_employees_card", "/ 2"),
 ]
 
 
@@ -50,10 +50,7 @@ def test_usage_page_accessible(request, role: str):
     """Usage sahifasi har 4 rol uchun ochiladi."""
     page: Page = request.getfixturevalue(f"logged_in_{role}")
     _open_usage(page)
-    # Sahifa sarlavhasi va subtitle ko'rinishi kerak
-    expect(
-        page.get_by_text("Monitor your subscription usage and limits")
-    ).to_be_visible(timeout=10000)
+    expect(page.get_by_test_id("usage_page")).to_be_visible(timeout=10000)
 
 
 @allure.feature("Usage")
@@ -61,9 +58,9 @@ def test_usage_page_accessible(request, role: str):
 def test_current_plan_is_free(free_broker: Page):
     """Test foydalanuvchi Free planda ekanligini ko'rsatishi kerak."""
     _open_usage(free_broker)
-    expect(
-        free_broker.get_by_text("Current plan: Free")
-    ).to_be_visible(timeout=10000)
+    expect(free_broker.get_by_test_id("usage_current_plan_label")).to_contain_text(
+        "Free", timeout=10000
+    )
 
 
 @allure.feature("Usage")
@@ -71,9 +68,9 @@ def test_current_plan_is_free(free_broker: Page):
 def test_upgrade_plan_button_visible(logged_in_broker: Page):
     """'Upgrade plan' tugmasi ko'rinadi (Free plan'dan yuqorilash imkoniyati)."""
     _open_usage(logged_in_broker)
-    expect(
-        logged_in_broker.get_by_text("Upgrade plan").first
-    ).to_be_visible(timeout=10000)
+    expect(logged_in_broker.get_by_test_id("usage_upgrade_plan_button")).to_be_visible(
+        timeout=10000
+    )
 
 
 @allure.feature("Usage")
@@ -84,10 +81,6 @@ def test_free_plan_metric_with_limit(
 ):
     """Har bir metrika kartasi label va Free plan limit qiymatini ko'rsatishi kerak."""
     _open_usage(free_broker)
-    card = (
-        free_broker.locator("div")
-        .filter(has_text=metric)
-        .filter(has_text=limit)
-        .first
-    )
+    card = free_broker.get_by_test_id(metric)
     expect(card).to_be_visible(timeout=10000)
+    expect(card).to_contain_text(limit)

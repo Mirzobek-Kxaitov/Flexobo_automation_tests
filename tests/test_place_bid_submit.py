@@ -24,8 +24,8 @@ def _open_bid_form(page: Page):
     page.get_by_text("Be first").first.click()
     page.wait_for_timeout(2500)
 
-    page.get_by_role("button", name="Place a bid").first.click()
-    page.wait_for_timeout(2500)
+    page.get_by_test_id("bid_place_open_button").click()
+    expect(page.get_by_test_id("bid_form_container")).to_be_visible()
 
 
 @allure.feature("Place a Bid")
@@ -39,10 +39,7 @@ def test_empty_bid_form_blocks_submit(logged_in_carrier: Page):
     _open_bid_form(page)
 
     # Hech nima to'ldirmaymiz
-    # Form'da 2 ta "Place a bid" tugma: birinchi ochish, ikkinchi submit.
-    # Submit tugmasi — oxirgi yoki .nth(-1) bo'lishi mumkin. Lekin first allaqachon bosildi.
-    # Force click — disabled bo'lsa ham
-    submit_btn = page.get_by_role("button", name="Place a bid").last
+    submit_btn = page.get_by_test_id("bid_form_submit_button")
     submit_btn.click(force=True, timeout=5000)
     page.wait_for_timeout(2000)
 
@@ -60,11 +57,10 @@ def test_cancel_button_closes_bid_form(logged_in_carrier: Page):
     _open_bid_form(page)
 
     # Cancel bossa textarea yo'qoladi
-    note_locator = page.get_by_placeholder("Why is your offer better than others?")
+    note_locator = page.get_by_test_id("bid_form_note_input")
     expect(note_locator).to_be_visible()
 
-    page.get_by_role("button", name="Cancel").first.click()
-    page.wait_for_timeout(1500)
+    page.get_by_test_id("bid_form_cancel_button").click()
 
     expect(note_locator).not_to_be_visible(timeout=5000)
 
@@ -78,7 +74,7 @@ def test_bid_form_note_accepts_input(logged_in_carrier: Page):
     page = logged_in_carrier
     _open_bid_form(page)
 
-    note = page.get_by_placeholder("Why is your offer better than others?")
+    note = page.get_by_test_id("bid_form_note_input")
     note.fill("Test bid from carrier")
 
     expect(note).to_have_value("Test bid from carrier")

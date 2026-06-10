@@ -35,9 +35,7 @@ def test_add_menu_item_visibility(request, role: str, menu_item: str):
     }
 
     page.get_by_test_id("global_add_button").click()
-    item = page.get_by_test_id(item_test_ids[menu_item]).or_(
-        page.get_by_role("menuitem", name=menu_item)
-    ).first
+    item = page.get_by_test_id(item_test_ids[menu_item])
 
     if should_be_visible:
         expect(item).to_be_visible()

@@ -24,7 +24,9 @@ def _open_usage(page: Page) -> None:
     """Sidebar orqali Usage sahifasiga o'tish."""
     page.goto(f"{APP_URL}/profile/root")
     page.wait_for_timeout(2000)
-    page.get_by_text("Usage", exact=True).first.click()
+    page.get_by_test_id("sidebar_usage_link").or_(
+        page.get_by_text("Usage", exact=True)
+    ).first.click()
     page.wait_for_timeout(3000)
 
 
@@ -34,12 +36,7 @@ def _read_bids_placed_count(page: Page) -> int:
     Free plan format: 'X / 20', funksiya X ni qaytaradi.
     """
     _open_usage(page)
-    card = (
-        page.locator("div")
-        .filter(has_text="Bids placed")
-        .filter(has_text="/ 20")
-        .first
-    )
+    card = page.get_by_test_id("usage_bids_placed_card")
     text = card.inner_text(timeout=10000)
     match = re.search(r"(\d+)\s*/\s*20", text)
     assert match, f"'Bids placed' formatda son topilmadi. Card matni:\n{text}"
@@ -52,21 +49,21 @@ def _place_one_bid(page: Page) -> None:
     page.wait_for_load_state("domcontentloaded")
     page.wait_for_timeout(3000)
 
-    # Select first available load
-    page.locator("div").filter(has_text=re.compile(r"USD.*Fixed rate")).first.click()
+    # Select a load that does not have bids yet, so the bid form is available.
+    page.get_by_text("Be first").first.click()
     page.wait_for_timeout(2500)
 
     # Open bid form
-    page.get_by_role("button", name="Place a bid").first.click()
-    page.wait_for_timeout(2500)
+    page.get_by_test_id("bid_place_open_button").click()
+    page.get_by_test_id("bid_form_container").wait_for(timeout=10000)
 
-    note = page.get_by_role("textbox", name="Why is your offer better than")
+    note = page.get_by_test_id("bid_form_note_input")
     if note.is_visible(timeout=2000):
         note.fill("Counter increment test bid")
         page.wait_for_timeout(500)
 
     # Submit
-    page.get_by_role("button", name="Place a bid").last.click()
+    page.get_by_test_id("bid_form_submit_button").click()
     page.wait_for_timeout(5000)
 
 

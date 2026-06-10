@@ -31,6 +31,7 @@ def test_search_form_visible(request, role: str):
     expect(page.get_by_test_id("loads_search_from_input")).to_be_visible()
     expect(page.get_by_test_id("loads_search_to_input")).to_be_visible()
     expect(page.get_by_test_id("loads_search_button")).to_be_visible()
+    expect(page.get_by_test_id("loads_filter_button")).to_be_visible()
 
 
 @allure.feature("Loads search")
@@ -65,14 +66,6 @@ def test_filter_button_opens_panel(logged_in_broker: Page):
     page.wait_for_timeout(3000)
 
     page.get_by_test_id("loads_filter_button").click()
-    page.wait_for_timeout(1500)
-
-    # Filter panel ochilganini tasdiqlash uchun, masalan, "Weight" yoki "Reset" yoki
-    # boshqa filter element ko'rinishini kutamiz. "Reset" / "Apply" / "Weight" — biror biri bo'lishi kerak.
-    indicators = ["Weight", "Reset", "Apply", "Body type", "Cargo type"]
-    found = False
-    for word in indicators:
-        if page.get_by_text(word, exact=False).count() > 0:
-            found = True
-            break
-    assert found, "Filter panel ochilmagan ko'rinadi (Weight/Reset/Apply/Body type/Cargo type topilmadi)"
+    expect(page.get_by_test_id("loads_filter_panel")).to_be_visible()
+    expect(page.get_by_test_id("loads_filter_apply_button")).to_be_visible()
+    expect(page.get_by_test_id("loads_filter_reset_button")).to_be_visible()

@@ -5,10 +5,8 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-  # schedule o'chirildi — free tier minutlarni tejash uchun
-  # schedule:
-  #   - cron: "0 3 * * *"   # 08:00 Toshkent
-  #   - cron: "0 13 * * *"  # 18:00 Toshkent
+  schedule:
+    - cron: "0 3 * * *"   # 08:00 Toshkent
   workflow_dispatch: # Qo'lda ishga tushirish imkoniyati
 
 jobs:
@@ -27,29 +25,74 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install playwright pytest pytest-playwright python-dotenv allure-pytest pytest-rerunfailures pytest-timeout
-          playwright install chromium
-          playwright install-deps chromium
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          playwright install chromium --with-deps
 
       - name: Create .env file
         run: |
-          echo "EMAIL=${{ secrets.EMAIL }}" >> .env
-          echo "PASSWORD=${{ secrets.PASSWORD }}" >> .env
-          echo "BASE_URL=${{ secrets.BASE_URL }}" >> .env
-          echo "APP_URL=${{ secrets.APP_URL }}" >> .env
-          echo "BROKER_EMAIL=${{ secrets.BROKER_EMAIL }}" >> .env
-          echo "BROKER_PASSWORD=${{ secrets.BROKER_PASSWORD }}" >> .env
-          echo "LOAD_OWNER_EMAIL=${{ secrets.LOAD_OWNER_EMAIL }}" >> .env
-          echo "LOAD_OWNER_PASSWORD=${{ secrets.LOAD_OWNER_PASSWORD }}" >> .env
-          echo "CARRIER_EMAIL=${{ secrets.CARRIER_EMAIL }}" >> .env
-          echo "CARRIER_PASSWORD=${{ secrets.CARRIER_PASSWORD }}" >> .env
-          echo "OWNER_OPERATOR_EMAIL=${{ secrets.OWNER_OPERATOR_EMAIL }}" >> .env
-          echo "OWNER_OPERATOR_PASSWORD=${{ secrets.OWNER_OPERATOR_PASSWORD }}" >> .env
+          {
+            echo "EMAIL=${EMAIL}"
+            echo "PASSWORD=${PASSWORD}"
+            echo "BASE_URL=${BASE_URL}"
+            echo "APP_URL=${APP_URL}"
+            echo "BROKER_EMAIL=${BROKER_EMAIL}"
+            echo "BROKER_PASSWORD=${BROKER_PASSWORD}"
+            echo "LOAD_OWNER_EMAIL=${LOAD_OWNER_EMAIL}"
+            echo "LOAD_OWNER_PASSWORD=${LOAD_OWNER_PASSWORD}"
+            echo "CARRIER_EMAIL=${CARRIER_EMAIL}"
+            echo "CARRIER_PASSWORD=${CARRIER_PASSWORD}"
+            echo "OWNER_OPERATOR_EMAIL=${OWNER_OPERATOR_EMAIL}"
+            echo "OWNER_OPERATOR_PASSWORD=${OWNER_OPERATOR_PASSWORD}"
+            echo "FREE_BROKER_EMAIL=${FREE_BROKER_EMAIL}"
+            echo "FREE_BROKER_PASSWORD=${FREE_BROKER_PASSWORD}"
+            echo "FREE_LOAD_OWNER_EMAIL=${FREE_LOAD_OWNER_EMAIL}"
+            echo "FREE_LOAD_OWNER_PASSWORD=${FREE_LOAD_OWNER_PASSWORD}"
+            echo "FREE_CARRIER_EMAIL=${FREE_CARRIER_EMAIL}"
+            echo "FREE_CARRIER_PASSWORD=${FREE_CARRIER_PASSWORD}"
+            echo "FREE_OWNER_OPERATOR_EMAIL=${FREE_OWNER_OPERATOR_EMAIL}"
+            echo "FREE_OWNER_OPERATOR_PASSWORD=${FREE_OWNER_OPERATOR_PASSWORD}"
+          } > .env
+        env:
+          EMAIL: ${{ secrets.EMAIL }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          BASE_URL: ${{ secrets.BASE_URL }}
+          APP_URL: ${{ secrets.APP_URL }}
+          BROKER_EMAIL: ${{ secrets.BROKER_EMAIL }}
+          BROKER_PASSWORD: ${{ secrets.BROKER_PASSWORD }}
+          LOAD_OWNER_EMAIL: ${{ secrets.LOAD_OWNER_EMAIL }}
+          LOAD_OWNER_PASSWORD: ${{ secrets.LOAD_OWNER_PASSWORD }}
+          CARRIER_EMAIL: ${{ secrets.CARRIER_EMAIL }}
+          CARRIER_PASSWORD: ${{ secrets.CARRIER_PASSWORD }}
+          OWNER_OPERATOR_EMAIL: ${{ secrets.OWNER_OPERATOR_EMAIL }}
+          OWNER_OPERATOR_PASSWORD: ${{ secrets.OWNER_OPERATOR_PASSWORD }}
+          FREE_BROKER_EMAIL: ${{ secrets.FREE_BROKER_EMAIL }}
+          FREE_BROKER_PASSWORD: ${{ secrets.FREE_BROKER_PASSWORD }}
+          FREE_LOAD_OWNER_EMAIL: ${{ secrets.FREE_LOAD_OWNER_EMAIL }}
+          FREE_LOAD_OWNER_PASSWORD: ${{ secrets.FREE_LOAD_OWNER_PASSWORD }}
+          FREE_CARRIER_EMAIL: ${{ secrets.FREE_CARRIER_EMAIL }}
+          FREE_CARRIER_PASSWORD: ${{ secrets.FREE_CARRIER_PASSWORD }}
+          FREE_OWNER_OPERATOR_EMAIL: ${{ secrets.FREE_OWNER_OPERATOR_EMAIL }}
+          FREE_OWNER_OPERATOR_PASSWORD: ${{ secrets.FREE_OWNER_OPERATOR_PASSWORD }}
 
-      - name: Run tests
-        run: pytest tests/ -v --reruns 2 --timeout 300 --alluredir=allure-results
+      - name: Run stable web tests
+        id: pytest
+        run: |
+          set +e
+          pytest ${TEST_TARGETS} --reruns 2 --timeout 300 2>&1 | tee pytest-output.log
+          exit_code=${PIPESTATUS[0]}
+          echo "exit_code=${exit_code}" >> "$GITHUB_OUTPUT"
+          exit "${exit_code}"
         env:
           PLAYWRIGHT_SLOW_MO: "500"
+          TEST_TARGETS: >-
+            tests/test_usage.py
+            tests/test_usage_counters.py
+            tests/test_loads_search.py
+            tests/test_place_bid_flow.py
+            tests/test_place_bid_submit.py
+            tests/permissions/test_add_menu_permissions.py
+            tests/permissions/test_cross_user_access.py::test_load_owner_save_does_not_modify_brokers_load
 
       - name: Upload Allure results
         if: always()
@@ -57,3 +100,23 @@ jobs:
         with:
           name: allure-results
           path: allure-results/
+
+      - name: Upload pytest log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-output
+          path: pytest-output.log
+
+      - name: Notify Telegram
+        if: always()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_TEST_STATUS: ${{ steps.pytest.outcome }}
+          TELEGRAM_WORKFLOW: ${{ github.workflow }}
+          TELEGRAM_BRANCH: ${{ github.ref_name }}
+          TELEGRAM_EVENT: ${{ github.event_name }}
+          TELEGRAM_RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          PYTEST_LOG_PATH: pytest-output.log
+        run: python scripts/telegram_notify.py

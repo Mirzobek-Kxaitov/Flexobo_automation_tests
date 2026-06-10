@@ -23,12 +23,8 @@ class ProfilePage:
         self.fleet_menu_item = page.get_by_role("menuitem", name="Fleet")
         self.my_trips_item = page.get_by_test_id("sidebar_my_trips_link")
         self.my_trips_menu_item = page.get_by_role("menuitem", name="My trips")
-        self.logout_item = page.get_by_test_id("global_logout_menu_item").or_(
-            page.get_by_role("menuitem", name="Logout")
-        ).first
-        self.confirm_yes_button = page.get_by_test_id("global_logout_confirm_button").or_(
-            page.get_by_text("Yes")
-        ).first
+        self.logout_item = page.get_by_test_id("global_logout_menu_item")
+        self.confirm_yes_button = page.get_by_test_id("global_logout_confirm_button")
     
     def open_menu(self):
         self.dropdown_menu_trigger.click()

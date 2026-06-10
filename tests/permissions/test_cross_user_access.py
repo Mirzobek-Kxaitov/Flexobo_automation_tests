@@ -45,12 +45,8 @@ def _login(page: Page, email: str, password: str):
 def _logout(page: Page):
     """Profile dropdown orqali logout."""
     page.get_by_test_id("global_user_menu_button").click()
-    page.get_by_test_id("global_logout_menu_item").or_(
-        page.get_by_role("menuitem", name="Logout")
-    ).first.click()
-    page.get_by_test_id("global_logout_confirm_button").or_(
-        page.get_by_text("Yes")
-    ).first.click()
+    page.get_by_test_id("global_logout_menu_item").click()
+    page.get_by_test_id("global_logout_confirm_button").click()
     expect(page).to_have_url(re.compile(r"sign-in|landing"), timeout=10000)
 
 

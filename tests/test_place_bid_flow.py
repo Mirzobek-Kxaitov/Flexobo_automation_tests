@@ -53,7 +53,7 @@ def test_load_detail_shows_place_a_bid_button(logged_in_carrier: Page):
     page.get_by_text("Be first").first.click()
     page.wait_for_timeout(2500)
 
-    expect(page.get_by_role("button", name="Place a bid").first).to_be_visible(timeout=10000)
+    expect(page.get_by_test_id("bid_place_open_button")).to_be_visible(timeout=10000)
 
 
 @allure.feature("Place a Bid")
@@ -71,17 +71,9 @@ def test_clicking_place_a_bid_opens_form(logged_in_carrier: Page):
     page.get_by_text("Be first").first.click()
     page.wait_for_timeout(2500)
 
-    page.get_by_role("button", name="Place a bid").first.click()
-    page.wait_for_timeout(2500)
+    page.get_by_test_id("bid_place_open_button").click()
 
-    # Bid form indikatorlardan biri ko'rinishi kerak
-    indicators = ["Propose", "Your price", "Send bid", "Submit", "Counter offer", "Bid amount"]
-    found_indicator = None
-    for word in indicators:
-        if page.get_by_text(word, exact=False).count() > 0:
-            found_indicator = word
-            break
-
-    assert found_indicator, (
-        f"Bid form ochilmagan ko'rinadi. Hech qaysi indikator topilmadi: {indicators}"
-    )
+    expect(page.get_by_test_id("bid_form_container")).to_be_visible()
+    expect(page.get_by_test_id("bid_form_note_input")).to_be_visible()
+    expect(page.get_by_test_id("bid_form_date_button")).to_be_visible()
+    expect(page.get_by_test_id("bid_form_submit_button")).to_be_visible()

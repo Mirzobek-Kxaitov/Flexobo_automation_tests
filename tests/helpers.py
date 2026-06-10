@@ -10,6 +10,14 @@ from dotenv import load_dotenv
 load_dotenv()
 APP_URL = os.getenv("APP_URL")
 
+USAGE_CARD_TEST_IDS = {
+    "Bids placed": "usage_bids_placed_card",
+    "Bookings": "usage_bookings_card",
+    "Fleet size": "usage_fleet_size_card",
+    "Company roles": "usage_company_roles_card",
+    "Company employees": "usage_company_employees_card",
+}
+
 
 def dismiss_cookie_banner(page: Page) -> None:
     """Dismiss cookie consent banner if visible."""
@@ -48,12 +56,16 @@ def read_usage_counter(page: Page, label: str, limit: int) -> int:
         page.get_by_text("Usage", exact=True)
     ).first.click()
     page.wait_for_timeout(3000)
-    card = (
-        page.locator("div")
-        .filter(has_text=label)
-        .filter(has_text=f"/ {limit}")
-        .first
-    )
+    test_id = USAGE_CARD_TEST_IDS.get(label)
+    if test_id:
+        card = page.get_by_test_id(test_id)
+    else:
+        card = (
+            page.locator("div")
+            .filter(has_text=label)
+            .filter(has_text=f"/ {limit}")
+            .first
+        )
     text = card.inner_text(timeout=10000)
     match = re.search(rf"(\d+)\s*/\s*{limit}", text)
     assert match, f"'{label}' counter not found in card text:\n{text}"

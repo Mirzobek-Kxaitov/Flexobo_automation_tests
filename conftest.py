@@ -37,8 +37,18 @@ FREE_CARRIER_PASSWORD = os.getenv("FREE_CARRIER_PASSWORD")
 FREE_OWNER_OPERATOR_EMAIL = os.getenv("FREE_OWNER_OPERATOR_EMAIL")
 FREE_OWNER_OPERATOR_PASSWORD = os.getenv("FREE_OWNER_OPERATOR_PASSWORD")
 
+LOGIN_TIMEOUT_MS = int(os.getenv("LOGIN_TIMEOUT_MS", "30000"))
 
-def _login_as(page: Page, email: str, password: str) -> Page:
+
+def _required_env(name: str, value: str | None) -> str:
+    if value:
+        return value
+    raise AssertionError(
+        f"{name} is required but empty. Add it to local .env and GitHub repository secrets."
+    )
+
+
+def _login_as(page: Page, email: str | None, password: str | None, label: str) -> Page:
     """Log in with the given email and password.
 
     After login the site redirects to /loads or /profile/root depending on
@@ -46,11 +56,18 @@ def _login_as(page: Page, email: str, password: str) -> Page:
     URL no longer contains /sign-in.
     """
     import re
-    page.goto(f"{APP_URL}/sign-in?lang=en")
+
+    app_url = _required_env("APP_URL", APP_URL).rstrip("/")
+    if not email or not password:
+        raise AssertionError(
+            f"{label} credentials are missing. Check local .env and GitHub repository secrets."
+        )
+
+    page.goto(f"{app_url}/sign-in?lang=en")
     page.get_by_test_id("login_email_input").fill(email)
     page.get_by_test_id("login_password_input").fill(password)
     page.get_by_test_id("login_submit_button").click()
-    expect(page).not_to_have_url(re.compile(r".*sign-in.*"), timeout=15000)
+    expect(page).not_to_have_url(re.compile(r".*sign-in.*"), timeout=LOGIN_TIMEOUT_MS)
 
     accept_button = page.get_by_test_id("global_cookie_accept_button")
     if accept_button.is_visible():
@@ -59,7 +76,7 @@ def _login_as(page: Page, email: str, password: str) -> Page:
     return page
 
 
-def _logged_in_page(browser, browser_context_args, email, password):
+def _logged_in_page(browser, browser_context_args, email, password, label):
     """Create a separate browser context and log in.
 
     Multi-user tests require isolated contexts so that two fixtures do not
@@ -68,7 +85,7 @@ def _logged_in_page(browser, browser_context_args, email, password):
     """
     context = browser.new_context(**browser_context_args)
     page = context.new_page()
-    _login_as(page, email, password)
+    _login_as(page, email, password, label)
     return context, page
 
 
@@ -90,14 +107,14 @@ def reset_usage_if_requested(request):
 @pytest.fixture
 def open_page(page: Page):
     """Open the login page without performing a login."""
-    page.goto(f"{APP_URL}/sign-in?lang=en")
+    page.goto(f"{_required_env('APP_URL', APP_URL).rstrip('/')}/sign-in?lang=en")
     return page
 
 
 @pytest.fixture
 def logged_in(browser, browser_context_args):
     """Log in as broker using the legacy EMAIL/PASSWORD credentials."""
-    context, page = _logged_in_page(browser, browser_context_args, EMAIL, PASSWORD)
+    context, page = _logged_in_page(browser, browser_context_args, EMAIL, PASSWORD, "EMAIL/PASSWORD")
     yield page
     context.close()
 
@@ -105,7 +122,9 @@ def logged_in(browser, browser_context_args):
 @pytest.fixture
 def logged_in_broker(browser, browser_context_args):
     """Log in as broker in an isolated browser context."""
-    context, page = _logged_in_page(browser, browser_context_args, BROKER_EMAIL, BROKER_PASSWORD)
+    context, page = _logged_in_page(
+        browser, browser_context_args, BROKER_EMAIL, BROKER_PASSWORD, "BROKER_EMAIL/BROKER_PASSWORD"
+    )
     yield page
     context.close()
 
@@ -113,7 +132,13 @@ def logged_in_broker(browser, browser_context_args):
 @pytest.fixture
 def logged_in_load_owner(browser, browser_context_args):
     """Log in as load owner in an isolated browser context."""
-    context, page = _logged_in_page(browser, browser_context_args, LOAD_OWNER_EMAIL, LOAD_OWNER_PASSWORD)
+    context, page = _logged_in_page(
+        browser,
+        browser_context_args,
+        LOAD_OWNER_EMAIL,
+        LOAD_OWNER_PASSWORD,
+        "LOAD_OWNER_EMAIL/LOAD_OWNER_PASSWORD",
+    )
     yield page
     context.close()
 
@@ -121,7 +146,9 @@ def logged_in_load_owner(browser, browser_context_args):
 @pytest.fixture
 def logged_in_carrier(browser, browser_context_args):
     """Log in as carrier in an isolated browser context."""
-    context, page = _logged_in_page(browser, browser_context_args, CARRIER_EMAIL, CARRIER_PASSWORD)
+    context, page = _logged_in_page(
+        browser, browser_context_args, CARRIER_EMAIL, CARRIER_PASSWORD, "CARRIER_EMAIL/CARRIER_PASSWORD"
+    )
     yield page
     context.close()
 
@@ -129,7 +156,13 @@ def logged_in_carrier(browser, browser_context_args):
 @pytest.fixture
 def logged_in_owner_operator(browser, browser_context_args):
     """Log in as owner operator in an isolated browser context."""
-    context, page = _logged_in_page(browser, browser_context_args, OWNER_OPERATOR_EMAIL, OWNER_OPERATOR_PASSWORD)
+    context, page = _logged_in_page(
+        browser,
+        browser_context_args,
+        OWNER_OPERATOR_EMAIL,
+        OWNER_OPERATOR_PASSWORD,
+        "OWNER_OPERATOR_EMAIL/OWNER_OPERATOR_PASSWORD",
+    )
     yield page
     context.close()
 
@@ -138,28 +171,52 @@ def logged_in_owner_operator(browser, browser_context_args):
 
 @pytest.fixture
 def free_broker(browser, browser_context_args):
-    context, page = _logged_in_page(browser, browser_context_args, FREE_BROKER_EMAIL, FREE_BROKER_PASSWORD)
+    context, page = _logged_in_page(
+        browser,
+        browser_context_args,
+        FREE_BROKER_EMAIL,
+        FREE_BROKER_PASSWORD,
+        "FREE_BROKER_EMAIL/FREE_BROKER_PASSWORD",
+    )
     yield page
     context.close()
 
 
 @pytest.fixture
 def free_load_owner(browser, browser_context_args):
-    context, page = _logged_in_page(browser, browser_context_args, FREE_LOAD_OWNER_EMAIL, FREE_LOAD_OWNER_PASSWORD)
+    context, page = _logged_in_page(
+        browser,
+        browser_context_args,
+        FREE_LOAD_OWNER_EMAIL,
+        FREE_LOAD_OWNER_PASSWORD,
+        "FREE_LOAD_OWNER_EMAIL/FREE_LOAD_OWNER_PASSWORD",
+    )
     yield page
     context.close()
 
 
 @pytest.fixture
 def free_carrier(browser, browser_context_args):
-    context, page = _logged_in_page(browser, browser_context_args, FREE_CARRIER_EMAIL, FREE_CARRIER_PASSWORD)
+    context, page = _logged_in_page(
+        browser,
+        browser_context_args,
+        FREE_CARRIER_EMAIL,
+        FREE_CARRIER_PASSWORD,
+        "FREE_CARRIER_EMAIL/FREE_CARRIER_PASSWORD",
+    )
     yield page
     context.close()
 
 
 @pytest.fixture
 def free_owner_operator(browser, browser_context_args):
-    context, page = _logged_in_page(browser, browser_context_args, FREE_OWNER_OPERATOR_EMAIL, FREE_OWNER_OPERATOR_PASSWORD)
+    context, page = _logged_in_page(
+        browser,
+        browser_context_args,
+        FREE_OWNER_OPERATOR_EMAIL,
+        FREE_OWNER_OPERATOR_PASSWORD,
+        "FREE_OWNER_OPERATOR_EMAIL/FREE_OWNER_OPERATOR_PASSWORD",
+    )
     yield page
     context.close()
 
@@ -167,5 +224,5 @@ def free_owner_operator(browser, browser_context_args):
 @pytest.fixture
 def landing_page(page: Page):
     """Open the landing page without logging in."""
-    page.goto(BASE_URL, wait_until="domcontentloaded")
+    page.goto(_required_env("BASE_URL", BASE_URL), wait_until="domcontentloaded")
     return page
