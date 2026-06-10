@@ -5,3 +5,4 @@ __pycache__/
 allure-results/
 qa-artifacts/
 .venv/
+.auth/
