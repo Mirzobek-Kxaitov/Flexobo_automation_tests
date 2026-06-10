@@ -124,6 +124,8 @@ jobs:
       - name: Deploy to GitHub Pages
         if: always()
         run: |
+          cp scripts/telegram_notify.py /tmp/telegram_notify.py
+          cp pytest-output.log /tmp/pytest-output.log 2>/dev/null || true
           cp -r allure-report/history history-backup 2>/dev/null || true
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
@@ -135,6 +137,8 @@ jobs:
           git add -A
           git commit -m "Allure Report #${{ github.run_number }}"
           git push origin gh-pages-tmp:gh-pages --force
+          cp /tmp/telegram_notify.py telegram_notify.py
+          cp /tmp/pytest-output.log pytest-output.log 2>/dev/null || true
 
       - name: Upload Allure results
         if: always()
@@ -162,4 +166,4 @@ jobs:
           TELEGRAM_RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           ALLURE_REPORT_URL: https://mirzobek-kxaitov.github.io/Flexobo_automation_tests/
           PYTEST_LOG_PATH: pytest-output.log
-        run: python scripts/telegram_notify.py
+        run: python telegram_notify.py
