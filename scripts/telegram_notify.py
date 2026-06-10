@@ -65,10 +65,13 @@ def build_message() -> str:
         lines.append("Failed tests:")
         lines.extend(f"- {failure}" for failure in failures)
 
-    if run_url:
+    allure_url = os.getenv("ALLURE_REPORT_URL", "")
+    if allure_url:
         lines.append("")
-        lines.append(f"Run: {run_url}")
-        lines.append("Artifacts: open the run and download allure-results")
+        lines.append(f"Allure Report: {allure_url}")
+
+    if run_url:
+        lines.append(f"GitHub Run: {run_url}")
 
     message = "\n".join(lines)
     return message[:3900]

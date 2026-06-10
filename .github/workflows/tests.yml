@@ -14,6 +14,9 @@ on:
         required: false
         default: ""
 
+permissions:
+  contents: write
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -100,6 +103,39 @@ jobs:
             tests/permissions/test_add_menu_permissions.py
             tests/permissions/test_cross_user_access.py::test_load_owner_save_does_not_modify_brokers_load' }}
 
+      - name: Get Allure history from gh-pages
+        if: always()
+        run: |
+          git fetch origin gh-pages --depth=1 || true
+          if git rev-parse --verify origin/gh-pages >/dev/null 2>&1; then
+            git checkout origin/gh-pages -- history/ 2>/dev/null || true
+            if [ -d history ]; then
+              mkdir -p allure-results/history
+              cp -r history/* allure-results/history/
+            fi
+          fi
+
+      - name: Generate Allure report
+        if: always()
+        run: |
+          npm install -g allure-commandline
+          allure generate allure-results -o allure-report --clean
+
+      - name: Deploy to GitHub Pages
+        if: always()
+        run: |
+          cp -r allure-report/history history-backup 2>/dev/null || true
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git checkout --orphan gh-pages-tmp
+          git rm -rf . 2>/dev/null || true
+          cp -r allure-report/* .
+          mkdir -p history
+          cp -r history-backup/* history/ 2>/dev/null || true
+          git add -A
+          git commit -m "Allure Report #${{ github.run_number }}"
+          git push origin gh-pages-tmp:gh-pages --force
+
       - name: Upload Allure results
         if: always()
         uses: actions/upload-artifact@v4
@@ -124,5 +160,6 @@ jobs:
           TELEGRAM_BRANCH: ${{ github.ref_name }}
           TELEGRAM_EVENT: ${{ github.event_name }}
           TELEGRAM_RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          ALLURE_REPORT_URL: https://mirzobek-kxaitov.github.io/Flexobo_automation_tests/
           PYTEST_LOG_PATH: pytest-output.log
         run: python scripts/telegram_notify.py
