@@ -71,10 +71,7 @@ def test_load_owner_save_does_not_modify_brokers_load(page: Page):
     # 2. Edit URL'ni saqlaymiz
     page.goto(f"{APP_URL}/profile-load")
     page.wait_for_load_state("domcontentloaded")
-    page.wait_for_timeout(2000)
-    page.get_by_role("button").nth(4).click()
-    page.wait_for_timeout(500)
-    page.get_by_role("menuitem", name="Change").click()
+    LoadsPage(page).click_change_on_first_load()
     expect(page).to_have_url(re.compile(r".*/loads/[a-f0-9-]+/edit.*"), timeout=10000)
     brokers_edit_url = page.url
 
@@ -189,11 +186,7 @@ def test_load_owner_save_does_not_modify_brokers_trip(page: Page):
     # 2. Edit URL saqlaymiz
     page.goto(f"{APP_URL}/profile-trips")
     page.wait_for_load_state("domcontentloaded")
-    page.wait_for_timeout(2000)
-    page.get_by_role("button").nth(4).click()
-    page.wait_for_timeout(500)
-    page.get_by_role("menuitem", name="Change").click()
-    page.wait_for_timeout(2000)
+    TripsPage(page).click_change_on_first_trip()
     brokers_trip_edit_url = page.url
 
     # 3. Switch to LoadOwner

@@ -142,8 +142,8 @@ class TripsPage:
         if actions.count() > index:
             actions.nth(index).click()
         else:
+            # Fallback: testid bo'lmaganda pozitsion selektor (frontend'ga testid qo'shilganda o'chirish)
             self.page.get_by_role("button").nth(4 + index).click()
-        self.page.wait_for_timeout(500)
         return self
 
     def click_change_on_first_trip(self):
