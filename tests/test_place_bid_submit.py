@@ -27,10 +27,11 @@ def _open_bid_form(page: Page, price: int):
     load_card = page.get_by_text(price_pattern).first
     expect(load_card).to_be_visible(timeout=20000)
     load_card.click()
-    page.wait_for_timeout(2500)
 
-    page.get_by_test_id("bid_place_open_button").click()
-    expect(page.get_by_test_id("bid_form_container")).to_be_visible()
+    bid_btn = page.get_by_test_id("bid_place_open_button")
+    expect(bid_btn).to_be_visible(timeout=10000)
+    bid_btn.click()
+    expect(page.get_by_test_id("bid_form_container")).to_be_visible(timeout=10000)
 
 
 @allure.feature("Place a Bid")

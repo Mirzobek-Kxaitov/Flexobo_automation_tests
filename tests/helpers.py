@@ -24,7 +24,6 @@ def dismiss_cookie_banner(page: Page) -> None:
     btn = page.get_by_test_id("global_cookie_accept_button")
     if btn.is_visible(timeout=1000):
         btn.click(force=True)
-        page.wait_for_timeout(500)
 
 
 def pick_future_date(page: Page) -> None:
@@ -32,30 +31,22 @@ def pick_future_date(page: Page) -> None:
     page.get_by_test_id("calendar_next_month_button").or_(
         page.get_by_role("button", name="Next month")
     ).first.click()
-    page.wait_for_timeout(300)
-    page.locator(
+    day_cell = page.locator(
         "td[role='gridcell']:not([data-outside='true']) button:not([disabled])"
-    ).first.click()
-    page.wait_for_timeout(300)
+    ).first
+    expect(day_cell).to_be_visible(timeout=5000)
+    day_cell.click()
 
 
 def read_usage_counter(page: Page, label: str, limit: int) -> int:
-    """Read a usage counter value from the Usage tab in profile.
-
-    Args:
-        page: Playwright page object (logged-in user).
-        label: Counter card label, e.g. "Bids placed", "Fleet size".
-        limit: Expected plan limit shown on the card (e.g. 3).
-
-    Returns:
-        Current counter value as int.
-    """
-    page.goto(f"{APP_URL}/profile/root")
-    page.wait_for_timeout(2000)
-    page.get_by_test_id("sidebar_usage_link").or_(
+    """Read a usage counter value from the Usage tab in profile."""
+    page.goto(f"{APP_URL}/profile/root", wait_until="domcontentloaded")
+    usage_link = page.get_by_test_id("sidebar_usage_link").or_(
         page.get_by_text("Usage", exact=True)
-    ).first.click()
-    page.wait_for_timeout(3000)
+    ).first
+    expect(usage_link).to_be_visible(timeout=10000)
+    usage_link.click()
+
     test_id = USAGE_CARD_TEST_IDS.get(label)
     if test_id:
         card = page.get_by_test_id(test_id)
@@ -79,16 +70,12 @@ def navigate_to_loads(page: Page) -> None:
     ).first
     if not load_nav.is_visible():
         page.goto(f"{APP_URL}/loads", wait_until="domcontentloaded")
-        page.wait_for_function(
-            "() => document.body.innerText.trim().length > 50",
-            timeout=15000,
-        )
     else:
         load_nav.click()
-        page.wait_for_function(
-            "() => document.body.innerText.trim().length > 50",
-            timeout=15000,
-        )
+    page.wait_for_function(
+        "() => document.body.innerText.trim().length > 50",
+        timeout=15000,
+    )
 
 
 def navigate_to_transport(page: Page) -> None:
@@ -100,17 +87,14 @@ def navigate_to_transport(page: Page) -> None:
         transport_nav.click()
     else:
         page.goto(f"{APP_URL}/transport", wait_until="domcontentloaded")
-    page.wait_for_timeout(5000)
-    if page.locator("body").inner_text(timeout=3000).strip() == "":
-        page.reload(wait_until="domcontentloaded")
-        page.wait_for_timeout(5000)
+    page.wait_for_function(
+        "() => document.body.innerText.trim().length > 50",
+        timeout=15000,
+    )
 
 
 def create_load(load_owner: Page, price: int) -> None:
     """Create a load as load_owner with the given price.
-
-    Fills route (Tashkent -> Denain), load type, weight,
-    transport type, and publishes.
 
     Form steps (2025-06 layout):
       Step 1: Route + load type + weight + date
@@ -155,22 +139,14 @@ def create_load(load_owner: Page, price: int) -> None:
     publish_btn = load_owner.get_by_test_id("loads_publish_button")
     if publish_btn.is_visible(timeout=5000):
         publish_btn.click()
-    else:
-        # Ba'zi layoutlarda oxirgi "Next" to'g'ridan-to'g'ri publish qiladi
-        pass
-    load_owner.wait_for_timeout(3000)
+    expect(load_owner).not_to_have_url(re.compile(r".*/create.*"), timeout=15000)
+
     # Keyingi load yaratish uchun sahifani tozalash
     load_owner.goto(f"{APP_URL}/loads", wait_until="domcontentloaded")
-    load_owner.wait_for_timeout(2000)
 
 
 def place_bid_on_load(bidder: Page, price: int) -> None:
-    """Find a load by price on /loads and place a bid.
-
-    Args:
-        bidder: Playwright page for the bidding user (carrier / OO).
-        price: The unique price used to identify the load card.
-    """
+    """Find a load by price on /loads and place a bid."""
     navigate_to_loads(bidder)
 
     thousands = price // 1000
@@ -179,24 +155,26 @@ def place_bid_on_load(bidder: Page, price: int) -> None:
     load_card = bidder.get_by_text(price_pattern).first
     expect(load_card).to_be_visible(timeout=20000)
     load_card.click()
-    bidder.wait_for_timeout(1500)
 
-    bidder.get_by_test_id("bid_place_open_button").or_(
+    bid_btn = bidder.get_by_test_id("bid_place_open_button").or_(
         bidder.get_by_role("button", name="Place a bid")
-    ).first.click()
-    bidder.wait_for_timeout(2000)
+    ).first
+    expect(bid_btn).to_be_visible(timeout=10000)
+    bid_btn.click()
 
     dismiss_cookie_banner(bidder)
 
-    bidder.get_by_test_id("bid_form_date_button").or_(
+    date_btn = bidder.get_by_test_id("bid_form_date_button").or_(
         bidder.get_by_role("button", name="Date")
-    ).first.click()
+    ).first
+    expect(date_btn).to_be_visible(timeout=10000)
+    date_btn.click()
     pick_future_date(bidder)
 
-    bidder.get_by_test_id("bid_form_submit_button").or_(
+    submit_btn = bidder.get_by_test_id("bid_form_submit_button").or_(
         bidder.get_by_role("button", name="Place a bid")
-    ).last.click()
-    bidder.wait_for_timeout(3000)
+    ).last
+    submit_btn.click()
 
     # Detect bid limit modal
     limit_modal = bidder.get_by_text("Limit reached")
@@ -219,95 +197,84 @@ def create_load_and_place_bid(
 
 
 def add_trailer(page: Page, index: int, prefix: str = "TRL") -> None:
-    """Add a trailer in Fleet > Trailers tab.
+    """Add a trailer in Fleet > Trailers tab."""
+    page.goto(f"{APP_URL}/tms/fleet", wait_until="domcontentloaded")
 
-    Args:
-        page: Logged-in page with fleet access.
-        index: Unique index for gov number.
-        prefix: Gov number prefix (default "TRL").
-    """
-    page.goto(f"{APP_URL}/tms/fleet")
-    page.wait_for_load_state("domcontentloaded")
-    page.wait_for_timeout(3000)
+    trailers_tab = page.get_by_test_id("fleet_trailers_tab")
+    expect(trailers_tab).to_be_visible(timeout=10000)
+    trailers_tab.click()
 
-    page.get_by_test_id("fleet_trailers_tab").click()
-    page.wait_for_timeout(1000)
+    add_btn = page.get_by_test_id("fleet_add_trailer_button")
+    expect(add_btn).to_be_visible(timeout=10000)
+    add_btn.click()
 
-    page.get_by_test_id("fleet_add_trailer_button").click()
-    page.wait_for_timeout(2000)
-
-    page.get_by_test_id("fleet_country_select").click()
+    country_select = page.get_by_test_id("fleet_country_select")
+    expect(country_select).to_be_visible(timeout=10000)
+    country_select.click()
     page.get_by_role("option", name="United Arab Emirates").click()
-    page.wait_for_timeout(500)
 
     page.get_by_test_id("fleet_gov_number_input").click()
     page.get_by_test_id("fleet_gov_number_input").fill(f"{prefix}-{index:03d}")
-    page.wait_for_timeout(500)
 
     page.get_by_test_id("fleet_trailer_type_select").click()
     page.get_by_role("option", name="Trailer 1").click()
-    page.wait_for_timeout(500)
 
     page.get_by_test_id("fleet_year_select").click()
     page.get_by_role("option", name="2018").click()
-    page.wait_for_timeout(500)
 
     page.get_by_test_id("fleet_form_submit_button").click()
-    page.wait_for_timeout(3000)
+    page.wait_for_timeout(2000)
 
 
 def create_role(page: Page, name: str) -> None:
     """Create a company role in Profile > Roles tab."""
-    page.goto(f"{APP_URL}/profile/root")
-    page.wait_for_load_state("domcontentloaded")
-    page.wait_for_timeout(2000)
+    page.goto(f"{APP_URL}/profile/root", wait_until="domcontentloaded")
 
-    page.get_by_test_id("profile_roles_tab").click()
-    page.wait_for_timeout(1500)
+    roles_tab = page.get_by_test_id("profile_roles_tab")
+    expect(roles_tab).to_be_visible(timeout=10000)
+    roles_tab.click()
 
-    page.get_by_test_id("roles_create_button").click()
-    page.wait_for_timeout(1500)
+    create_btn = page.get_by_test_id("roles_create_button")
+    expect(create_btn).to_be_visible(timeout=10000)
+    create_btn.click()
 
-    page.get_by_test_id("roles_name_input").or_(
+    name_input = page.get_by_test_id("roles_name_input").or_(
         page.get_by_role("textbox", name="Role name")
-    ).first.click()
-    page.get_by_test_id("roles_name_input").or_(
-        page.get_by_role("textbox", name="Role name")
-    ).first.fill(name)
-    page.wait_for_timeout(500)
+    ).first
+    expect(name_input).to_be_visible(timeout=10000)
+    name_input.click()
+    name_input.fill(name)
 
     page.get_by_test_id("roles_submit_button").or_(
         page.get_by_role("button", name="Create role")
     ).first.click()
-    page.wait_for_timeout(3000)
+    page.wait_for_timeout(2000)
 
 
 def invite_employee(page: Page, index: int, prefix: str = "emp") -> None:
     """Invite an employee in Profile > Users tab."""
-    page.goto(f"{APP_URL}/profile/root")
-    page.wait_for_load_state("domcontentloaded")
-    page.wait_for_timeout(2000)
+    page.goto(f"{APP_URL}/profile/root", wait_until="domcontentloaded")
 
-    page.get_by_test_id("profile_users_tab").click()
-    page.wait_for_timeout(1500)
+    users_tab = page.get_by_test_id("profile_users_tab")
+    expect(users_tab).to_be_visible(timeout=10000)
+    users_tab.click()
 
-    page.get_by_test_id("users_invite_button").click()
-    page.wait_for_timeout(1500)
+    invite_btn = page.get_by_test_id("users_invite_button")
+    expect(invite_btn).to_be_visible(timeout=10000)
+    invite_btn.click()
 
-    page.get_by_test_id("users_invite_email_input").or_(
+    email_input = page.get_by_test_id("users_invite_email_input").or_(
         page.get_by_role("textbox", name="Phone or Email")
-    ).first.fill(
-        f"{prefix}_{index}@test.com"
-    )
-    page.wait_for_timeout(500)
+    ).first
+    expect(email_input).to_be_visible(timeout=10000)
+    email_input.fill(f"{prefix}_{index}@test.com")
 
     page.get_by_test_id("users_invite_role_select").or_(
         page.get_by_role("combobox", name="Role")
     ).first.click()
     page.get_by_role("option").first.click()
-    page.wait_for_timeout(500)
 
     page.get_by_test_id("users_send_invitation_button").or_(
         page.get_by_role("button", name="Send Invitation")
     ).first.click()
-    page.wait_for_timeout(3000)
+    page.wait_for_timeout(2000)
