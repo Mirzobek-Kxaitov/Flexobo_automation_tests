@@ -29,7 +29,7 @@ CARRIER_PASSWORD = os.getenv("CARRIER_PASSWORD")
 OWNER_OPERATOR_EMAIL = os.getenv("OWNER_OPERATOR_EMAIL")
 OWNER_OPERATOR_PASSWORD = os.getenv("OWNER_OPERATOR_PASSWORD")
 
-# FREE plan users (limit testlar uchun)
+# FREE plan users (for limit enforcement tests)
 FREE_BROKER_EMAIL = os.getenv("FREE_BROKER_EMAIL")
 FREE_BROKER_PASSWORD = os.getenv("FREE_BROKER_PASSWORD")
 FREE_LOAD_OWNER_EMAIL = os.getenv("FREE_LOAD_OWNER_EMAIL")
@@ -112,7 +112,7 @@ def _clean_auth_cache():
         shutil.rmtree(_STATE_DIR)
     _STATE_DIR.mkdir(exist_ok=True)
     yield
-    # Session tugaganda tozalash
+    # Cleanup at end of session
     if _STATE_DIR.exists():
         shutil.rmtree(_STATE_DIR)
 
@@ -186,7 +186,7 @@ def logged_in_owner_operator(browser, browser_context_args):
     context.close()
 
 
-# === FREE plan fixtures (limit testlar uchun) ===
+# === FREE plan fixtures (for limit enforcement tests) ===
 
 @pytest.fixture
 def free_broker(browser, browser_context_args):
@@ -242,10 +242,10 @@ def _load_owner_context(browser, browser_context_args):
 @pytest.fixture
 def fresh_load_for_bid(_load_owner_context):
     """Load owner creates a fresh load, returns unique price for carrier to find it."""
-    import random
-    from tests.helpers import create_load
+    import time
+    from helpers import create_load
 
-    price = random.randint(1000, 9999)
+    price = int(time.time()) % 9000 + 1000
     create_load(_load_owner_context, price)
     return price
 

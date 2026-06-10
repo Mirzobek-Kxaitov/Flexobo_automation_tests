@@ -42,7 +42,7 @@ def test_actor_places_bid_and_sees_in_my_bids(request, bidder_role: str):
     limit_modal = page.get_by_text("Limit reached")
     if limit_modal.is_visible(timeout=3000):
         page.get_by_role("button", name="Maybe later").click()
-        pytest.skip(f"{bidder_role} bid limit reached")
+        pytest.fail(f"{bidder_role} bid limit reached — run reset_usage.py")
 
     page.goto(f"{APP_URL}/my-bids", wait_until="domcontentloaded")
     page.wait_for_function(

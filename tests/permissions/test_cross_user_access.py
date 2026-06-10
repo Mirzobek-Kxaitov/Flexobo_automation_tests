@@ -96,18 +96,18 @@ def test_load_owner_save_does_not_modify_brokers_load(page: Page):
             loads.publish()
         page.wait_for_timeout(3000)
 
-    # 5. Broker'ga qaytib tekshirish
+    # 5. Switch back to broker and verify
     _switch_user(page, BROKER_EMAIL, BROKER_PASSWORD)
     page.goto(f"{APP_URL}/profile-load")
     page.wait_for_load_state("domcontentloaded")
     page.wait_for_timeout(3000)
 
-    # POZITIV KONTROL: sahifa yuklangan va original data ko'rinadi
+    # POSITIVE: page loaded with actual content
     page_text = page.locator("body").inner_text(timeout=10000)
     assert len(page_text.strip()) > 50, \
         f"Profile-load sahifasi bo'sh yoki yuklanmadi: {page_text[:200]}"
 
-    # NEGATIV: HACK_WEIGHT broker'ning yuklarida YO'Q bo'lishi kerak
+    # NEGATIVE: HACK_WEIGHT must NOT appear in broker's loads
     expect(page.get_by_text(HACK_WEIGHT).first).not_to_be_visible(timeout=5000)
 
 
@@ -140,17 +140,17 @@ def test_load_owner_does_not_see_brokers_loads_in_list(page: Page):
     # 2. Switch to LoadOwner
     _switch_user(page, LOAD_OWNER_EMAIL, LOAD_OWNER_PASSWORD)
 
-    # 3. My Loads sahifasiga o'tish
+    # 3. Navigate to My Loads
     page.goto(f"{APP_URL}/profile-load")
     page.wait_for_load_state("domcontentloaded")
     page.wait_for_timeout(3000)
 
-    # POZITIV KONTROL: sahifa yuklangan
+    # POSITIVE: page loaded with content
     page_text = page.locator("body").inner_text(timeout=10000)
     assert len(page_text.strip()) > 50, \
         f"Profile-load sahifasi bo'sh yoki yuklanmadi: {page_text[:200]}"
 
-    # NEGATIV: Broker yaratgan yuk LoadOwner ro'yxatida ko'rinmasligi kerak
+    # NEGATIVE: broker's load must NOT appear in load_owner's list
     expect(page.get_by_text(UNIQUE_PRICE).first).not_to_be_visible(timeout=5000)
 
 
@@ -206,16 +206,16 @@ def test_load_owner_save_does_not_modify_brokers_trip(page: Page):
         trips.click_next()
         page.wait_for_timeout(3000)
 
-    # 5. Broker'ga qaytib tekshirish
+    # 5. Switch back to broker and verify
     _switch_user(page, BROKER_EMAIL, BROKER_PASSWORD)
     page.goto(f"{APP_URL}/profile-trips")
     page.wait_for_load_state("domcontentloaded")
     page.wait_for_timeout(3000)
 
-    # POZITIV KONTROL: sahifa yuklangan va ma'lumot bor
+    # POSITIVE: page loaded with content va ma'lumot bor
     page_text = page.locator("body").inner_text(timeout=10000)
     assert len(page_text.strip()) > 50, \
         f"Profile-trips sahifasi bo'sh yoki yuklanmadi: {page_text[:200]}"
 
-    # NEGATIV: HACK_PRICE broker'ning trip'larida YO'Q bo'lishi kerak
+    # NEGATIVE: HACK_PRICE must NOT appear in broker's trips
     expect(page.get_by_text(HACK_PRICE).first).not_to_be_visible(timeout=5000)

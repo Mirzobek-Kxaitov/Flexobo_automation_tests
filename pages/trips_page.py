@@ -13,12 +13,9 @@ class TripsPage:
     LIST_URL = f"{APP_URL}/trips"
 
     def __init__(self, page: Page):
-
-
-
         self.page = page
-        
-        self.cookie_accept_button = self.page.get_by_test_id("global_cookie_accept_button")
+
+        self.cookie_accept_button = page.get_by_test_id("global_cookie_accept_button")
 
         self.transport_combobox = (
             page.get_by_test_id("trips_transport_select")
@@ -42,11 +39,11 @@ class TripsPage:
             .first
         )
 
-        self.transport_tab = self.page.get_by_test_id("loads_tab_transport_button").or_(
-            self.page.get_by_role("tab", name="Transport")
+        self.transport_tab = page.get_by_test_id("loads_tab_transport_button").or_(
+            page.get_by_role("tab", name="Transport")
         ).first
 
-        self.next_button = self.page.get_by_test_id("trips_next_button")
+        self.next_button = page.get_by_test_id("trips_next_button")
 
         self.confirm_delete_button = (
             page.get_by_test_id("trips_delete_confirm_button")
@@ -54,72 +51,69 @@ class TripsPage:
             .first
         )
 
-
-    def open_create_trip_form(self):
-        self.page.goto(self.CREATE_URL)
+    def open_create_trip_form(self) -> "TripsPage":
+        self.page.goto(self.CREATE_URL, wait_until="domcontentloaded")
         return self
-    
-    def accept_cookies_if_visible(self):
+
+    def accept_cookies_if_visible(self) -> "TripsPage":
         if self.cookie_accept_button.is_visible():
             self.cookie_accept_button.click()
         return self
-    
-    def select_transport(self, name):
+
+    def select_transport(self, name: str) -> "TripsPage":
         self.transport_combobox.click()
         self.page.get_by_role("option", name=name).click()
         return self
 
-    def select_lifting_capacity(self, capacity="tons"):
+    def select_lifting_capacity(self, capacity: str = "tons") -> "TripsPage":
         self.unit_combobox.click()
         self.page.get_by_role("option", name=capacity).click()
         return self
-    
 
-    def fill_volume(self, volume):
+    def fill_volume(self, volume: int) -> "TripsPage":
         self.volume_input.fill(str(volume))
         return self
-    
-    def fill_loading(self, city,suggestion):
+
+    def fill_loading(self, city: str, suggestion: str) -> "TripsPage":
         self.loading_input.fill(city)
         self.page.get_by_text(suggestion).first.click()
         return self
-    
-    def fill_loading_radius(self, radius):
+
+    def fill_loading_radius(self, radius: int) -> "TripsPage":
         self.loading_radius_input.fill(str(radius))
-        return self     
-    
-    def fill_unloading(self, city, suggestion):
+        return self
+
+    def fill_unloading(self, city: str, suggestion: str) -> "TripsPage":
         self.unloading_input.fill(city)
         self.page.get_by_text(suggestion).first.click()
         return self
-    
-    def fill_unloading_radius(self,radius):
+
+    def fill_unloading_radius(self, radius: int) -> "TripsPage":
         self.unloading_radius_input.fill(str(radius))
         return self
 
-    def click_next(self):
+    def click_next(self) -> "TripsPage":
         self.next_button.click()
         return self
 
-    def fill_price(self, price):
+    def fill_price(self, price) -> "TripsPage":
         self.price_input.fill(str(price))
         return self
 
-    def click_transport_tab(self):
-        # Broker'da success ekranda "Transport" tab bor — bosamiz.
-        # Carrier/OwnerOperator'da yo'q (avto-redirect) — o'tkazib yuboramiz.
+    def click_transport_tab(self) -> "TripsPage":
         if self.transport_tab.is_visible():
             self.transport_tab.click()
         return self
 
-    def go_to_trips_list(self):
-        self.page.goto(self.LIST_URL)
+    def go_to_trips_list(self) -> "TripsPage":
+        self.page.goto(self.LIST_URL, wait_until="domcontentloaded")
         return self
-    
 
-    def create_trip(self, transport, volume, loading_city, loading_suggestion,
-                    loading_radius, unloading_city, unloading_suggestion,
-                    unloading_radius, price, lifting_capacity="tons"):
+    def create_trip(self, transport: str, volume: int, loading_city: str,
+                    loading_suggestion: str, loading_radius: int,
+                    unloading_city: str, unloading_suggestion: str,
+                    unloading_radius: int, price: int,
+                    lifting_capacity: str = "tons") -> "TripsPage":
         self.open_create_trip_form()
         self.accept_cookies_if_visible()
         self.select_transport(transport)
@@ -133,49 +127,46 @@ class TripsPage:
         self.click_next()
         self.fill_price(price)
         self.click_next()
-        self.page.wait_for_timeout(3000)
+        expect(self.page).not_to_have_url(self.CREATE_URL, timeout=15000)
         return self
 
-    def _open_trip_menu(self, index=0):
-        """Open the 3-dot dropdown menu on a trip card by index."""
+    def _open_trip_menu(self, index: int = 0) -> "TripsPage":
+        """Open 3-dot menu on a trip card. Uses data-testid, falls back to positional."""
         actions = self.page.locator("[data-testid^='trips_trip_actions_button_']")
         if actions.count() > index:
             actions.nth(index).click()
         else:
-            # Fallback: testid bo'lmaganda pozitsion selektor (frontend'ga testid qo'shilganda o'chirish)
             self.page.get_by_role("button").nth(4 + index).click()
         return self
 
-    def click_change_on_first_trip(self):
+    def click_change_on_first_trip(self) -> "TripsPage":
         self._open_trip_menu(0)
-        self.page.get_by_role("menuitem", name="Change").click()
-        self.page.wait_for_timeout(2000)
+        change_item = self.page.get_by_role("menuitem", name="Change")
+        expect(change_item).to_be_visible(timeout=5000)
+        change_item.click()
         return self
 
-    def edit_trip(self, price):
-        """Edit the first trip — only change price."""
+    def edit_trip(self, price) -> "TripsPage":
         self.click_change_on_first_trip()
         self.click_next()
         self.fill_price(price)
         self.click_next()
         return self
 
-    def delete_first_trip(self):
-        """Delete the first trip via 3-dot menu."""
+    def delete_first_trip(self) -> "TripsPage":
         self._open_trip_menu(0)
-        self.page.get_by_role("menuitem", name="Delete").click()
-        self.page.wait_for_timeout(1000)
+        delete_item = self.page.get_by_role("menuitem", name="Delete")
+        expect(delete_item).to_be_visible(timeout=5000)
+        delete_item.click()
         self.confirm_delete_button.click()
-        self.page.wait_for_timeout(2000)
         return self
 
-    def expect_on_trips_page(self):
+    def expect_on_trips_page(self) -> "TripsPage":
         expect(self.page).to_have_url(f"{APP_URL}/profile-trips")
         return self
 
-    def expect_trip_in_list(self, price, city, transport):
-        self.page.goto(f"{APP_URL}/profile-trips")
-        self.page.wait_for_timeout(3000)
+    def expect_trip_in_list(self, price: str, city: str, transport: str) -> "TripsPage":
+        self.page.goto(f"{APP_URL}/profile-trips", wait_until="domcontentloaded")
         expect(self.page.get_by_text(price).first).to_be_visible(timeout=10000)
         expect(self.page.get_by_text(city).first).to_be_visible()
         expect(self.page.get_by_text(transport).first).to_be_visible()

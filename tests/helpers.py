@@ -10,6 +10,13 @@ from dotenv import load_dotenv
 load_dotenv()
 APP_URL = os.getenv("APP_URL")
 
+def price_regex(price: int) -> re.Pattern:
+    """USD price formatiga mos regex: 12345 → r'USD[\\s]+12[,\\s]345'"""
+    thousands = price // 1000
+    remainder = price % 1000
+    return re.compile(rf"USD[\s]+{thousands}[,\s]{remainder:03d}(?!\d)")
+
+
 USAGE_CARD_TEST_IDS = {
     "Bids placed": "usage_bids_placed_card",
     "Bookings": "usage_bookings_card",
@@ -141,7 +148,7 @@ def create_load(load_owner: Page, price: int) -> None:
         publish_btn.click()
     expect(load_owner).not_to_have_url(re.compile(r".*/create.*"), timeout=15000)
 
-    # Keyingi load yaratish uchun sahifani tozalash
+    # Navigate away so the next create_load starts clean
     load_owner.goto(f"{APP_URL}/loads", wait_until="domcontentloaded")
 
 
@@ -149,10 +156,7 @@ def place_bid_on_load(bidder: Page, price: int) -> None:
     """Find a load by price on /loads and place a bid."""
     navigate_to_loads(bidder)
 
-    thousands = price // 1000
-    remainder = price % 1000
-    price_pattern = re.compile(rf"USD[\s]+{thousands}[,\s]{remainder:03d}")
-    load_card = bidder.get_by_text(price_pattern).first
+    load_card = bidder.get_by_text(price_regex(price)).first
     expect(load_card).to_be_visible(timeout=20000)
     load_card.click()
 
@@ -182,7 +186,7 @@ def place_bid_on_load(bidder: Page, price: int) -> None:
         bidder.get_by_test_id("limit_modal_maybe_later_button").or_(
             bidder.get_by_role("button", name="Maybe later")
         ).first.click()
-        pytest.skip("Carrier daily bid limit reached — reset the account or run tomorrow")
+        pytest.fail("Bid limit reached — run reset_usage.py or use --reset-usage flag")
 
     bidder.wait_for_timeout(2000)
 

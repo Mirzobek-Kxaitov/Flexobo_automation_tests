@@ -1,47 +1,37 @@
 """
 Place a Bid — form submit testlari (Phase 2).
-
-Carrier bid form'ni to'ldirib submit qiladi.
 Har bir test o'z load'ini yaratadi (test isolation).
 """
 import os
 import re
 import allure
-import pytest
 from playwright.sync_api import Page, expect
 from dotenv import load_dotenv
+from helpers import price_regex
+from pages.bid_form_page import BidFormPage
 
 load_dotenv()
 APP_URL = os.getenv("APP_URL")
 
 
-def _open_bid_form(page: Page, price: int):
-    """Load owner yaratgan loadni topib bid form'ni ochadi."""
+def _open_bid_form(page: Page, price: int) -> BidFormPage:
     page.goto(f"{APP_URL}/loads", wait_until="domcontentloaded")
-
-    thousands = price // 1000
-    remainder = price % 1000
-    price_pattern = re.compile(rf"USD[\s]+{thousands}[,\s]{remainder:03d}")
-    load_card = page.get_by_text(price_pattern).first
+    load_card = page.get_by_text(price_regex(price)).first
     expect(load_card).to_be_visible(timeout=20000)
     load_card.click()
 
-    bid_btn = page.get_by_test_id("bid_place_open_button")
-    expect(bid_btn).to_be_visible(timeout=10000)
-    bid_btn.click()
-    expect(page.get_by_test_id("bid_form_container")).to_be_visible(timeout=10000)
+    bid = BidFormPage(page)
+    bid.open_form()
+    return bid
 
 
 @allure.feature("Place a Bid")
 @allure.story("Bid form: empty submit blocks (validation)")
 def test_empty_bid_form_blocks_submit(logged_in_carrier: Page, fresh_load_for_bid: int):
     page = logged_in_carrier
-    _open_bid_form(page, fresh_load_for_bid)
+    bid = _open_bid_form(page, fresh_load_for_bid)
 
-    submit_btn = page.get_by_test_id("bid_form_submit_button")
-    submit_btn.click(force=True, timeout=5000)
-
-    # Submit ishlamagan bo'lsa, sahifa hali detail URL'da qolishi kerak
+    bid.submit_button.click(force=True, timeout=5000)
     expect(page).to_have_url(re.compile(r".*/loads/[a-f0-9-]{36}$"), timeout=5000)
 
 
@@ -49,23 +39,15 @@ def test_empty_bid_form_blocks_submit(logged_in_carrier: Page, fresh_load_for_bi
 @allure.story("Bid form: cancel button closes form")
 def test_cancel_button_closes_bid_form(logged_in_carrier: Page, fresh_load_for_bid: int):
     page = logged_in_carrier
-    _open_bid_form(page, fresh_load_for_bid)
-
-    note_locator = page.get_by_test_id("bid_form_note_input")
-    expect(note_locator).to_be_visible()
-
-    page.get_by_test_id("bid_form_cancel_button").click()
-
-    expect(note_locator).not_to_be_visible(timeout=5000)
+    bid = _open_bid_form(page, fresh_load_for_bid)
+    expect(bid.note_input).to_be_visible()
+    bid.cancel()
 
 
 @allure.feature("Place a Bid")
 @allure.story("Bid form: note textarea accepts input")
 def test_bid_form_note_accepts_input(logged_in_carrier: Page, fresh_load_for_bid: int):
     page = logged_in_carrier
-    _open_bid_form(page, fresh_load_for_bid)
-
-    note = page.get_by_test_id("bid_form_note_input")
-    note.fill("Test bid from carrier")
-
-    expect(note).to_have_value("Test bid from carrier")
+    bid = _open_bid_form(page, fresh_load_for_bid)
+    bid.fill_note("Test bid from carrier")
+    expect(bid.note_input).to_have_value("Test bid from carrier")

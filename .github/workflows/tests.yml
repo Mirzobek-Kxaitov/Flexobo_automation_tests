@@ -6,11 +6,11 @@ on:
   pull_request:
     branches: [main]
   schedule:
-    - cron: "0 3 * * *"   # 08:00 Toshkent
+    - cron: "0 3 * * *"
   workflow_dispatch:
     inputs:
       test_targets:
-        description: "Test fayllar (bo'sh = default stable pack)"
+        description: "Override test targets (empty = all suites)"
         required: false
         default: ""
 
@@ -18,26 +18,107 @@ permissions:
   contents: write
 
 jobs:
-  test:
+  reset:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
-
+    timeout-minutes: 5
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
-      - name: Install dependencies
+      - run: |
+          pip install -r requirements.txt
+          playwright install chromium --with-deps
+      - name: Create .env
         run: |
-          python -m pip install --upgrade pip
+          {
+            echo "ADMIN_URL=${ADMIN_URL}"
+            echo "ADMIN_EMAIL=${ADMIN_EMAIL}"
+            echo "ADMIN_PASSWORD=${ADMIN_PASSWORD}"
+            echo "BROKER_EMAIL=${BROKER_EMAIL}"
+            echo "BROKER_PASSWORD=${BROKER_PASSWORD}"
+            echo "LOAD_OWNER_EMAIL=${LOAD_OWNER_EMAIL}"
+            echo "LOAD_OWNER_PASSWORD=${LOAD_OWNER_PASSWORD}"
+            echo "CARRIER_EMAIL=${CARRIER_EMAIL}"
+            echo "CARRIER_PASSWORD=${CARRIER_PASSWORD}"
+            echo "OWNER_OPERATOR_EMAIL=${OWNER_OPERATOR_EMAIL}"
+            echo "OWNER_OPERATOR_PASSWORD=${OWNER_OPERATOR_PASSWORD}"
+            echo "FREE_BROKER_EMAIL=${FREE_BROKER_EMAIL}"
+            echo "FREE_BROKER_PASSWORD=${FREE_BROKER_PASSWORD}"
+            echo "FREE_LOAD_OWNER_EMAIL=${FREE_LOAD_OWNER_EMAIL}"
+            echo "FREE_LOAD_OWNER_PASSWORD=${FREE_LOAD_OWNER_PASSWORD}"
+            echo "FREE_CARRIER_EMAIL=${FREE_CARRIER_EMAIL}"
+            echo "FREE_CARRIER_PASSWORD=${FREE_CARRIER_PASSWORD}"
+            echo "FREE_OWNER_OPERATOR_EMAIL=${FREE_OWNER_OPERATOR_EMAIL}"
+            echo "FREE_OWNER_OPERATOR_PASSWORD=${FREE_OWNER_OPERATOR_PASSWORD}"
+            echo "APP_URL=${APP_URL}"
+          } > .env
+        env:
+          ADMIN_URL: ${{ secrets.ADMIN_URL }}
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          BROKER_EMAIL: ${{ secrets.BROKER_EMAIL }}
+          BROKER_PASSWORD: ${{ secrets.BROKER_PASSWORD }}
+          LOAD_OWNER_EMAIL: ${{ secrets.LOAD_OWNER_EMAIL }}
+          LOAD_OWNER_PASSWORD: ${{ secrets.LOAD_OWNER_PASSWORD }}
+          CARRIER_EMAIL: ${{ secrets.CARRIER_EMAIL }}
+          CARRIER_PASSWORD: ${{ secrets.CARRIER_PASSWORD }}
+          OWNER_OPERATOR_EMAIL: ${{ secrets.OWNER_OPERATOR_EMAIL }}
+          OWNER_OPERATOR_PASSWORD: ${{ secrets.OWNER_OPERATOR_PASSWORD }}
+          FREE_BROKER_EMAIL: ${{ secrets.FREE_BROKER_EMAIL }}
+          FREE_BROKER_PASSWORD: ${{ secrets.FREE_BROKER_PASSWORD }}
+          FREE_LOAD_OWNER_EMAIL: ${{ secrets.FREE_LOAD_OWNER_EMAIL }}
+          FREE_LOAD_OWNER_PASSWORD: ${{ secrets.FREE_LOAD_OWNER_PASSWORD }}
+          FREE_CARRIER_EMAIL: ${{ secrets.FREE_CARRIER_EMAIL }}
+          FREE_CARRIER_PASSWORD: ${{ secrets.FREE_CARRIER_PASSWORD }}
+          FREE_OWNER_OPERATOR_EMAIL: ${{ secrets.FREE_OWNER_OPERATOR_EMAIL }}
+          FREE_OWNER_OPERATOR_PASSWORD: ${{ secrets.FREE_OWNER_OPERATOR_PASSWORD }}
+          APP_URL: ${{ secrets.APP_URL }}
+      - name: Reset usage counters
+        run: python scripts/reset_usage.py
+        continue-on-error: true
+
+  test:
+    needs: reset
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        suite:
+          - name: permissions
+            targets: tests/permissions/
+          - name: loads
+            targets: >-
+              tests/test_loads_search.py
+              tests/test_place_bid_flow.py
+              tests/test_place_bid_submit.py
+          - name: usage
+            targets: >-
+              tests/test_usage.py
+              tests/test_usage_counters.py
+          - name: e2e
+            targets: >-
+              tests/test_e2e_bid_lifecycle.py
+              tests/test_e2e_simple_bid_flow.py
+              tests/test_e2e_bid_accept_flow.py
+              tests/test_my_bids.py
+              tests/test_received_bids.py
+          - name: profile
+            targets: >-
+              tests/test_profile.py
+              tests/validation/
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
           pip install -r requirements.txt
           playwright install chromium --with-deps
 
-      - name: Create .env file
+      - name: Create .env
         run: |
           {
             echo "EMAIL=${EMAIL}"
@@ -89,32 +170,55 @@ jobs:
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
 
-      - name: Reset usage counters
-        run: python scripts/reset_usage.py
-        continue-on-error: true
-
-      - name: Run stable web tests
+      - name: "Run ${{ matrix.suite.name }} suite"
         id: pytest
         run: |
           set +e
-          pytest ${TEST_TARGETS} --reruns 2 --timeout 300 2>&1 | tee pytest-output.log
+          TARGETS="${{ github.event.inputs.test_targets || matrix.suite.targets }}"
+          pytest ${TARGETS} --reruns 2 --timeout 300 -v 2>&1 | tee pytest-output.log
           exit_code=${PIPESTATUS[0]}
           echo "exit_code=${exit_code}" >> "$GITHUB_OUTPUT"
           exit "${exit_code}"
         env:
           PLAYWRIGHT_SLOW_MO: "500"
-          TEST_TARGETS: >-
-            ${{ github.event.inputs.test_targets ||
-            'tests/test_usage.py
-            tests/test_usage_counters.py
-            tests/test_loads_search.py
-            tests/test_place_bid_flow.py
-            tests/test_place_bid_submit.py
-            tests/permissions/test_add_menu_permissions.py
-            tests/permissions/test_cross_user_access.py::test_load_owner_save_does_not_modify_brokers_load' }}
+
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-${{ matrix.suite.name }}
+          path: allure-results/
+
+      - name: Upload pytest log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-log-${{ matrix.suite.name }}
+          path: pytest-output.log
+
+  report:
+    needs: test
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all Allure results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: allure-results-*
+          path: allure-results
+          merge-multiple: true
+
+      - name: Download all pytest logs
+        uses: actions/download-artifact@v4
+        with:
+          pattern: pytest-log-*
+          path: pytest-logs
+          merge-multiple: true
 
       - name: Get Allure history from gh-pages
-        if: always()
         run: |
           git fetch origin gh-pages --depth=1 || true
           if git rev-parse --verify origin/gh-pages >/dev/null 2>&1; then
@@ -126,55 +230,34 @@ jobs:
           fi
 
       - name: Generate Allure report
-        if: always()
         run: |
           npm install -g allure-commandline
           allure generate allure-results -o allure-report --clean
 
       - name: Deploy to GitHub Pages
-        if: always()
         run: |
           cp scripts/telegram_notify.py /tmp/telegram_notify.py
-          cp pytest-output.log /tmp/pytest-output.log 2>/dev/null || true
-          cp -r allure-report/history history-backup 2>/dev/null || true
-          # Allure report fayllarini temp papkaga tayyorlab olish
+          cat pytest-logs/*.log > /tmp/pytest-output.log 2>/dev/null || true
           mkdir -p /tmp/gh-pages-deploy
           cp -r allure-report/* /tmp/gh-pages-deploy/
-          mkdir -p /tmp/gh-pages-deploy/history
-          cp -r history-backup/* /tmp/gh-pages-deploy/history/ 2>/dev/null || true
-          # Toza orphan branch yaratib, faqat report fayllarini qo'shish
+          cp -r allure-report/history /tmp/gh-pages-deploy/history 2>/dev/null || true
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git checkout --orphan gh-pages-tmp
           git rm -rf . 2>/dev/null || true
           cp -r /tmp/gh-pages-deploy/* .
-          rm -f .env pytest-output.log 2>/dev/null || true
+          rm -f .env 2>/dev/null || true
           git add -A
           git commit -m "Allure Report #${{ github.run_number }}"
           git push origin gh-pages-tmp:gh-pages --force
           cp /tmp/telegram_notify.py telegram_notify.py
           cp /tmp/pytest-output.log pytest-output.log 2>/dev/null || true
 
-      - name: Upload Allure results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-results
-          path: allure-results/
-
-      - name: Upload pytest log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: pytest-output
-          path: pytest-output.log
-
       - name: Notify Telegram
-        if: always()
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          TELEGRAM_TEST_STATUS: ${{ steps.pytest.outcome }}
+          TELEGRAM_TEST_STATUS: ${{ needs.test.result }}
           TELEGRAM_WORKFLOW: ${{ github.workflow }}
           TELEGRAM_BRANCH: ${{ github.ref_name }}
           TELEGRAM_EVENT: ${{ github.event_name }}

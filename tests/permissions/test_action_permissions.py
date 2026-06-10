@@ -15,7 +15,7 @@ APP_URL = os.getenv("APP_URL")
 
 
 # Real permission matritsasi:
-# True = ko'rinishi kerak, False = yashirin bo'lishi kerak
+# True = should be visible, False = should be hidden
 BUTTON_VISIBILITY = {
     "Update Password": {
         "broker": True, "load_owner": True, "carrier": True, "owner_operator": True,

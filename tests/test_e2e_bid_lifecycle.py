@@ -13,7 +13,7 @@ import allure
 from playwright.sync_api import Page, expect
 from dotenv import load_dotenv
 
-from helpers import create_load, place_bid_on_load
+from helpers import create_load, place_bid_on_load, price_regex
 
 load_dotenv()
 APP_URL = os.getenv("APP_URL")
@@ -35,9 +35,7 @@ def test_bid_lifecycle(
     bidder: Page = request.getfixturevalue(f"logged_in_{bidder_role}")
 
     price = random.randint(10000, 49999)
-    thousands = price // 1000
-    remainder = price % 1000
-    price_pattern = re.compile(rf"USD[\s]+{thousands}[,\s]{remainder:03d}")
+    price_pattern = price_regex(price)
 
     create_load(owner, price)
     place_bid_on_load(bidder, price)

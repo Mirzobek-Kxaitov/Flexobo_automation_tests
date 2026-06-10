@@ -15,11 +15,9 @@ class RolesPage:
     def __init__(self, page: Page):
         self.page = page
 
-        # Tabs
         self.roles_tab = page.get_by_test_id("profile_roles_tab")
         self.users_tab = page.get_by_test_id("profile_users_tab")
 
-        # Role form
         self.create_role_button = page.get_by_test_id("roles_create_button")
         self.role_name_input = page.get_by_test_id("roles_name_input").or_(
             page.get_by_role("textbox", name="Role name")
@@ -28,71 +26,59 @@ class RolesPage:
             page.get_by_role("button", name="Update Role")
         ).first
 
-        # Confirm dialogs
         self.confirm_delete_button = page.get_by_test_id("roles_delete_confirm_button").or_(
             page.get_by_role("button", name="Delete")
         ).first
 
-    # ── Navigation ──────────────────────────────────────────────
-
-    def go_to_roles(self):
-        self.page.goto(self.PROFILE_URL)
-        self.page.wait_for_load_state("domcontentloaded")
-        self.page.wait_for_timeout(2000)
+    def go_to_roles(self) -> "RolesPage":
+        self.page.goto(self.PROFILE_URL, wait_until="domcontentloaded")
+        expect(self.roles_tab).to_be_visible(timeout=10000)
         self.roles_tab.click()
-        self.page.wait_for_timeout(1500)
+        expect(self.create_role_button).to_be_visible(timeout=10000)
         return self
 
-    # ── CRUD ────────────────────────────────────────────────────
-
-    def _dismiss_cookie_banner(self):
+    def _dismiss_cookie_banner(self) -> "RolesPage":
         btn = self.page.get_by_test_id("global_cookie_accept_button")
         if btn.is_visible(timeout=1000):
             btn.click(force=True)
-            self.page.wait_for_timeout(500)
         return self
 
-    def create_role(self, name):
+    def create_role(self, name: str) -> "RolesPage":
         self.go_to_roles()
         self._dismiss_cookie_banner()
         self.create_role_button.click()
-        self.page.wait_for_timeout(1000)
+        expect(self.role_name_input).to_be_visible(timeout=10000)
         self.role_name_input.fill(name)
         self.update_role_button.click(force=True)
-        self.page.wait_for_timeout(3000)
+        expect(self.page.get_by_text(name).first).to_be_visible(timeout=10000)
         return self
 
-    def _get_role_card(self, name):
+    def _get_role_card(self, name: str):
         return self.page.locator("div").filter(has_text=re.compile(rf"^{re.escape(name)}")).first
 
-    def _open_role_delete(self, name):
-        """Click the delete (trash) button on a role card."""
+    def _open_role_delete(self, name: str) -> "RolesPage":
         card = self._get_role_card(name)
         delete_button = card.locator("[data-testid^='roles_delete_button_']")
         if delete_button.count() > 0:
             delete_button.first.click()
         else:
             card.locator("button[data-slot='alert-dialog-trigger']").click()
-        self.page.wait_for_timeout(500)
         return self
 
-    def delete_role(self, name):
+    def delete_role(self, name: str) -> "RolesPage":
         self.go_to_roles()
         self._open_role_delete(name)
         self.confirm_delete_button.click()
-        self.page.wait_for_timeout(2000)
         return self
 
-    # ── Assertions ──────────────────────────────────────────────
-
-    def expect_role_visible(self, name):
+    def expect_role_visible(self, name: str) -> "RolesPage":
         expect(self.page.get_by_text(name).first).to_be_visible(timeout=10000)
         return self
 
-    def expect_role_not_visible(self, name):
+    def expect_role_not_visible(self, name: str) -> "RolesPage":
         expect(self.page.get_by_text(name)).not_to_be_visible(timeout=10000)
         return self
 
-    def expect_on_roles_tab(self):
+    def expect_on_roles_tab(self) -> "RolesPage":
         expect(self.roles_tab).to_be_visible()
         return self

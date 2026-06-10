@@ -65,7 +65,7 @@ def test_load_owner_sees_carrier_bid_in_received_bids(
         limit_modal = carrier.get_by_text("Limit reached")
         if limit_modal.is_visible(timeout=3000):
             carrier.get_by_role("button", name="Maybe later").click()
-            pytest.skip("Carrier daily bid limit reached (3/3) — reset the account or run tomorrow")
+            pytest.fail("Bid limit reached — run reset_usage.py")
 
     with allure.step("Load owner navigates to Received bids via sidebar"):
         owner.goto(f"{APP_URL}/profile/root")
