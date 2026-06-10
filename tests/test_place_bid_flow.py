@@ -7,7 +7,7 @@ Carrier user'i (yuk topib bid yuboradigan) uchun:
 3. Detail sahifada "Place a bid" tugma visible
 4. "Place a bid" bosish → bid form same-page'da ochiladi
 
-Note: Bid yuborish (form to'ldirib submit) — bu Phase 2, alohida testda.
+Har bir test o'z load'ini yaratadi (test isolation).
 """
 import os
 import re
@@ -19,57 +19,44 @@ load_dotenv()
 APP_URL = os.getenv("APP_URL")
 
 
-@allure.feature("Place a Bid")
-@allure.story("Loads board → click load → detail page opens")
-def test_clicking_load_opens_detail_page(logged_in_carrier: Page):
-    """
-    Carrier /loads board'da yuk ustiga bossa, detail sahifa /loads/{uuid}
-    ochilishi kerak.
-    """
-    page = logged_in_carrier
+def _navigate_to_load(page: Page, price: int):
+    """Navigate to /loads and click on load with given price."""
     page.goto(f"{APP_URL}/loads")
     page.wait_for_load_state("domcontentloaded")
     page.wait_for_timeout(3000)
 
-    # Birinchi "Be first" link/element bossa, detail sahifa ochiladi
-    page.get_by_text("Be first").first.click()
+    thousands = price // 1000
+    remainder = price % 1000
+    price_pattern = re.compile(rf"USD[\s]+{thousands}[,\s]{remainder:03d}")
+    load_card = page.get_by_text(price_pattern).first
+    expect(load_card).to_be_visible(timeout=20000)
+    load_card.click()
     page.wait_for_timeout(2500)
 
-    # URL pattern: /loads/{uuid}
+
+@allure.feature("Place a Bid")
+@allure.story("Loads board → click load → detail page opens")
+def test_clicking_load_opens_detail_page(logged_in_carrier: Page, fresh_load_for_bid: int):
+    page = logged_in_carrier
+    _navigate_to_load(page, fresh_load_for_bid)
+
     expect(page).to_have_url(re.compile(r".*/loads/[a-f0-9-]{36}$"))
 
 
 @allure.feature("Place a Bid")
 @allure.story("Detail page shows Place a bid button")
-def test_load_detail_shows_place_a_bid_button(logged_in_carrier: Page):
-    """
-    Detail sahifada (boshqa user yuki) "Place a bid" tugma visible bo'lishi kerak.
-    """
+def test_load_detail_shows_place_a_bid_button(logged_in_carrier: Page, fresh_load_for_bid: int):
     page = logged_in_carrier
-    page.goto(f"{APP_URL}/loads")
-    page.wait_for_load_state("domcontentloaded")
-    page.wait_for_timeout(3000)
-
-    page.get_by_text("Be first").first.click()
-    page.wait_for_timeout(2500)
+    _navigate_to_load(page, fresh_load_for_bid)
 
     expect(page.get_by_test_id("bid_place_open_button")).to_be_visible(timeout=10000)
 
 
 @allure.feature("Place a Bid")
 @allure.story("Place a bid button click opens bid form")
-def test_clicking_place_a_bid_opens_form(logged_in_carrier: Page):
-    """
-    "Place a bid" tugmani bossak, bid form open bo'lishi kerak.
-    Form indikatorlar: "Propose" matni, yoki price input, yoki Submit/Send tugma.
-    """
+def test_clicking_place_a_bid_opens_form(logged_in_carrier: Page, fresh_load_for_bid: int):
     page = logged_in_carrier
-    page.goto(f"{APP_URL}/loads")
-    page.wait_for_load_state("domcontentloaded")
-    page.wait_for_timeout(3000)
-
-    page.get_by_text("Be first").first.click()
-    page.wait_for_timeout(2500)
+    _navigate_to_load(page, fresh_load_for_bid)
 
     page.get_by_test_id("bid_place_open_button").click()
 

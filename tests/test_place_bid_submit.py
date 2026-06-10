@@ -2,7 +2,7 @@
 Place a Bid — form submit testlari (Phase 2).
 
 Carrier bid form'ni to'ldirib submit qiladi.
-Verifikatsiya: bid /my-bids ro'yxatida paydo bo'ladi.
+Har bir test o'z load'ini yaratadi (test isolation).
 """
 import os
 import re
@@ -15,13 +15,18 @@ load_dotenv()
 APP_URL = os.getenv("APP_URL")
 
 
-def _open_bid_form(page: Page):
-    """/loads board'dan birinchi yukga kirib bid form'ni ochadi."""
+def _open_bid_form(page: Page, price: int):
+    """Load owner yaratgan loadni topib bid form'ni ochadi."""
     page.goto(f"{APP_URL}/loads")
     page.wait_for_load_state("domcontentloaded")
     page.wait_for_timeout(3000)
 
-    page.get_by_text("Be first").first.click()
+    thousands = price // 1000
+    remainder = price % 1000
+    price_pattern = re.compile(rf"USD[\s]+{thousands}[,\s]{remainder:03d}")
+    load_card = page.get_by_text(price_pattern).first
+    expect(load_card).to_be_visible(timeout=20000)
+    load_card.click()
     page.wait_for_timeout(2500)
 
     page.get_by_test_id("bid_place_open_button").click()
@@ -30,33 +35,23 @@ def _open_bid_form(page: Page):
 
 @allure.feature("Place a Bid")
 @allure.story("Bid form: empty submit blocks (validation)")
-def test_empty_bid_form_blocks_submit(logged_in_carrier: Page):
-    """
-    Bo'sh form (Note va Date to'ldirilmagan) bilan "Place a bid" submit
-    bossak, sahifa o'sha holda qoladi (validation blokda saqlasa kerak).
-    """
+def test_empty_bid_form_blocks_submit(logged_in_carrier: Page, fresh_load_for_bid: int):
     page = logged_in_carrier
-    _open_bid_form(page)
+    _open_bid_form(page, fresh_load_for_bid)
 
-    # Hech nima to'ldirmaymiz
     submit_btn = page.get_by_test_id("bid_form_submit_button")
     submit_btn.click(force=True, timeout=5000)
     page.wait_for_timeout(2000)
 
-    # Sahifa hali ham detail URL'da (modal ochiq, submit ishlamadi)
     expect(page).to_have_url(re.compile(r".*/loads/[a-f0-9-]{36}$"))
 
 
 @allure.feature("Place a Bid")
 @allure.story("Bid form: cancel button closes form")
-def test_cancel_button_closes_bid_form(logged_in_carrier: Page):
-    """
-    "Cancel" tugma bid form'ni yopishi va Note textarea'ni yashirishi kerak.
-    """
+def test_cancel_button_closes_bid_form(logged_in_carrier: Page, fresh_load_for_bid: int):
     page = logged_in_carrier
-    _open_bid_form(page)
+    _open_bid_form(page, fresh_load_for_bid)
 
-    # Cancel bossa textarea yo'qoladi
     note_locator = page.get_by_test_id("bid_form_note_input")
     expect(note_locator).to_be_visible()
 
@@ -67,12 +62,9 @@ def test_cancel_button_closes_bid_form(logged_in_carrier: Page):
 
 @allure.feature("Place a Bid")
 @allure.story("Bid form: note textarea accepts input")
-def test_bid_form_note_accepts_input(logged_in_carrier: Page):
-    """
-    Note textarea'ga matn yozsak, qabul qilishi va saqlanishi kerak.
-    """
+def test_bid_form_note_accepts_input(logged_in_carrier: Page, fresh_load_for_bid: int):
     page = logged_in_carrier
-    _open_bid_form(page)
+    _open_bid_form(page, fresh_load_for_bid)
 
     note = page.get_by_test_id("bid_form_note_input")
     note.fill("Test bid from carrier")

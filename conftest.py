@@ -221,6 +221,31 @@ def free_owner_operator(browser, browser_context_args):
     context.close()
 
 
+@pytest.fixture(scope="module")
+def _load_owner_context(browser, browser_context_args):
+    """Single load_owner session shared across a test module."""
+    context, page = _logged_in_page(
+        browser,
+        browser_context_args,
+        LOAD_OWNER_EMAIL,
+        LOAD_OWNER_PASSWORD,
+        "LOAD_OWNER_EMAIL/LOAD_OWNER_PASSWORD",
+    )
+    yield page
+    context.close()
+
+
+@pytest.fixture
+def fresh_load_for_bid(_load_owner_context):
+    """Load owner creates a fresh load, returns unique price for carrier to find it."""
+    import random
+    from tests.helpers import create_load
+
+    price = random.randint(1000, 9999)
+    create_load(_load_owner_context, price)
+    return price
+
+
 @pytest.fixture
 def landing_page(page: Page):
     """Open the landing page without logging in."""

@@ -111,11 +111,18 @@ def create_load(load_owner: Page, price: int) -> None:
 
     Fills route (Tashkent -> Denain), load type, weight,
     transport type, and publishes.
+
+    Form steps (2025-06 layout):
+      Step 1: Route + load type + weight + date
+      Step 2: Body (transport type)
+      Step 3: Payment (price)
+      Step 4: Review + publish
     """
     load_owner.get_by_test_id("global_add_button").click()
     load_owner.get_by_test_id("global_add_load_menu_item").click()
-    load_owner.wait_for_timeout(1000)
+    expect(load_owner.get_by_test_id("loads_from_input")).to_be_visible(timeout=15000)
 
+    # Step 1 — Route & load
     load_owner.get_by_test_id("loads_from_input").fill("TASH")
     load_owner.get_by_text("Tashkent", exact=True).click()
     load_owner.get_by_test_id("loads_to_input").fill("DENA")
@@ -124,34 +131,37 @@ def create_load(load_owner: Page, price: int) -> None:
     load_owner.get_by_test_id("loads_load_type_select").click()
     load_owner.get_by_role("option", name="dovcha").click()
 
+    load_owner.get_by_test_id("loads_weight_input").fill("12")
+
     load_owner.get_by_test_id("loads_date_button").click()
     pick_future_date(load_owner)
 
     dismiss_cookie_banner(load_owner)
 
     load_owner.get_by_test_id("loads_next_button").click()
-    load_owner.wait_for_timeout(500)
 
-    load_owner.get_by_test_id("loads_weight_input").fill("12")
-    load_owner.get_by_test_id("loads_next_button").click()
-    load_owner.wait_for_timeout(500)
-    load_owner.get_by_test_id("loads_next_button").click()
-    load_owner.wait_for_timeout(500)
-
-    load_owner.get_by_test_id("loads_transport_type_select").or_(
-        load_owner.get_by_role("combobox").filter(has_text="Transport type")
-    ).first.click()
+    # Step 2 — Body
+    expect(load_owner.get_by_test_id("loads_transport_type_select")).to_be_visible(timeout=10000)
+    load_owner.get_by_test_id("loads_transport_type_select").click()
     load_owner.get_by_role("option", name="Mega truck").click()
     load_owner.get_by_test_id("loads_next_button").click()
-    load_owner.wait_for_timeout(500)
 
-    # Payment page: price is now on this step
+    # Step 3 — Payment
+    expect(load_owner.get_by_test_id("loads_price_input")).to_be_visible(timeout=10000)
     load_owner.get_by_test_id("loads_price_input").fill(str(price))
     load_owner.get_by_test_id("loads_next_button").click()
-    load_owner.wait_for_timeout(500)
 
-    load_owner.get_by_test_id("loads_publish_button").click()
+    # Step 4 — Publish
+    publish_btn = load_owner.get_by_test_id("loads_publish_button")
+    if publish_btn.is_visible(timeout=5000):
+        publish_btn.click()
+    else:
+        # Ba'zi layoutlarda oxirgi "Next" to'g'ridan-to'g'ri publish qiladi
+        pass
     load_owner.wait_for_timeout(3000)
+    # Keyingi load yaratish uchun sahifani tozalash
+    load_owner.goto(f"{APP_URL}/loads", wait_until="domcontentloaded")
+    load_owner.wait_for_timeout(2000)
 
 
 def place_bid_on_load(bidder: Page, price: int) -> None:
