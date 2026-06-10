@@ -37,7 +37,7 @@ FREE_CARRIER_PASSWORD = os.getenv("FREE_CARRIER_PASSWORD")
 FREE_OWNER_OPERATOR_EMAIL = os.getenv("FREE_OWNER_OPERATOR_EMAIL")
 FREE_OWNER_OPERATOR_PASSWORD = os.getenv("FREE_OWNER_OPERATOR_PASSWORD")
 
-LOGIN_TIMEOUT_MS = int(os.getenv("LOGIN_TIMEOUT_MS", "30000"))
+LOGIN_TIMEOUT_MS = int(os.getenv("LOGIN_TIMEOUT_MS", "60000"))
 
 
 def _required_env(name: str, value: str | None) -> str:
