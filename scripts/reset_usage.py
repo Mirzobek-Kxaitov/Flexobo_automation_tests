@@ -24,6 +24,10 @@ TEST_USERS = {
     "load_owner": os.getenv("LOAD_OWNER_EMAIL"),
     "carrier": os.getenv("CARRIER_EMAIL"),
     "owner_operator": os.getenv("OWNER_OPERATOR_EMAIL"),
+    "free_broker": os.getenv("FREE_BROKER_EMAIL"),
+    "free_load_owner": os.getenv("FREE_LOAD_OWNER_EMAIL"),
+    "free_carrier": os.getenv("FREE_CARRIER_EMAIL"),
+    "free_owner_operator": os.getenv("FREE_OWNER_OPERATOR_EMAIL"),
 }
 
 

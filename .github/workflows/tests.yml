@@ -60,6 +60,9 @@ jobs:
             echo "FREE_CARRIER_PASSWORD=${FREE_CARRIER_PASSWORD}"
             echo "FREE_OWNER_OPERATOR_EMAIL=${FREE_OWNER_OPERATOR_EMAIL}"
             echo "FREE_OWNER_OPERATOR_PASSWORD=${FREE_OWNER_OPERATOR_PASSWORD}"
+            echo "ADMIN_URL=${ADMIN_URL}"
+            echo "ADMIN_EMAIL=${ADMIN_EMAIL}"
+            echo "ADMIN_PASSWORD=${ADMIN_PASSWORD}"
           } > .env
         env:
           EMAIL: ${{ secrets.EMAIL }}
@@ -82,6 +85,13 @@ jobs:
           FREE_CARRIER_PASSWORD: ${{ secrets.FREE_CARRIER_PASSWORD }}
           FREE_OWNER_OPERATOR_EMAIL: ${{ secrets.FREE_OWNER_OPERATOR_EMAIL }}
           FREE_OWNER_OPERATOR_PASSWORD: ${{ secrets.FREE_OWNER_OPERATOR_PASSWORD }}
+          ADMIN_URL: ${{ secrets.ADMIN_URL }}
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+
+      - name: Reset usage counters
+        run: python scripts/reset_usage.py
+        continue-on-error: true
 
       - name: Run stable web tests
         id: pytest
