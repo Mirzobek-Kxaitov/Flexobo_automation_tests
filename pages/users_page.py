@@ -39,20 +39,20 @@ class UsersPage:
 
     def go_to_users(self) -> "UsersPage":
         self.page.goto(self.PROFILE_URL, wait_until="domcontentloaded")
-        expect(self.users_tab).to_be_visible(timeout=10000)
+        expect(self.users_tab).to_be_visible()
         self.users_tab.click()
-        expect(self.invite_button).to_be_visible(timeout=10000)
+        expect(self.invite_button).to_be_visible()
         return self
 
     def go_to_pending(self) -> "UsersPage":
         self.page.goto(self.USERS_URL, wait_until="domcontentloaded")
-        expect(self.pending_tab).to_be_visible(timeout=10000)
+        expect(self.pending_tab).to_be_visible()
         self.pending_tab.click()
         return self
 
     def _dismiss_cookie_banner(self) -> "UsersPage":
         btn = self.page.get_by_test_id("global_cookie_accept_button")
-        if btn.is_visible(timeout=1000):
+        if btn.is_visible():
             btn.click(force=True)
         return self
 
@@ -60,7 +60,7 @@ class UsersPage:
         self.go_to_users()
         self._dismiss_cookie_banner()
         self.invite_button.click()
-        expect(self.email_input).to_be_visible(timeout=10000)
+        expect(self.email_input).to_be_visible()
         self.email_input.fill(email)
         self.role_combobox.click()
         if role_name:
@@ -75,7 +75,7 @@ class UsersPage:
         self.go_to_pending()
         self.page.get_by_text(email).first.click()
         resend_btn = self.page.get_by_role("button", name="Resend").first
-        expect(resend_btn).to_be_visible(timeout=5000)
+        expect(resend_btn).to_be_visible()
         resend_btn.click()
         return self
 
@@ -87,25 +87,25 @@ class UsersPage:
             cancel_button.first.click()
         else:
             self.page.locator("button[data-slot='alert-dialog-trigger']").first.click()
-        expect(self.cancel_invitation_button).to_be_visible(timeout=5000)
+        expect(self.cancel_invitation_button).to_be_visible()
         self.cancel_invitation_button.click()
         return self
 
     def expect_invitation_visible(self, email: str) -> "UsersPage":
         self.go_to_pending()
-        expect(self.page.get_by_text(email).first).to_be_visible(timeout=10000)
+        expect(self.page.get_by_text(email).first).to_be_visible()
         return self
 
     def expect_resent_success(self) -> "UsersPage":
-        expect(self.resent_message).to_be_visible(timeout=10000)
+        expect(self.resent_message).to_be_visible()
         return self
 
     def expect_no_pending(self) -> "UsersPage":
-        if self.no_pending_message.is_visible(timeout=3000):
+        if self.no_pending_message.is_visible():
             return self
         email = getattr(self, "last_cancelled_email", None)
         assert email, "No cancelled email recorded for pending invitation check"
-        expect(self.page.get_by_text(email).first).not_to_be_visible(timeout=10000)
+        expect(self.page.get_by_text(email).first).not_to_be_visible()
         return self
 
     def expect_on_users_tab(self) -> "UsersPage":

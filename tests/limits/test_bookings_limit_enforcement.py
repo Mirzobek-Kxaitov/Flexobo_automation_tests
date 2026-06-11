@@ -160,7 +160,7 @@ def test_bookings_limit_full_flow(
         for p in [broker, owner]:
             try:
                 p.get_by_role("heading", name="Limit reached").wait_for(
-                    state="visible", timeout=5000
+                    state="visible"
                 )
                 modal_page = p
                 break
@@ -204,7 +204,7 @@ def test_bookings_modal_maybe_later(
     with allure.step("Verify 'Limit reached' modal is visible"):
         expect(
             broker.get_by_role("heading", name="Limit reached")
-        ).to_be_visible(timeout=10000)
+        ).to_be_visible()
 
     with allure.step("Click 'Maybe later' and verify modal is dismissed"):
         broker.get_by_role("button", name="Maybe later").click()
@@ -243,11 +243,11 @@ def test_bookings_modal_upgrade_plan(
     with allure.step("Verify 'Limit reached' modal is visible"):
         expect(
             broker.get_by_role("heading", name="Limit reached")
-        ).to_be_visible(timeout=10000)
+        ).to_be_visible()
 
     with allure.step("Click 'Upgrade plan' and verify navigation to pricing page"):
         broker.get_by_role("button", name="Upgrade plan").click()
         broker.wait_for_timeout(3000)
         expect(broker).to_have_url(
-            re.compile(r".*(pricing|upgrade|plan).*"), timeout=10000
+            re.compile(r".*(pricing|upgrade|plan).*")
         )

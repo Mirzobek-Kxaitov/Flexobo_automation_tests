@@ -53,7 +53,7 @@ class LoginPage:
         return self
     
     def expect_logged_in(self):
-        expect(self.page).not_to_have_url(re.compile(r".*sign-in.*"), timeout=15000)
+        expect(self.page).not_to_have_url(re.compile(r".*sign-in.*"))
         return self
     
     def expect_invalid_credentials(self):

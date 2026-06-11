@@ -15,7 +15,7 @@ class LoadsBoardPage:
 
     def open(self, app_url: str):
         self.page.goto(f"{app_url}/loads", wait_until="domcontentloaded")
-        expect(self.search_from).to_be_visible(timeout=15000)
+        expect(self.search_from).to_be_visible()
         return self
 
     def search_from_city(self, city: str):
@@ -29,7 +29,7 @@ class LoadsBoardPage:
 
     def open_filter_panel(self):
         self.filter_button.click()
-        expect(self.filter_panel).to_be_visible(timeout=10000)
+        expect(self.filter_panel).to_be_visible()
         return self
 
     def expect_search_form_visible(self):

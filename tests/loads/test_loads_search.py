@@ -30,7 +30,7 @@ def test_search_by_from_city_returns_matching_loads(logged_in_broker: Page):
     board = LoadsBoardPage(logged_in_broker).open(APP_URL)
     board.search_from_city("Tashkent")
     board.click_search()
-    expect(logged_in_broker.get_by_text("Tashkent").first).to_be_visible(timeout=10000)
+    expect(logged_in_broker.get_by_text("Tashkent").first).to_be_visible()
 
 
 @allure.feature("Loads search")

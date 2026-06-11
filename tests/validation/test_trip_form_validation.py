@@ -11,11 +11,11 @@ from pages.trips_page import TripsPage
 def test_empty_form_blocks_next(logged_in_broker: Page):
     trips = TripsPage(logged_in_broker)
     trips.open_create_trip_form()
-    expect(trips.transport_combobox).to_be_visible(timeout=15000)
+    expect(trips.transport_combobox).to_be_visible()
     trips.accept_cookies_if_visible()
 
-    trips.next_button.click(timeout=5000)
-    expect(trips.price_input).not_to_be_visible(timeout=3000)
+    trips.next_button.click()
+    expect(trips.price_input).not_to_be_visible()
 
 
 @allure.feature("Validation")
@@ -23,7 +23,7 @@ def test_empty_form_blocks_next(logged_in_broker: Page):
 def test_missing_volume_blocks_next(logged_in_broker: Page):
     trips = TripsPage(logged_in_broker)
     trips.open_create_trip_form()
-    expect(trips.transport_combobox).to_be_visible(timeout=15000)
+    expect(trips.transport_combobox).to_be_visible()
     trips.accept_cookies_if_visible()
 
     trips.select_transport("Trailer 1")
@@ -33,8 +33,8 @@ def test_missing_volume_blocks_next(logged_in_broker: Page):
     trips.fill_unloading("denov", "Denov District")
     trips.fill_unloading_radius(12)
 
-    trips.next_button.click(timeout=5000)
-    expect(trips.price_input).not_to_be_visible(timeout=3000)
+    trips.next_button.click()
+    expect(trips.price_input).not_to_be_visible()
 
 
 @allure.feature("Validation")
@@ -42,7 +42,7 @@ def test_missing_volume_blocks_next(logged_in_broker: Page):
 def test_zero_volume_blocks_next(logged_in_broker: Page):
     trips = TripsPage(logged_in_broker)
     trips.open_create_trip_form()
-    expect(trips.transport_combobox).to_be_visible(timeout=15000)
+    expect(trips.transport_combobox).to_be_visible()
     trips.accept_cookies_if_visible()
 
     trips.select_transport("Trailer 1")
@@ -53,8 +53,8 @@ def test_zero_volume_blocks_next(logged_in_broker: Page):
     trips.fill_unloading("denov", "Denov District")
     trips.fill_unloading_radius(12)
 
-    trips.next_button.click(timeout=5000)
-    expect(trips.price_input).not_to_be_visible(timeout=3000)
+    trips.next_button.click()
+    expect(trips.price_input).not_to_be_visible()
 
 
 @allure.feature("Validation")
@@ -62,7 +62,7 @@ def test_zero_volume_blocks_next(logged_in_broker: Page):
 def test_negative_volume_blocks_next(logged_in_broker: Page):
     trips = TripsPage(logged_in_broker)
     trips.open_create_trip_form()
-    expect(trips.transport_combobox).to_be_visible(timeout=15000)
+    expect(trips.transport_combobox).to_be_visible()
     trips.accept_cookies_if_visible()
 
     trips.select_transport("Trailer 1")
@@ -73,5 +73,5 @@ def test_negative_volume_blocks_next(logged_in_broker: Page):
     trips.fill_unloading("denov", "Denov District")
     trips.fill_unloading_radius(12)
 
-    trips.next_button.click(timeout=5000)
-    expect(trips.price_input).not_to_be_visible(timeout=3000)
+    trips.next_button.click()
+    expect(trips.price_input).not_to_be_visible()

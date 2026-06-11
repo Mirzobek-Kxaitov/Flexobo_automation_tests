@@ -43,11 +43,11 @@ def test_bid_lifecycle(
     # Owner navigates to Received bids
     owner.goto(f"{APP_URL}/profile/root", wait_until="domcontentloaded")
     received = owner.get_by_text("Received bids", exact=True).first
-    expect(received).to_be_visible(timeout=10000)
+    expect(received).to_be_visible()
     received.click()
 
     bid_card = owner.get_by_text(price_pattern).first
-    expect(bid_card).to_be_visible(timeout=20000)
+    expect(bid_card).to_be_visible()
     bid_card.click()
 
     owner.get_by_role("button").filter(has_text=price_pattern).first.click()
@@ -58,7 +58,7 @@ def test_bid_lifecycle(
     # Bidder verifies status
     bidder.goto(f"{APP_URL}/my-bids", wait_until="domcontentloaded")
     tab = bidder.get_by_text(expected_tab, exact=True).first
-    expect(tab).to_be_visible(timeout=10000)
+    expect(tab).to_be_visible()
     tab.click()
 
-    expect(bidder.get_by_text(price_pattern).first).to_be_visible(timeout=15000)
+    expect(bidder.get_by_text(price_pattern).first).to_be_visible()

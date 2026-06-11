@@ -34,7 +34,9 @@ def test_add_menu_item_visibility(request, role: str, menu_item: str):
         "Transport": "global_add_transport_menu_item",
     }
 
-    page.get_by_test_id("global_add_button").click()
+    add_btn = page.get_by_test_id("global_add_button")
+    expect(add_btn).to_be_visible()
+    add_btn.click()
     item = page.get_by_test_id(item_test_ids[menu_item])
 
     if should_be_visible:

@@ -54,7 +54,7 @@ def test_load_owner_sees_carrier_bid_in_received_bids(
         pick_future_date(carrier)
 
         note_field = carrier.get_by_role("textbox", name="Why is your offer better than")
-        if note_field.is_visible(timeout=2000):
+        if note_field.is_visible():
             note_field.fill("E2E accept flow bid")
             carrier.wait_for_timeout(500)
 
@@ -63,7 +63,7 @@ def test_load_owner_sees_carrier_bid_in_received_bids(
 
         # Handle bid limit modal if it appears
         limit_modal = carrier.get_by_text("Limit reached")
-        if limit_modal.is_visible(timeout=3000):
+        if limit_modal.is_visible():
             carrier.get_by_role("button", name="Maybe later").click()
             pytest.fail("Bid limit reached — run reset_usage.py")
 
@@ -76,4 +76,4 @@ def test_load_owner_sees_carrier_bid_in_received_bids(
     with allure.step("Verify the bid is visible in Received bids"):
         expect(
             owner.get_by_text(price_pattern).first
-        ).to_be_visible(timeout=15000)
+        ).to_be_visible()

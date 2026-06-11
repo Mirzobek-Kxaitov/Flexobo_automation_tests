@@ -68,7 +68,7 @@ def test_carrier_fleet_limit_full_flow(logged_in_carrier: Page):
     with allure.step("Verify 'Limit reached' modal is displayed"):
         expect(
             page.get_by_role("dialog", name="Limit reached")
-        ).to_be_visible(timeout=10000)
+        ).to_be_visible()
         expect(page.get_by_role("button", name="Close")).to_be_visible()
 
 
@@ -94,7 +94,7 @@ def test_carrier_fleet_modal_close(logged_in_carrier: Page):
     with allure.step("Verify 'Limit reached' modal is visible"):
         expect(
             page.get_by_role("dialog", name="Limit reached")
-        ).to_be_visible(timeout=10000)
+        ).to_be_visible()
 
     with allure.step("Click 'Close' and verify modal is dismissed"):
         page.get_by_role("button", name="Close").click()
@@ -126,15 +126,15 @@ def test_carrier_fleet_modal_upgrade_plan(logged_in_carrier: Page):
     with allure.step("Verify 'Limit reached' modal is visible"):
         expect(
             page.get_by_role("dialog", name="Limit reached")
-        ).to_be_visible(timeout=10000)
+        ).to_be_visible()
 
     with allure.step("Click 'Upgrade plan' and verify navigation to pricing page"):
         upgrade_btn = page.get_by_role("button", name="Upgrade plan")
-        if upgrade_btn.is_visible(timeout=3000):
+        if upgrade_btn.is_visible():
             upgrade_btn.click()
             page.wait_for_timeout(3000)
             expect(page).to_have_url(
-                re.compile(r".*(pricing|upgrade|plan).*"), timeout=10000
+                re.compile(r".*(pricing|upgrade|plan).*")
             )
         else:
             pytest.skip("'Upgrade plan' button not found in modal")

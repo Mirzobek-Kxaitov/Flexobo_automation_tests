@@ -43,12 +43,12 @@ def test_profile_action_button_visibility(request, role: str, button_name: str):
     """
     page: Page = request.getfixturevalue(f"logged_in_{role}")
     page.goto(f"{APP_URL}/profile/root", wait_until="domcontentloaded")
-    expect(page.get_by_role("button", name="Update Password").first).to_be_visible(timeout=15000)
+    expect(page.get_by_role("button", name="Update Password").first).to_be_visible()
 
     button = page.get_by_role("button", name=button_name).first
     expected_visible = BUTTON_VISIBILITY[button_name][role]
 
     if expected_visible:
-        expect(button).to_be_visible(timeout=5000)
+        expect(button).to_be_visible()
     else:
-        expect(button).not_to_be_visible(timeout=5000)
+        expect(button).not_to_be_visible()

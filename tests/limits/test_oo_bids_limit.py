@@ -59,7 +59,7 @@ def test_oo_bids_limit_full_flow(
     with allure.step("Assert 'Limit reached' modal is visible with correct elements"):
         expect(
             oo.get_by_role("heading", name="Limit reached")
-        ).to_be_visible(timeout=10000)
+        ).to_be_visible()
         expect(oo.get_by_text("You have reached your limit")).to_be_visible()
         expect(oo.get_by_role("button", name="Upgrade plan")).to_be_visible()
         expect(oo.get_by_role("button", name="Maybe later")).to_be_visible()
@@ -91,7 +91,7 @@ def test_oo_bids_modal_maybe_later(
     with allure.step("Assert 'Limit reached' modal appears"):
         expect(
             oo.get_by_role("heading", name="Limit reached")
-        ).to_be_visible(timeout=10000)
+        ).to_be_visible()
 
     with allure.step("Click 'Maybe later' and verify modal closes"):
         oo.get_by_role("button", name="Maybe later").click()
@@ -127,9 +127,9 @@ def test_oo_bids_modal_upgrade_plan(
     with allure.step("Assert 'Limit reached' modal appears"):
         expect(
             oo.get_by_role("heading", name="Limit reached")
-        ).to_be_visible(timeout=10000)
+        ).to_be_visible()
 
     with allure.step("Click 'Upgrade plan' and verify navigation to upgrade page"):
         oo.get_by_role("button", name="Upgrade plan").click()
         oo.wait_for_timeout(3000)
-        expect(oo).to_have_url(re.compile(r".*(pricing|upgrade|plan).*"), timeout=10000)
+        expect(oo).to_have_url(re.compile(r".*(pricing|upgrade|plan).*"))

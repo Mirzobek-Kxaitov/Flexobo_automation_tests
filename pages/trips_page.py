@@ -127,7 +127,7 @@ class TripsPage:
         self.click_next()
         self.fill_price(price)
         self.click_next()
-        expect(self.page).not_to_have_url(self.CREATE_URL, timeout=15000)
+        expect(self.page).not_to_have_url(self.CREATE_URL)
         return self
 
     def _open_trip_menu(self, index: int = 0) -> "TripsPage":
@@ -142,7 +142,7 @@ class TripsPage:
     def click_change_on_first_trip(self) -> "TripsPage":
         self._open_trip_menu(0)
         change_item = self.page.get_by_role("menuitem", name="Change")
-        expect(change_item).to_be_visible(timeout=5000)
+        expect(change_item).to_be_visible()
         change_item.click()
         return self
 
@@ -156,7 +156,7 @@ class TripsPage:
     def delete_first_trip(self) -> "TripsPage":
         self._open_trip_menu(0)
         delete_item = self.page.get_by_role("menuitem", name="Delete")
-        expect(delete_item).to_be_visible(timeout=5000)
+        expect(delete_item).to_be_visible()
         delete_item.click()
         self.confirm_delete_button.click()
         return self
@@ -167,7 +167,7 @@ class TripsPage:
 
     def expect_trip_in_list(self, price: str, city: str, transport: str) -> "TripsPage":
         self.page.goto(f"{APP_URL}/profile-trips", wait_until="domcontentloaded")
-        expect(self.page.get_by_text(price).first).to_be_visible(timeout=10000)
+        expect(self.page.get_by_text(price).first).to_be_visible()
         expect(self.page.get_by_text(city).first).to_be_visible()
         expect(self.page.get_by_text(transport).first).to_be_visible()
         return self

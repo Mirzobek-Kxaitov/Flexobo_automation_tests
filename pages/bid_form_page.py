@@ -12,9 +12,9 @@ class BidFormPage:
         self.open_button = page.get_by_test_id("bid_place_open_button")
 
     def open_form(self):
-        expect(self.open_button).to_be_visible(timeout=10000)
+        expect(self.open_button).to_be_visible()
         self.open_button.click()
-        expect(self.container).to_be_visible(timeout=10000)
+        expect(self.container).to_be_visible()
         return self
 
     def fill_note(self, text: str):
@@ -27,7 +27,7 @@ class BidFormPage:
 
     def cancel(self):
         self.cancel_button.click()
-        expect(self.note_input).not_to_be_visible(timeout=5000)
+        expect(self.note_input).not_to_be_visible()
         return self
 
     def expect_form_visible(self):
@@ -38,5 +38,5 @@ class BidFormPage:
         return self
 
     def expect_form_hidden(self):
-        expect(self.container).not_to_be_visible(timeout=5000)
+        expect(self.container).not_to_be_visible()
         return self

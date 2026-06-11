@@ -17,16 +17,16 @@ def _place_one_bid(page: Page) -> None:
     page.goto(f"{APP_URL}/loads", wait_until="domcontentloaded")
 
     be_first = page.get_by_text("Be first").first
-    expect(be_first).to_be_visible(timeout=20000)
+    expect(be_first).to_be_visible()
     be_first.click()
 
     bid_btn = page.get_by_test_id("bid_place_open_button")
-    expect(bid_btn).to_be_visible(timeout=10000)
+    expect(bid_btn).to_be_visible()
     bid_btn.click()
-    expect(page.get_by_test_id("bid_form_container")).to_be_visible(timeout=10000)
+    expect(page.get_by_test_id("bid_form_container")).to_be_visible()
 
     note = page.get_by_test_id("bid_form_note_input")
-    if note.is_visible(timeout=2000):
+    if note.is_visible():
         note.fill("Counter increment test bid")
 
     page.get_by_test_id("bid_form_submit_button").click()

@@ -73,7 +73,7 @@ class LoadsPage:
 
     def open_create_load_form(self) -> "LoadsPage":
         self.page.goto(f"{APP_URL}/loads", wait_until="domcontentloaded")
-        expect(self.add_button).to_be_visible(timeout=15000)
+        expect(self.add_button).to_be_visible()
         self.add_button.click()
         self.load_menu_item.click()
         return self
@@ -103,7 +103,7 @@ class LoadsPage:
         day_cell = self.page.locator(
             "td[role='gridcell']:not([data-outside='true']) button:not([disabled])"
         ).first
-        expect(day_cell).to_be_visible(timeout=5000)
+        expect(day_cell).to_be_visible()
         day_cell.click()
         return self
 
@@ -148,7 +148,7 @@ class LoadsPage:
                     body_type: str, price: str) -> "LoadsPage":
         """Create load via 4-step form."""
         self.open_create_load_form()
-        expect(self.from_input).to_be_visible(timeout=15000)
+        expect(self.from_input).to_be_visible()
 
         self.fill_from(from_city, from_suggestion)
         self.fill_to(to_city, to_suggestion)
@@ -158,17 +158,17 @@ class LoadsPage:
         self.accept_cookies_if_visible()
         self.click_next()
 
-        expect(self.body_type_button).to_be_visible(timeout=10000)
+        expect(self.body_type_button).to_be_visible()
         self.select_body_type(body_type)
         self.click_next()
 
-        expect(self.price_input).to_be_visible(timeout=10000)
+        expect(self.price_input).to_be_visible()
         self.fill_price(price)
         self.click_next()
 
-        if self.publish_button.is_visible(timeout=5000):
+        if self.publish_button.is_visible():
             self.publish()
-        expect(self.page).not_to_have_url(re.compile(r".*/create.*"), timeout=15000)
+        expect(self.page).not_to_have_url(re.compile(r".*/create.*"))
         return self
 
     def _open_load_menu(self, index: int = 0) -> "LoadsPage":
@@ -183,14 +183,14 @@ class LoadsPage:
     def click_change_on_first_load(self) -> "LoadsPage":
         self._open_load_menu(0)
         change_item = self.page.get_by_role("menuitem", name="Change")
-        expect(change_item).to_be_visible(timeout=5000)
+        expect(change_item).to_be_visible()
         change_item.click()
         return self
 
     def delete_first_load(self) -> "LoadsPage":
         self._open_load_menu(0)
         delete_item = self.page.get_by_role("menuitem", name="Delete")
-        expect(delete_item).to_be_visible(timeout=5000)
+        expect(delete_item).to_be_visible()
         delete_item.click()
         self.confirm_delete_button.click()
         return self
@@ -223,11 +223,11 @@ class LoadsPage:
         return self
 
     def expect_load_created(self) -> "LoadsPage":
-        expect(self.page).not_to_have_url(re.compile(r".*/create.*"), timeout=10000)
+        expect(self.page).not_to_have_url(re.compile(r".*/create.*"))
         return self
 
     def expect_on_loads_page(self) -> "LoadsPage":
-        expect(self.page).to_have_url(re.compile(r"profile-load|profile/root"), timeout=10000)
+        expect(self.page).to_have_url(re.compile(r"profile-load|profile/root"))
         return self
 
     def expect_in_contract_checked(self) -> "LoadsPage":

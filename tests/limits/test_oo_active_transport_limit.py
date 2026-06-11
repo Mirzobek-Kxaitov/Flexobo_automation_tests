@@ -75,7 +75,7 @@ def test_oo_active_transport_limit_full_flow(logged_in_owner_operator: Page):
     with allure.step("Assert 'Limit reached' modal is visible"):
         modal_heading = page.get_by_role("heading", name="Limit reached")
         modal_dialog = page.get_by_role("dialog", name="Limit reached")
-        expect(modal_heading.or_(modal_dialog)).to_be_visible(timeout=10000)
+        expect(modal_heading.or_(modal_dialog)).to_be_visible()
 
 
 @pytest.mark.xfail(reason="BUG: Active transport limit not enforced — trips can be created beyond limit")
@@ -101,12 +101,12 @@ def test_oo_active_transport_modal_dismiss(logged_in_owner_operator: Page):
     with allure.step("Assert 'Limit reached' modal is visible"):
         modal_heading = page.get_by_role("heading", name="Limit reached")
         modal_dialog = page.get_by_role("dialog", name="Limit reached")
-        expect(modal_heading.or_(modal_dialog)).to_be_visible(timeout=10000)
+        expect(modal_heading.or_(modal_dialog)).to_be_visible()
 
     with allure.step("Dismiss the modal via 'Maybe later' or 'Close'"):
         maybe_later = page.get_by_role("button", name="Maybe later")
         close_btn = page.get_by_role("button", name="Close")
-        if maybe_later.is_visible(timeout=2000):
+        if maybe_later.is_visible():
             maybe_later.click()
         else:
             close_btn.click()
@@ -139,13 +139,13 @@ def test_oo_active_transport_modal_upgrade_plan(logged_in_owner_operator: Page):
     with allure.step("Assert 'Limit reached' modal is visible"):
         modal_heading = page.get_by_role("heading", name="Limit reached")
         modal_dialog = page.get_by_role("dialog", name="Limit reached")
-        expect(modal_heading.or_(modal_dialog)).to_be_visible(timeout=10000)
+        expect(modal_heading.or_(modal_dialog)).to_be_visible()
 
     with allure.step("Click 'Upgrade plan' and verify navigation"):
         upgrade_btn = page.get_by_role("button", name="Upgrade plan")
-        if upgrade_btn.is_visible(timeout=3000):
+        if upgrade_btn.is_visible():
             upgrade_btn.click()
             page.wait_for_timeout(3000)
-            expect(page).to_have_url(re.compile(r".*(pricing|upgrade|plan).*"), timeout=10000)
+            expect(page).to_have_url(re.compile(r".*(pricing|upgrade|plan).*"))
         else:
             pytest.skip("'Upgrade plan' button not found in modal")

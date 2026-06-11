@@ -91,10 +91,18 @@ def _get_storage_state(browser, browser_context_args, email, password, label) ->
     return str(state_path)
 
 
+DEFAULT_TIMEOUT_MS = 30_000
+EXPECT_TIMEOUT_MS = 30_000
+
+
 def _context_from_state(browser, browser_context_args, state_path):
     """Create a new context using cached storage_state."""
+    app_url = _required_env("APP_URL", APP_URL).rstrip("/")
     context = browser.new_context(storage_state=state_path, **browser_context_args)
     page = context.new_page()
+    page.set_default_timeout(DEFAULT_TIMEOUT_MS)
+    expect.set_options(timeout=EXPECT_TIMEOUT_MS)
+    page.goto(f"{app_url}/loads", wait_until="domcontentloaded")
     return context, page
 
 

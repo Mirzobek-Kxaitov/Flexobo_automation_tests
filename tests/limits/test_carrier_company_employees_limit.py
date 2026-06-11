@@ -69,7 +69,7 @@ def test_carrier_company_employees_limit_full_flow(logged_in_carrier: Page):
     with allure.step("Verify 'Limit reached' modal is displayed"):
         expect(
             page.get_by_role("heading", name="Limit reached")
-        ).to_be_visible(timeout=10000)
+        ).to_be_visible()
         expect(page.get_by_text("You have reached your limit")).to_be_visible()
         expect(page.get_by_role("button", name="Upgrade plan")).to_be_visible()
         expect(page.get_by_role("button", name="Maybe later")).to_be_visible()
@@ -97,7 +97,7 @@ def test_carrier_company_employees_modal_maybe_later(logged_in_carrier: Page):
     with allure.step("Verify 'Limit reached' modal is visible"):
         expect(
             page.get_by_role("heading", name="Limit reached")
-        ).to_be_visible(timeout=10000)
+        ).to_be_visible()
 
     with allure.step("Click 'Maybe later' and verify modal is dismissed"):
         page.get_by_role("button", name="Maybe later").click()
@@ -129,11 +129,11 @@ def test_carrier_company_employees_modal_upgrade_plan(logged_in_carrier: Page):
     with allure.step("Verify 'Limit reached' modal is visible"):
         expect(
             page.get_by_role("heading", name="Limit reached")
-        ).to_be_visible(timeout=10000)
+        ).to_be_visible()
 
     with allure.step("Click 'Upgrade plan' and verify navigation to pricing page"):
         page.get_by_role("button", name="Upgrade plan").click()
         page.wait_for_timeout(3000)
         expect(page).to_have_url(
-            re.compile(r".*(pricing|upgrade|plan).*"), timeout=10000
+            re.compile(r".*(pricing|upgrade|plan).*")
         )

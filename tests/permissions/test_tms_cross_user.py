@@ -41,7 +41,7 @@ def test_carrier_does_not_see_brokers_trucks_in_fleet(logged_in_broker: Page,
     logged_in_carrier.wait_for_timeout(3000)
     expect(
         logged_in_carrier.get_by_text("ABC123321").first
-    ).not_to_be_visible(timeout=5000)
+    ).not_to_be_visible()
 
 
 @SKIP_MOCK_ENV
@@ -59,7 +59,7 @@ def test_carrier_does_not_see_brokers_drivers_in_list(logged_in_broker: Page,
     logged_in_carrier.wait_for_timeout(3000)
     expect(
         logged_in_carrier.get_by_text("pistonchijon@mail.ru").first
-    ).not_to_be_visible(timeout=5000)
+    ).not_to_be_visible()
 
 
 @SKIP_MOCK_ENV
@@ -79,4 +79,4 @@ def test_carrier_does_not_see_brokers_orders(logged_in_broker: Page,
     logged_in_carrier.wait_for_timeout(3000)
     expect(
         logged_in_carrier.get_by_text(broker_order_id).first
-    ).not_to_be_visible(timeout=5000)
+    ).not_to_be_visible()

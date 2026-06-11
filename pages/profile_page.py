@@ -31,7 +31,7 @@ class ProfilePage:
         return self
 
     def _click_sidebar_or_menu(self, sidebar_item, menu_item):
-        if sidebar_item.is_visible(timeout=1000):
+        if sidebar_item.is_visible():
             sidebar_item.click()
         else:
             self.open_menu()
@@ -75,5 +75,5 @@ class ProfilePage:
 
     def expect_logged_out(self):
         import re
-        expect(self.page).to_have_url(re.compile(r"sign-in|landing"), timeout=10000)
+        expect(self.page).to_have_url(re.compile(r"sign-in|landing"))
         return self

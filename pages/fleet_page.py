@@ -72,7 +72,7 @@ class FleetPage:
 
     def go_to_fleet(self) -> "FleetPage":
         self.page.goto(self.FLEET_URL, wait_until="domcontentloaded")
-        expect(self.trucks_tab).to_be_visible(timeout=15000)
+        expect(self.trucks_tab).to_be_visible()
         return self
 
     def click_trucks_tab(self) -> "FleetPage":
@@ -81,7 +81,7 @@ class FleetPage:
 
     def click_trailers_tab(self) -> "FleetPage":
         self.trailers_tab.click()
-        expect(self.add_trailer_button).to_be_visible(timeout=10000)
+        expect(self.add_trailer_button).to_be_visible()
         return self
 
     # ── Truck CRUD ──
@@ -91,7 +91,7 @@ class FleetPage:
         if search:
             self.country_search.fill(search)
         option = self.page.get_by_role("option", name=country)
-        expect(option).to_be_visible(timeout=5000)
+        expect(option).to_be_visible()
         option.click()
         return self
 
@@ -103,21 +103,21 @@ class FleetPage:
     def select_brand(self, brand: str) -> "FleetPage":
         self.page.get_by_test_id("fleet_brand_select").click()
         option = self.page.get_by_role("option", name=brand)
-        expect(option).to_be_visible(timeout=5000)
+        expect(option).to_be_visible()
         option.click()
         return self
 
     def select_year(self, year: str) -> "FleetPage":
         self.page.get_by_test_id("fleet_year_select").click()
         option = self.page.get_by_role("option", name=year)
-        expect(option).to_be_visible(timeout=5000)
+        expect(option).to_be_visible()
         option.click()
         return self
 
     def select_lifting_capacity(self, capacity: str = "tons") -> "FleetPage":
         self.page.get_by_test_id("fleet_lifting_capacity_select").click()
         option = self.page.get_by_role("option", name=capacity)
-        expect(option).to_be_visible(timeout=5000)
+        expect(option).to_be_visible()
         option.click()
         return self
 
@@ -130,7 +130,7 @@ class FleetPage:
                      country_search: str = None) -> "FleetPage":
         self.go_to_fleet()
         self.add_truck_button.click()
-        expect(self.select_country).to_be_visible(timeout=10000)
+        expect(self.select_country).to_be_visible()
         self.select_country_option(country, search=country_search)
         self.fill_gov_number(gov_number)
         self.select_brand(brand)
@@ -139,7 +139,7 @@ class FleetPage:
         if technical_passport:
             self.fill_technical_passport(technical_passport)
         self.add_button.click()
-        expect(self.page).to_have_url(re.compile(r"tms/fleet"), timeout=15000)
+        expect(self.page).to_have_url(re.compile(r"tms/fleet"))
         return self
 
     def _get_truck_row(self, brand: str, gov_number: str):
@@ -158,23 +158,23 @@ class FleetPage:
         self.go_to_fleet()
         self._open_truck_menu(brand, gov_number)
         edit_item = self.page.get_by_role("menuitem", name="Edit")
-        expect(edit_item).to_be_visible(timeout=5000)
+        expect(edit_item).to_be_visible()
         edit_item.click()
         if new_brand:
             self.page.get_by_role("combobox").filter(has_text=brand).click()
             option = self.page.get_by_role("option", name=new_brand)
-            expect(option).to_be_visible(timeout=5000)
+            expect(option).to_be_visible()
             option.click()
         self.save_button.click()
-        expect(self.truck_updated_message).to_be_visible(timeout=10000)
+        expect(self.truck_updated_message).to_be_visible()
         return self
 
     def delete_truck(self, brand: str, gov_number: str) -> "FleetPage":
         self.go_to_fleet()
-        expect(self._get_truck_row(brand, gov_number)).to_be_visible(timeout=15000)
+        expect(self._get_truck_row(brand, gov_number)).to_be_visible()
         self._open_truck_menu(brand, gov_number)
         delete_item = self.page.get_by_role("menuitem", name="Delete")
-        expect(delete_item).to_be_visible(timeout=5000)
+        expect(delete_item).to_be_visible()
         delete_item.click()
         self.confirm_delete_button.click()
         return self
@@ -184,7 +184,7 @@ class FleetPage:
     def select_trailer_type(self, trailer_type: str) -> "FleetPage":
         self.page.get_by_test_id("fleet_trailer_type_select").click()
         option = self.page.get_by_role("option", name=trailer_type)
-        expect(option).to_be_visible(timeout=5000)
+        expect(option).to_be_visible()
         option.click()
         return self
 
@@ -203,7 +203,7 @@ class FleetPage:
     def select_loading_types(self, loading_type: str) -> "FleetPage":
         self.page.get_by_test_id("fleet_loading_types_select").click()
         option = self.page.get_by_role("option", name=loading_type)
-        expect(option).to_be_visible(timeout=5000)
+        expect(option).to_be_visible()
         option.click()
         self.page.keyboard.press("Escape")
         return self
@@ -215,7 +215,7 @@ class FleetPage:
         self.go_to_fleet()
         self.click_trailers_tab()
         self.add_trailer_button.click()
-        expect(self.select_country).to_be_visible(timeout=10000)
+        expect(self.select_country).to_be_visible()
         self.select_country_option(country)
         self.fill_gov_number(gov_number)
         self.select_trailer_type(trailer_type)
@@ -224,7 +224,7 @@ class FleetPage:
             self.fill_dimensions(volume, length, width, height)
         self.select_lifting_capacity(lifting_capacity)
         self.add_button.click()
-        expect(self.page).to_have_url(re.compile(r"tms/fleet"), timeout=15000)
+        expect(self.page).to_have_url(re.compile(r"tms/fleet"))
         return self
 
     def _get_trailer_row(self, gov_number: str):
@@ -244,7 +244,7 @@ class FleetPage:
         self.click_trailers_tab()
         self._open_trailer_menu(gov_number)
         edit_item = self.page.get_by_role("menuitem", name="Edit")
-        expect(edit_item).to_be_visible(timeout=5000)
+        expect(edit_item).to_be_visible()
         edit_item.click()
         if new_gov_number:
             self.gov_number_input.fill(new_gov_number)
@@ -256,7 +256,7 @@ class FleetPage:
         self.click_trailers_tab()
         self._open_trailer_menu(gov_number)
         deactivate_item = self.page.get_by_role("menuitem", name="Deactivate")
-        expect(deactivate_item).to_be_visible(timeout=5000)
+        expect(deactivate_item).to_be_visible()
         deactivate_item.click()
         self.confirm_deactivate_button.click()
         return self
@@ -266,7 +266,7 @@ class FleetPage:
         self.click_trailers_tab()
         self._open_trailer_menu(gov_number)
         reactivate_item = self.page.get_by_role("menuitem", name="Reactivate")
-        expect(reactivate_item).to_be_visible(timeout=5000)
+        expect(reactivate_item).to_be_visible()
         reactivate_item.click()
         self.page.get_by_role("button", name="Reactivate").click()
         return self
@@ -277,7 +277,7 @@ class FleetPage:
         self.click_trailers_tab()
         self._open_trailer_menu(gov_number)
         delete_item = self.page.get_by_role("menuitem", name="Delete")
-        expect(delete_item).to_be_visible(timeout=5000)
+        expect(delete_item).to_be_visible()
         delete_item.click()
         self.confirm_delete_button.click()
         return self
@@ -285,33 +285,33 @@ class FleetPage:
     # ── Assertions ──
 
     def expect_on_fleet_page(self) -> "FleetPage":
-        expect(self.page).to_have_url(re.compile(r"tms/fleet"), timeout=10000)
+        expect(self.page).to_have_url(re.compile(r"tms/fleet"))
         return self
 
     def expect_truck_in_list(self, brand: str, gov_number: str) -> "FleetPage":
-        expect(self._get_truck_row(brand, gov_number)).to_be_visible(timeout=10000)
+        expect(self._get_truck_row(brand, gov_number)).to_be_visible()
         return self
 
     def expect_truck_not_in_list(self, brand: str, gov_number: str) -> "FleetPage":
-        expect(self._get_truck_row(brand, gov_number)).not_to_be_visible(timeout=10000)
+        expect(self._get_truck_row(brand, gov_number)).not_to_be_visible()
         return self
 
     def expect_truck_updated(self) -> "FleetPage":
-        expect(self.truck_updated_message).to_be_visible(timeout=10000)
+        expect(self.truck_updated_message).to_be_visible()
         return self
 
     def expect_truck_deleted(self) -> "FleetPage":
-        expect(self.truck_deleted_message).to_be_visible(timeout=10000)
+        expect(self.truck_deleted_message).to_be_visible()
         return self
 
     def expect_trailer_in_list(self, gov_number: str) -> "FleetPage":
-        expect(self._get_trailer_row(gov_number)).to_be_visible(timeout=10000)
+        expect(self._get_trailer_row(gov_number)).to_be_visible()
         return self
 
     def expect_trailer_not_in_list(self, gov_number: str) -> "FleetPage":
-        expect(self._get_trailer_row(gov_number)).not_to_be_visible(timeout=10000)
+        expect(self._get_trailer_row(gov_number)).not_to_be_visible()
         return self
 
     def expect_trailer_deleted(self) -> "FleetPage":
-        expect(self.trailer_deleted_message).to_be_visible(timeout=10000)
+        expect(self.trailer_deleted_message).to_be_visible()
         return self

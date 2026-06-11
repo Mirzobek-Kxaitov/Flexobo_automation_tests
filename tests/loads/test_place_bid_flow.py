@@ -17,9 +17,9 @@ APP_URL = os.getenv("APP_URL")
 def _navigate_to_load(page: Page, price: int):
     page.goto(f"{APP_URL}/loads", wait_until="domcontentloaded")
     load_card = page.get_by_text(price_regex(price)).first
-    expect(load_card).to_be_visible(timeout=20000)
+    expect(load_card).to_be_visible()
     load_card.click()
-    expect(page).to_have_url(re.compile(r".*/loads/[a-f0-9-]{36}"), timeout=15000)
+    expect(page).to_have_url(re.compile(r".*/loads/[a-f0-9-]{36}"))
 
 
 @allure.feature("Place a Bid")
@@ -35,7 +35,7 @@ def test_clicking_load_opens_detail_page(logged_in_carrier: Page, fresh_load_for
 def test_load_detail_shows_place_a_bid_button(logged_in_carrier: Page, fresh_load_for_bid: int):
     page = logged_in_carrier
     _navigate_to_load(page, fresh_load_for_bid)
-    expect(BidFormPage(page).open_button).to_be_visible(timeout=10000)
+    expect(BidFormPage(page).open_button).to_be_visible()
 
 
 @allure.feature("Place a Bid")

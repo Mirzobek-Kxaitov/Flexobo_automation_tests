@@ -107,7 +107,7 @@ def test_bid_limit_full_flow(
     with allure.step("Verify 'Limit reached' modal is visible with expected buttons"):
         expect(
             broker.get_by_role("heading", name="Limit reached")
-        ).to_be_visible(timeout=10000)
+        ).to_be_visible()
 
         expect(
             broker.get_by_text("You have reached your limit")
@@ -154,7 +154,7 @@ def test_limit_modal_maybe_later(
     with allure.step("Verify 'Limit reached' modal appears"):
         expect(
             broker.get_by_role("heading", name="Limit reached")
-        ).to_be_visible(timeout=10000)
+        ).to_be_visible()
 
     with allure.step("Click 'Maybe later' and verify modal closes"):
         broker.get_by_role("button", name="Maybe later").click()
@@ -197,10 +197,10 @@ def test_limit_modal_upgrade_plan(
     with allure.step("Verify 'Limit reached' modal appears"):
         expect(
             broker.get_by_role("heading", name="Limit reached")
-        ).to_be_visible(timeout=10000)
+        ).to_be_visible()
 
     with allure.step("Click 'Upgrade plan' and verify navigation to pricing page"):
         broker.get_by_role("button", name="Upgrade plan").click()
         broker.wait_for_timeout(3000)
 
-        expect(broker).to_have_url(re.compile(r".*(pricing|upgrade|plan).*"), timeout=10000)
+        expect(broker).to_have_url(re.compile(r".*(pricing|upgrade|plan).*"))

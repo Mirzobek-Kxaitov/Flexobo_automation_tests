@@ -54,7 +54,7 @@ def _create_trip_and_place_bid(broker: Page, load_owner: Page, price: str) -> No
         remainder = price_int % 1000
         price_pattern = re.compile(rf"USD[\s]+{thousands}[,\s]{remainder:03d}")
         trip_card = load_owner.get_by_text(price_pattern).first
-        expect(trip_card).to_be_visible(timeout=20000)
+        expect(trip_card).to_be_visible()
         trip_card.click()
         load_owner.wait_for_timeout(1500)
 
@@ -120,7 +120,7 @@ def test_load_owner_bids_limit_full_flow(
     with allure.step("Verify 'Limit reached' modal is displayed"):
         expect(
             owner.get_by_role("heading", name="Limit reached")
-        ).to_be_visible(timeout=10000)
+        ).to_be_visible()
         expect(owner.get_by_text("You have reached your limit")).to_be_visible()
         expect(owner.get_by_role("button", name="Upgrade plan")).to_be_visible()
         expect(owner.get_by_role("button", name="Maybe later")).to_be_visible()
@@ -152,7 +152,7 @@ def test_load_owner_bids_modal_maybe_later(
     with allure.step("Verify 'Limit reached' modal is visible"):
         expect(
             owner.get_by_role("heading", name="Limit reached")
-        ).to_be_visible(timeout=10000)
+        ).to_be_visible()
 
     with allure.step("Click 'Maybe later' and verify modal is dismissed"):
         owner.get_by_role("button", name="Maybe later").click()
@@ -188,11 +188,11 @@ def test_load_owner_bids_modal_upgrade_plan(
     with allure.step("Verify 'Limit reached' modal is visible"):
         expect(
             owner.get_by_role("heading", name="Limit reached")
-        ).to_be_visible(timeout=10000)
+        ).to_be_visible()
 
     with allure.step("Click 'Upgrade plan' and verify navigation to upgrade page"):
         owner.get_by_role("button", name="Upgrade plan").click()
         owner.wait_for_timeout(3000)
         expect(owner).to_have_url(
-            re.compile(r".*(pricing|upgrade|plan).*"), timeout=10000
+            re.compile(r".*(pricing|upgrade|plan).*")
         )

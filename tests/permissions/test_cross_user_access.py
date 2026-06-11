@@ -28,7 +28,7 @@ def _logout(page: Page):
     page.get_by_test_id("global_user_menu_button").click()
     page.get_by_test_id("global_logout_menu_item").click()
     page.get_by_test_id("global_logout_confirm_button").click()
-    expect(page).to_have_url(re.compile(r"sign-in|landing"), timeout=10000)
+    expect(page).to_have_url(re.compile(r"sign-in|landing"))
 
 
 def _switch_user(page: Page, email: str, password: str):
@@ -72,7 +72,7 @@ def test_load_owner_save_does_not_modify_brokers_load(page: Page):
     page.goto(f"{APP_URL}/profile-load")
     page.wait_for_load_state("domcontentloaded")
     LoadsPage(page).click_change_on_first_load()
-    expect(page).to_have_url(re.compile(r".*/loads/[a-f0-9-]+/edit.*"), timeout=10000)
+    expect(page).to_have_url(re.compile(r".*/loads/[a-f0-9-]+/edit.*"))
     brokers_edit_url = page.url
 
     # 3. Switch to LoadOwner
@@ -85,14 +85,14 @@ def test_load_owner_save_does_not_modify_brokers_load(page: Page):
 
     # Agar backend URL darajasida himoya qilsa (redirect) — bu ham yaxshi
     on_edit_page = re.search(r"/loads/[a-f0-9-]+/edit", page.url)
-    if on_edit_page and page.get_by_test_id("loads_weight_input").is_visible(timeout=5000):
+    if on_edit_page and page.get_by_test_id("loads_weight_input").is_visible():
         # Edit forma ochiq — hujumni urinib ko'ramiz
         loads = LoadsPage(page)
         loads.weight_input.fill(HACK_WEIGHT)
         loads.click_next()
-        expect(loads.price_input).to_be_visible(timeout=10000)
+        expect(loads.price_input).to_be_visible()
         loads.click_next()
-        if loads.publish_button.is_visible(timeout=5000):
+        if loads.publish_button.is_visible():
             loads.publish()
         page.wait_for_timeout(3000)
 
@@ -103,12 +103,12 @@ def test_load_owner_save_does_not_modify_brokers_load(page: Page):
     page.wait_for_timeout(3000)
 
     # POSITIVE: page loaded with actual content
-    page_text = page.locator("body").inner_text(timeout=10000)
+    page_text = page.locator("body").inner_text()
     assert len(page_text.strip()) > 50, \
         f"Profile-load sahifasi bo'sh yoki yuklanmadi: {page_text[:200]}"
 
     # NEGATIVE: HACK_WEIGHT must NOT appear in broker's loads
-    expect(page.get_by_text(HACK_WEIGHT).first).not_to_be_visible(timeout=5000)
+    expect(page.get_by_text(HACK_WEIGHT).first).not_to_be_visible()
 
 
 @allure.feature("Permissions")
@@ -146,12 +146,12 @@ def test_load_owner_does_not_see_brokers_loads_in_list(page: Page):
     page.wait_for_timeout(3000)
 
     # POSITIVE: page loaded with content
-    page_text = page.locator("body").inner_text(timeout=10000)
+    page_text = page.locator("body").inner_text()
     assert len(page_text.strip()) > 50, \
         f"Profile-load sahifasi bo'sh yoki yuklanmadi: {page_text[:200]}"
 
     # NEGATIVE: broker's load must NOT appear in load_owner's list
-    expect(page.get_by_text(UNIQUE_PRICE).first).not_to_be_visible(timeout=5000)
+    expect(page.get_by_text(UNIQUE_PRICE).first).not_to_be_visible()
 
 
 @allure.feature("Permissions")
@@ -213,9 +213,9 @@ def test_load_owner_save_does_not_modify_brokers_trip(page: Page):
     page.wait_for_timeout(3000)
 
     # POSITIVE: page loaded with content va ma'lumot bor
-    page_text = page.locator("body").inner_text(timeout=10000)
+    page_text = page.locator("body").inner_text()
     assert len(page_text.strip()) > 50, \
         f"Profile-trips sahifasi bo'sh yoki yuklanmadi: {page_text[:200]}"
 
     # NEGATIVE: HACK_PRICE must NOT appear in broker's trips
-    expect(page.get_by_text(HACK_PRICE).first).not_to_be_visible(timeout=5000)
+    expect(page.get_by_text(HACK_PRICE).first).not_to_be_visible()
