@@ -84,6 +84,7 @@ jobs:
     timeout-minutes: 45
     strategy:
       fail-fast: false
+      max-parallel: 3
       matrix:
         suite:
           - name: smoke
@@ -167,12 +168,10 @@ jobs:
         run: |
           set +e
           TARGETS="${{ github.event.inputs.test_targets || matrix.suite.targets }}"
-          pytest ${TARGETS} --reruns 2 --timeout 300 -v 2>&1 | tee pytest-output.log
+          pytest ${TARGETS} --reruns 1 --timeout 120 -v 2>&1 | tee pytest-output.log
           exit_code=${PIPESTATUS[0]}
           echo "exit_code=${exit_code}" >> "$GITHUB_OUTPUT"
           exit "${exit_code}"
-        env:
-          PLAYWRIGHT_SLOW_MO: "500"
 
       - name: Upload Allure results
         if: always()

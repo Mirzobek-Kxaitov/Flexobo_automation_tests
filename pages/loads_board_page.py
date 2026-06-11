@@ -16,14 +16,27 @@ class LoadsBoardPage:
     def open(self, app_url: str):
         self.page.goto(f"{app_url}/loads", wait_until="domcontentloaded")
         expect(self.search_from).to_be_visible()
+        cookie = self.page.get_by_test_id("global_cookie_accept_button")
+        if cookie.is_visible():
+            cookie.click(force=True)
+        return self
+
+    def _dismiss_drawer(self):
+        """Close any open drawer/overlay that blocks interaction."""
+        drawer = self.page.locator("[data-vaul-drawer][data-state='open']")
+        if drawer.is_visible():
+            self.page.keyboard.press("Escape")
         return self
 
     def search_from_city(self, city: str):
         self.search_from.fill(city)
-        self.page.get_by_text(city, exact=False).first.click()
+        suggestion = self.page.get_by_text(city, exact=False).first
+        expect(suggestion).to_be_visible()
+        suggestion.click(force=True)
         return self
 
     def click_search(self):
+        self._dismiss_drawer()
         self.search_button.click()
         return self
 
