@@ -58,8 +58,10 @@ def login_as(page: Page, email: str | None, password: str | None, label: str = "
             f"{label} credentials are missing. Check local .env and GitHub repository secrets."
         )
 
-    page.goto(f"{app_url}/sign-in?lang=en")
-    page.get_by_test_id("login_email_input").fill(email)
+    page.goto(f"{app_url}/sign-in?lang=en", wait_until="domcontentloaded")
+    email_input = page.get_by_test_id("login_email_input")
+    expect(email_input).to_be_visible()
+    email_input.fill(email)
     page.get_by_test_id("login_password_input").fill(password)
     page.get_by_test_id("login_submit_button").click()
     expect(page).not_to_have_url(re.compile(r".*sign-in.*"), timeout=LOGIN_TIMEOUT_MS)
