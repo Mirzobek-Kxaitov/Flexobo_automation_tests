@@ -1,10 +1,8 @@
 import os
 import re
 import sys
-import json
 import pytest
-from pathlib import Path
-from playwright.sync_api import Page, expect, BrowserContext
+from playwright.sync_api import Page, expect
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -41,8 +39,7 @@ FREE_OWNER_OPERATOR_PASSWORD = os.getenv("FREE_OWNER_OPERATOR_PASSWORD")
 
 LOGIN_TIMEOUT_MS = int(os.getenv("LOGIN_TIMEOUT_MS", "60000"))
 
-# Storage state cache directory
-_STATE_DIR = Path(__file__).parent / ".auth"
+DEFAULT_TIMEOUT_MS = 30_000
 
 
 def _required_env(name: str, value: str | None) -> str:
@@ -74,55 +71,13 @@ def login_as(page: Page, email: str | None, password: str | None, label: str = "
     return page
 
 
-def _get_storage_state(browser, browser_context_args, email, password, label) -> str:
-    """Login once and cache storage_state to disk. Returns path to state file."""
-    _STATE_DIR.mkdir(exist_ok=True)
-    safe_name = re.sub(r"[^a-zA-Z0-9]", "_", label)
-    state_path = _STATE_DIR / f"{safe_name}.json"
-
-    if state_path.exists():
-        return str(state_path)
-
+def _logged_in_page(browser, browser_context_args, email, password, label):
+    """Create a separate browser context and log in."""
     context = browser.new_context(**browser_context_args)
     page = context.new_page()
-    login_as(page, email, password, label)
-    context.storage_state(path=str(state_path))
-    context.close()
-    return str(state_path)
-
-
-DEFAULT_TIMEOUT_MS = 30_000
-EXPECT_TIMEOUT_MS = 30_000
-
-
-def _context_from_state(browser, browser_context_args, state_path):
-    """Create a new context using cached storage_state."""
-    app_url = _required_env("APP_URL", APP_URL).rstrip("/")
-    context = browser.new_context(storage_state=state_path, **browser_context_args)
-    page = context.new_page()
     page.set_default_timeout(DEFAULT_TIMEOUT_MS)
-    expect.set_options(timeout=EXPECT_TIMEOUT_MS)
-    page.goto(f"{app_url}/loads", wait_until="domcontentloaded")
+    login_as(page, email, password, label)
     return context, page
-
-
-def _logged_in_page(browser, browser_context_args, email, password, label):
-    """Create a separate browser context with cached login session."""
-    state_path = _get_storage_state(browser, browser_context_args, email, password, label)
-    return _context_from_state(browser, browser_context_args, state_path)
-
-
-@pytest.fixture(scope="session", autouse=True)
-def _clean_auth_cache():
-    """Clean auth cache at start/end of session — fresh login once per run."""
-    import shutil
-    if _STATE_DIR.exists():
-        shutil.rmtree(_STATE_DIR)
-    _STATE_DIR.mkdir(exist_ok=True)
-    yield
-    # Cleanup at end of session
-    if _STATE_DIR.exists():
-        shutil.rmtree(_STATE_DIR)
 
 
 def pytest_addoption(parser):
