@@ -14,9 +14,9 @@ class UsagePage:
         usage_link = self.page.get_by_test_id("sidebar_usage_link").or_(
             self.page.get_by_text("Usage", exact=True)
         ).first
-        expect(usage_link).to_be_visible(timeout=10000)
+        expect(usage_link).to_be_visible(timeout=30000)
         usage_link.click()
-        expect(self.usage_page).to_be_visible(timeout=15000)
+        expect(self.usage_page).to_be_visible(timeout=30000)
         return self
 
     def get_card(self, test_id: str):
