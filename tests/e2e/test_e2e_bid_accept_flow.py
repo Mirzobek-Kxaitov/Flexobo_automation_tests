@@ -9,7 +9,7 @@ import allure
 from playwright.sync_api import Page, expect
 from dotenv import load_dotenv
 
-from helpers import create_load, navigate_to_loads, pick_future_date
+from tests.helpers import create_load, navigate_to_loads, pick_future_date
 
 load_dotenv()
 APP_URL = os.getenv("APP_URL")

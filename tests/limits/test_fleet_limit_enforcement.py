@@ -15,7 +15,7 @@ import pytest
 from playwright.sync_api import Page, expect
 from dotenv import load_dotenv
 
-from helpers import read_usage_counter, add_trailer
+from tests.helpers import read_usage_counter, add_trailer
 
 load_dotenv()
 APP_URL = os.getenv("APP_URL")

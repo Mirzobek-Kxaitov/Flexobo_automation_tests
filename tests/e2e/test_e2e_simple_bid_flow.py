@@ -11,7 +11,7 @@ import pytest
 from playwright.sync_api import Page, expect
 from dotenv import load_dotenv
 
-from helpers import navigate_to_loads, dismiss_cookie_banner
+from tests.helpers import navigate_to_loads, dismiss_cookie_banner
 
 load_dotenv()
 APP_URL = os.getenv("APP_URL")

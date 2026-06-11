@@ -35,7 +35,7 @@ def _switch_user(page: Page, email: str, password: str):
     """Logout current user, clear cookies, login as new user."""
     _logout(page)
     page.context.clear_cookies()
-    login_as(page,email, password)
+    login_as(page, email, password)
 
 
 @allure.feature("Permissions")
@@ -54,7 +54,7 @@ def test_load_owner_save_does_not_modify_brokers_load(page: Page):
     ORIGINAL_WEIGHT = "20"
 
     # 1. Broker login va yuk yaratish
-    login_as(page,BROKER_EMAIL, BROKER_PASSWORD)
+    login_as(page, BROKER_EMAIL, BROKER_PASSWORD)
     page.goto(f"{APP_URL}/loads")
     page.wait_for_load_state("domcontentloaded")
     LoadsPage(page).create_load(
@@ -123,7 +123,7 @@ def test_load_owner_does_not_see_brokers_loads_in_list(page: Page):
     UNIQUE_PRICE = str(random.randint(40000, 49999))
 
     # 1. Broker login + yuk yaratish
-    login_as(page,BROKER_EMAIL, BROKER_PASSWORD)
+    login_as(page, BROKER_EMAIL, BROKER_PASSWORD)
     page.goto(f"{APP_URL}/loads")
     page.wait_for_load_state("domcontentloaded")
     LoadsPage(page).create_load(
@@ -168,7 +168,7 @@ def test_load_owner_save_does_not_modify_brokers_trip(page: Page):
     HACK_PRICE = "99999"
 
     # 1. Broker login va trip yaratish
-    login_as(page,BROKER_EMAIL, BROKER_PASSWORD)
+    login_as(page, BROKER_EMAIL, BROKER_PASSWORD)
     page.goto(f"{APP_URL}/loads")
     page.wait_for_load_state("domcontentloaded")
     TripsPage(page).create_trip(

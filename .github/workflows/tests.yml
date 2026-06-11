@@ -86,28 +86,20 @@ jobs:
       fail-fast: false
       matrix:
         suite:
+          - name: smoke
+            targets: tests/smoke/
           - name: permissions
             targets: tests/permissions/
           - name: loads
-            targets: >-
-              tests/test_loads_search.py
-              tests/test_place_bid_flow.py
-              tests/test_place_bid_submit.py
+            targets: tests/loads/
           - name: usage
-            targets: >-
-              tests/test_usage.py
-              tests/test_usage_counters.py
+            targets: tests/usage/
           - name: e2e
-            targets: >-
-              tests/test_e2e_bid_lifecycle.py
-              tests/test_e2e_simple_bid_flow.py
-              tests/test_e2e_bid_accept_flow.py
-              tests/test_my_bids.py
-              tests/test_received_bids.py
+            targets: tests/e2e/
           - name: profile
-            targets: >-
-              tests/test_profile.py
-              tests/validation/
+            targets: tests/profile/ tests/validation/
+          - name: limits
+            targets: tests/limits/
 
     steps:
       - uses: actions/checkout@v4

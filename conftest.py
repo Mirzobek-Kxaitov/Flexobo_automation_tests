@@ -243,7 +243,7 @@ def _load_owner_context(browser, browser_context_args):
 def fresh_load_for_bid(_load_owner_context):
     """Load owner creates a fresh load, returns unique price for carrier to find it."""
     import time
-    from helpers import create_load
+    from tests.helpers import create_load
 
     price = int(time.time()) % 9000 + 1000
     create_load(_load_owner_context, price)

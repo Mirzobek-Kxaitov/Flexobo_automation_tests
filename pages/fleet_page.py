@@ -279,7 +279,7 @@ class FleetPage:
         delete_item = self.page.get_by_role("menuitem", name="Delete")
         expect(delete_item).to_be_visible(timeout=5000)
         delete_item.click()
-        self.confirm_deactivate_button.click()
+        self.confirm_delete_button.click()
         return self
 
     # ── Assertions ──

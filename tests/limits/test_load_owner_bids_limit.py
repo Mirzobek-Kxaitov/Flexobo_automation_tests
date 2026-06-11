@@ -20,7 +20,7 @@ from playwright.sync_api import Page, expect
 from dotenv import load_dotenv
 
 from pages.trips_page import TripsPage
-from helpers import read_usage_counter, navigate_to_transport, pick_future_date
+from tests.helpers import read_usage_counter, navigate_to_transport, pick_future_date
 
 load_dotenv()
 APP_URL = os.getenv("APP_URL")

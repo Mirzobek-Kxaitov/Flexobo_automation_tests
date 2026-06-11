@@ -7,7 +7,7 @@ import re
 import allure
 from playwright.sync_api import Page, expect
 from dotenv import load_dotenv
-from helpers import price_regex
+from tests.helpers import price_regex
 from pages.bid_form_page import BidFormPage
 
 load_dotenv()

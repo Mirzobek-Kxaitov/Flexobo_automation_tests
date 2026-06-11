@@ -15,7 +15,7 @@ import pytest
 from playwright.sync_api import Page, expect
 from dotenv import load_dotenv
 
-from helpers import read_usage_counter
+from tests.helpers import read_usage_counter
 from pages.trips_page import TripsPage
 
 load_dotenv()

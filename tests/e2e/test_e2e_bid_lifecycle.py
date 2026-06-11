@@ -13,7 +13,7 @@ import allure
 from playwright.sync_api import Page, expect
 from dotenv import load_dotenv
 
-from helpers import create_load, place_bid_on_load, price_regex
+from tests.helpers import create_load, place_bid_on_load, price_regex
 
 load_dotenv()
 APP_URL = os.getenv("APP_URL")
