@@ -8,7 +8,6 @@ load_dotenv()
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "scripts"))
 
-# Legacy tests use EMAIL/PASSWORD — kept for backward compatibility
 EMAIL = os.getenv("EMAIL")
 PASSWORD = os.getenv("PASSWORD")
 
@@ -27,7 +26,6 @@ CARRIER_PASSWORD = os.getenv("CARRIER_PASSWORD")
 OWNER_OPERATOR_EMAIL = os.getenv("OWNER_OPERATOR_EMAIL")
 OWNER_OPERATOR_PASSWORD = os.getenv("OWNER_OPERATOR_PASSWORD")
 
-# FREE plan users (for limit enforcement tests)
 FREE_BROKER_EMAIL = os.getenv("FREE_BROKER_EMAIL")
 FREE_BROKER_PASSWORD = os.getenv("FREE_BROKER_PASSWORD")
 FREE_LOAD_OWNER_EMAIL = os.getenv("FREE_LOAD_OWNER_EMAIL")
@@ -38,8 +36,10 @@ FREE_OWNER_OPERATOR_EMAIL = os.getenv("FREE_OWNER_OPERATOR_EMAIL")
 FREE_OWNER_OPERATOR_PASSWORD = os.getenv("FREE_OWNER_OPERATOR_PASSWORD")
 
 LOGIN_TIMEOUT_MS = int(os.getenv("LOGIN_TIMEOUT_MS", "60000"))
-
 DEFAULT_TIMEOUT_MS = 30_000
+
+# Session-scoped token cache: {label: storage_state_dict}
+_auth_cache: dict[str, dict] = {}
 
 
 def _required_env(name: str, value: str | None) -> str:
@@ -73,12 +73,27 @@ def login_as(page: Page, email: str | None, password: str | None, label: str = "
     return page
 
 
-def _logged_in_page(browser, browser_context_args, email, password, label):
-    """Create a separate browser context and log in."""
+def _get_auth(browser, browser_context_args, email, password, label) -> dict:
+    """Login once per label, cache the storage_state dict in memory."""
+    if label in _auth_cache:
+        return _auth_cache[label]
+
     context = browser.new_context(**browser_context_args)
     page = context.new_page()
     page.set_default_timeout(DEFAULT_TIMEOUT_MS)
     login_as(page, email, password, label)
+    state = context.storage_state()
+    context.close()
+    _auth_cache[label] = state
+    return state
+
+
+def _logged_in_page(browser, browser_context_args, email, password, label):
+    """Create a new context with cached auth tokens. No extra login needed."""
+    state = _get_auth(browser, browser_context_args, email, password, label)
+    context = browser.new_context(storage_state=state, **browser_context_args)
+    page = context.new_page()
+    page.set_default_timeout(DEFAULT_TIMEOUT_MS)
     return context, page
 
 
@@ -91,7 +106,6 @@ def pytest_addoption(parser):
 
 @pytest.fixture(scope="session", autouse=True)
 def reset_usage_if_requested(request):
-    """Reset all user usage counters when --reset-usage flag is passed."""
     if request.config.getoption("--reset-usage"):
         from reset_usage import reset_all_users
         reset_all_users()
@@ -99,15 +113,13 @@ def reset_usage_if_requested(request):
 
 @pytest.fixture
 def open_page(page: Page):
-    """Open the login page without performing a login."""
     page.goto(f"{_required_env('APP_URL', APP_URL).rstrip('/')}/sign-in?lang=en")
     return page
 
 
 @pytest.fixture
 def logged_in(browser, browser_context_args):
-    """Log in as broker using the legacy EMAIL/PASSWORD credentials."""
-    context, page = _logged_in_page(browser, browser_context_args, EMAIL, PASSWORD, "EMAIL/PASSWORD")
+    context, page = _logged_in_page(browser, browser_context_args, EMAIL, PASSWORD, "legacy")
     yield page
     context.close()
 
@@ -115,7 +127,7 @@ def logged_in(browser, browser_context_args):
 @pytest.fixture
 def logged_in_broker(browser, browser_context_args):
     context, page = _logged_in_page(
-        browser, browser_context_args, BROKER_EMAIL, BROKER_PASSWORD, "BROKER_EMAIL/BROKER_PASSWORD"
+        browser, browser_context_args, BROKER_EMAIL, BROKER_PASSWORD, "broker"
     )
     yield page
     context.close()
@@ -124,8 +136,7 @@ def logged_in_broker(browser, browser_context_args):
 @pytest.fixture
 def logged_in_load_owner(browser, browser_context_args):
     context, page = _logged_in_page(
-        browser, browser_context_args, LOAD_OWNER_EMAIL, LOAD_OWNER_PASSWORD,
-        "LOAD_OWNER_EMAIL/LOAD_OWNER_PASSWORD",
+        browser, browser_context_args, LOAD_OWNER_EMAIL, LOAD_OWNER_PASSWORD, "load_owner"
     )
     yield page
     context.close()
@@ -134,8 +145,7 @@ def logged_in_load_owner(browser, browser_context_args):
 @pytest.fixture
 def logged_in_carrier(browser, browser_context_args):
     context, page = _logged_in_page(
-        browser, browser_context_args, CARRIER_EMAIL, CARRIER_PASSWORD,
-        "CARRIER_EMAIL/CARRIER_PASSWORD",
+        browser, browser_context_args, CARRIER_EMAIL, CARRIER_PASSWORD, "carrier"
     )
     yield page
     context.close()
@@ -144,20 +154,18 @@ def logged_in_carrier(browser, browser_context_args):
 @pytest.fixture
 def logged_in_owner_operator(browser, browser_context_args):
     context, page = _logged_in_page(
-        browser, browser_context_args, OWNER_OPERATOR_EMAIL, OWNER_OPERATOR_PASSWORD,
-        "OWNER_OPERATOR_EMAIL/OWNER_OPERATOR_PASSWORD",
+        browser, browser_context_args, OWNER_OPERATOR_EMAIL, OWNER_OPERATOR_PASSWORD, "owner_operator"
     )
     yield page
     context.close()
 
 
-# === FREE plan fixtures (for limit enforcement tests) ===
+# === FREE plan fixtures ===
 
 @pytest.fixture
 def free_broker(browser, browser_context_args):
     context, page = _logged_in_page(
-        browser, browser_context_args, FREE_BROKER_EMAIL, FREE_BROKER_PASSWORD,
-        "FREE_BROKER_EMAIL/FREE_BROKER_PASSWORD",
+        browser, browser_context_args, FREE_BROKER_EMAIL, FREE_BROKER_PASSWORD, "free_broker"
     )
     yield page
     context.close()
@@ -166,8 +174,7 @@ def free_broker(browser, browser_context_args):
 @pytest.fixture
 def free_load_owner(browser, browser_context_args):
     context, page = _logged_in_page(
-        browser, browser_context_args, FREE_LOAD_OWNER_EMAIL, FREE_LOAD_OWNER_PASSWORD,
-        "FREE_LOAD_OWNER_EMAIL/FREE_LOAD_OWNER_PASSWORD",
+        browser, browser_context_args, FREE_LOAD_OWNER_EMAIL, FREE_LOAD_OWNER_PASSWORD, "free_load_owner"
     )
     yield page
     context.close()
@@ -176,8 +183,7 @@ def free_load_owner(browser, browser_context_args):
 @pytest.fixture
 def free_carrier(browser, browser_context_args):
     context, page = _logged_in_page(
-        browser, browser_context_args, FREE_CARRIER_EMAIL, FREE_CARRIER_PASSWORD,
-        "FREE_CARRIER_EMAIL/FREE_CARRIER_PASSWORD",
+        browser, browser_context_args, FREE_CARRIER_EMAIL, FREE_CARRIER_PASSWORD, "free_carrier"
     )
     yield page
     context.close()
@@ -186,8 +192,7 @@ def free_carrier(browser, browser_context_args):
 @pytest.fixture
 def free_owner_operator(browser, browser_context_args):
     context, page = _logged_in_page(
-        browser, browser_context_args, FREE_OWNER_OPERATOR_EMAIL, FREE_OWNER_OPERATOR_PASSWORD,
-        "FREE_OWNER_OPERATOR_EMAIL/FREE_OWNER_OPERATOR_PASSWORD",
+        browser, browser_context_args, FREE_OWNER_OPERATOR_EMAIL, FREE_OWNER_OPERATOR_PASSWORD, "free_owner_operator"
     )
     yield page
     context.close()
@@ -195,10 +200,8 @@ def free_owner_operator(browser, browser_context_args):
 
 @pytest.fixture(scope="module")
 def _load_owner_context(browser, browser_context_args):
-    """Single load_owner session shared across a test module."""
     context, page = _logged_in_page(
-        browser, browser_context_args, LOAD_OWNER_EMAIL, LOAD_OWNER_PASSWORD,
-        "LOAD_OWNER_EMAIL/LOAD_OWNER_PASSWORD",
+        browser, browser_context_args, LOAD_OWNER_EMAIL, LOAD_OWNER_PASSWORD, "load_owner"
     )
     yield page
     context.close()
@@ -206,7 +209,6 @@ def _load_owner_context(browser, browser_context_args):
 
 @pytest.fixture
 def fresh_load_for_bid(_load_owner_context):
-    """Load owner creates a fresh load, returns unique price for carrier to find it."""
     import time
     from tests.helpers import create_load
 
@@ -217,6 +219,5 @@ def fresh_load_for_bid(_load_owner_context):
 
 @pytest.fixture
 def landing_page(page: Page):
-    """Open the landing page without logging in."""
     page.goto(_required_env("BASE_URL", BASE_URL), wait_until="domcontentloaded")
     return page

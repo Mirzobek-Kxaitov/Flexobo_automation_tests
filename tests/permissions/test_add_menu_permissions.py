@@ -1,10 +1,13 @@
+import os
 import allure
 import pytest
 from playwright.sync_api import Page, expect
+from dotenv import load_dotenv
 
+load_dotenv()
+APP_URL = os.getenv("APP_URL")
 
-# Permission matrix: kim qaysi "Add" menyu itemini ko'ra olishi
-# Yangi item qo'shilsa — shu yerga qator qo'shiladi
+# True = should be visible, False = should be hidden
 ADD_MENU_PERMISSIONS = {
     "Load": {
         "broker": True,
@@ -28,6 +31,7 @@ ADD_MENU_PERMISSIONS = {
 def test_add_menu_item_visibility(request, role: str, menu_item: str):
     """Add menyudagi har item'ning role bo'yicha ko'rinishini tekshiradi."""
     page: Page = request.getfixturevalue(f"logged_in_{role}")
+    page.goto(f"{APP_URL}/loads", wait_until="domcontentloaded")
     should_be_visible = ADD_MENU_PERMISSIONS[menu_item][role]
     item_test_ids = {
         "Load": "global_add_load_menu_item",
