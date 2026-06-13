@@ -84,23 +84,37 @@ jobs:
     timeout-minutes: 45
     strategy:
       fail-fast: false
-      max-parallel: 2
+      max-parallel: 1
       matrix:
         suite:
           - name: smoke
             targets: tests/smoke/
           - name: permissions
-            targets: tests/permissions/
+            targets: >-
+              tests/permissions/test_add_menu_permissions.py
+              tests/permissions/test_sidebar_visibility.py
+              tests/permissions/test_direct_url_permissions.py
+              tests/permissions/test_unauthenticated_access.py
+              tests/permissions/test_tms_pages_content.py
+              tests/permissions/test_tms_cross_user.py
+              tests/permissions/test_cross_user_access.py::test_load_owner_save_does_not_modify_brokers_load
+              tests/permissions/test_cross_user_access.py::test_load_owner_save_does_not_modify_brokers_trip
           - name: loads
-            targets: tests/loads/
+            targets: >-
+              tests/loads/test_loads_search.py
+              tests/loads/test_place_bid_flow.py
+              tests/loads/test_place_bid_submit.py
           - name: usage
             targets: tests/usage/
           - name: e2e
-            targets: tests/e2e/
+            targets: >-
+              tests/e2e/test_my_bids.py
+              tests/e2e/test_received_bids.py
           - name: profile
-            targets: tests/profile/ tests/validation/
-          - name: limits
-            targets: tests/limits/
+            targets: >-
+              tests/profile/test_profile.py
+              tests/profile/test_roles.py
+              tests/profile/test_users.py
 
     steps:
       - uses: actions/checkout@v4

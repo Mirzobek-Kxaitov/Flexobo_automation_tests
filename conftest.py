@@ -38,10 +38,6 @@ FREE_OWNER_OPERATOR_PASSWORD = os.getenv("FREE_OWNER_OPERATOR_PASSWORD")
 LOGIN_TIMEOUT_MS = int(os.getenv("LOGIN_TIMEOUT_MS", "60000"))
 DEFAULT_TIMEOUT_MS = 30_000
 
-# Session-scoped token cache: {label: storage_state_dict}
-_auth_cache: dict[str, dict] = {}
-
-
 def _required_env(name: str, value: str | None) -> str:
     if value:
         return value
@@ -73,27 +69,12 @@ def login_as(page: Page, email: str | None, password: str | None, label: str = "
     return page
 
 
-def _get_auth(browser, browser_context_args, email, password, label) -> dict:
-    """Login once per label, cache the storage_state dict in memory."""
-    if label in _auth_cache:
-        return _auth_cache[label]
-
+def _logged_in_page(browser, browser_context_args, email, password, label):
+    """Create a separate browser context and log in directly."""
     context = browser.new_context(**browser_context_args)
     page = context.new_page()
     page.set_default_timeout(DEFAULT_TIMEOUT_MS)
     login_as(page, email, password, label)
-    state = context.storage_state()
-    context.close()
-    _auth_cache[label] = state
-    return state
-
-
-def _logged_in_page(browser, browser_context_args, email, password, label):
-    """Create a new context with cached auth tokens. No extra login needed."""
-    state = _get_auth(browser, browser_context_args, email, password, label)
-    context = browser.new_context(storage_state=state, **browser_context_args)
-    page = context.new_page()
-    page.set_default_timeout(DEFAULT_TIMEOUT_MS)
     return context, page
 
 
