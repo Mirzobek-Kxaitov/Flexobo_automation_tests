@@ -1,0 +1,544 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"
+    Login qilmagan user himoyalangan URL'ga goto qilsa,
+    /sign-in sahifasiga avtomatik redirect bo'lishi kerak.
+    ","3457","test_unauthenticated_redirected_to_signin[chromium-/tms/drivers]","tests.permissions","2026-06-14","passed","2026-06-14","","test_unauthenticated_access","",""
+"","12503","test_deactivate_and_reactivate_trailer[broker]","tests.profile","2026-06-14","passed","2026-06-14","","test_fleet","",""
+"","30099","test_loads_page_is_accessible[load_owner]","tests.loads","2026-06-14","broken","2026-06-14","","test_loads","",""
+"
+    Profile sahifasidagi har action tugmasining role bo'yicha to'g'ri ko'rinishi.
+    Kamida bitta False (negativ) holat bor — owner_operator uchun ""Apply for Company"" yashirin.
+    ","5735","test_profile_action_button_visibility[Enable 2FA-load_owner]","tests.permissions","2026-06-14","passed","2026-06-14","","test_action_permissions","",""
+"
+    When the broker is at the bid limit and places another bid,
+    clicking 'Maybe later' on the modal should close it.
+
+    Pre-condition: broker must already be at 20/20.
+    ","7694","test_limit_modal_maybe_later[chromium]","tests.limits","2026-06-14","failed","2026-06-14","","test_bid_limit_enforcement","",""
+"
+    Profile sahifasidagi har action tugmasining role bo'yicha to'g'ri ko'rinishi.
+    Kamida bitta False (negativ) holat bor — owner_operator uchun ""Apply for Company"" yashirin.
+    ","5501","test_profile_action_button_visibility[Enable 2FA-carrier]","tests.permissions","2026-06-14","passed","2026-06-14","","test_action_permissions","",""
+"","30092","test_my_loads_page[load_owner]","tests.profile","2026-06-14","broken","2026-06-14","","test_profile","",""
+"","0","test_empty_bid_form_blocks_submit[chromium]","tests.loads","2026-06-14","broken","2026-06-14","","test_place_bid_submit","",""
+"Verify that clicking 'Upgrade plan' navigates to the upgrade page.","6479","test_oo_bids_modal_upgrade_plan[chromium]","tests.limits","2026-06-14","skipped","2026-06-14","","test_oo_bids_limit","",""
+"
+    Profile sahifasidagi har action tugmasining role bo'yicha to'g'ri ko'rinishi.
+    Kamida bitta False (negativ) holat bor — owner_operator uchun ""Apply for Company"" yashirin.
+    ","5709","test_profile_action_button_visibility[Apply for Company-load_owner]","tests.permissions","2026-06-14","passed","2026-06-14","","test_action_permissions","",""
+"","7802","test_invite_user[carrier]","tests.profile","2026-06-14","failed","2026-06-14","","test_users","",""
+"","9281","test_negative_volume_blocks_next[chromium]","tests.validation","2026-06-14","passed","2026-06-14","","test_trip_form_validation","",""
+"","32545","test_add_trip[carrier]","tests.profile","2026-06-14","passed","2026-06-14","","test_trips","",""
+"
+    Direct URL'ga to'g'ridan-to'g'ri o'tib ko'rish:
+    - Ruxsat berilgan role: URL o'zgarmasdan qoladi
+    - Ruxsat berilmagan role: aniq /profile/root ga redirect bo'lishi kerak
+    ","3060","test_direct_url_permission[/loads/create-broker]","tests.permissions","2026-06-14","passed","2026-06-14","","test_direct_url_permissions","",""
+"Verify that clicking 'Maybe later' closes the limit modal.","7695","test_load_owner_company_roles_modal_maybe_later[chromium]","tests.limits","2026-06-14","failed","2026-06-14","","test_load_owner_company_roles_limit","",""
+"
+    Profile sahifasidagi har action tugmasining role bo'yicha to'g'ri ko'rinishi.
+    Kamida bitta False (negativ) holat bor — owner_operator uchun ""Apply for Company"" yashirin.
+    ","5675","test_profile_action_button_visibility[Apply for Company-carrier]","tests.permissions","2026-06-14","passed","2026-06-14","","test_action_permissions","",""
+"","13958","test_delete_trailer[owner_operator]","tests.profile","2026-06-14","passed","2026-06-14","","test_fleet","",""
+"Har bir status filter (All/Pending/Accepted/...) sahifada ko'rinishi kerak.","5264","test_my_bids_filter_tab_visible[chromium-Delivered]","tests.e2e","2026-06-14","passed","2026-06-14","","test_my_bids","",""
+"","6476","test_free_plan_metric_with_limit[chromium-usage_bids_placed_card-/ 20]","tests.usage","2026-06-14","passed","2026-06-14","","test_usage","",""
+"","30089","test_user_can_logout[owner_operator]","tests.profile","2026-06-14","broken","2026-06-14","","test_profile","",""
+"Fleet sahifa: 'Fleet' heading, 'Add Truck' tugma, Trucks/Trailers tab'lari.","10843","test_fleet_page_content[owner_operator]","tests.permissions","2026-06-14","failed","2026-06-14","","test_tms_pages_content","",""
+"","18382","test_bids_placed_counter_increments_by_one[chromium]","tests.usage","2026-06-14","passed","2026-06-14","","test_usage_counters","",""
+"
+    Login qilmagan user himoyalangan URL'ga goto qilsa,
+    /sign-in sahifasiga avtomatik redirect bo'lishi kerak.
+    ","3385","test_unauthenticated_redirected_to_signin[chromium-/loads/create]","tests.permissions","2026-06-14","passed","2026-06-14","","test_unauthenticated_access","",""
+"","7800","test_resend_invitation[carrier]","tests.profile","2026-06-14","failed","2026-06-14","","test_users","",""
+"","8194","test_negative_weight_blocks_next[chromium]","tests.validation","2026-06-14","passed","2026-06-14","","test_load_form_validation","",""
+"","0","test_cancel_button_closes_bid_form[chromium]","tests.loads","2026-06-14","broken","2026-06-14","","test_place_bid_submit","",""
+"
+    When the broker is at the roles limit and creates another role,
+    clicking 'Upgrade plan' should navigate to the pricing/upgrade page.
+
+    Pre-condition: broker must already be at 1/1.
+    ","6505","test_company_roles_modal_upgrade_plan[chromium]","tests.limits","2026-06-14","failed","2026-06-14","","test_company_roles_limit_enforcement","",""
+"Fleet sahifa: 'Fleet' heading, 'Add Truck' tugma, Trucks/Trailers tab'lari.","11056","test_fleet_page_content[broker]","tests.permissions","2026-06-14","failed","2026-06-14","","test_tms_pages_content","",""
+"
+    Profile sahifasidagi har action tugmasining role bo'yicha to'g'ri ko'rinishi.
+    Kamida bitta False (negativ) holat bor — owner_operator uchun ""Apply for Company"" yashirin.
+    ","7580","test_profile_action_button_visibility[Verify Identity-carrier]","tests.permissions","2026-06-14","failed","2026-06-14","","test_action_permissions","",""
+"Verify that clicking 'Maybe later' closes the limit modal.","7718","test_carrier_company_employees_modal_maybe_later[chromium]","tests.limits","2026-06-14","failed","2026-06-14","","test_carrier_company_employees_limit","",""
+"","12031","test_delete_role[carrier]","tests.profile","2026-06-14","failed","2026-06-14","","test_roles","",""
+"","39857","test_edit_truck[carrier]","tests.profile","2026-06-14","broken","2026-06-14","","test_fleet","",""
+"","9152","test_create_trailer[broker]","tests.profile","2026-06-14","passed","2026-06-14","","test_fleet","",""
+"
+    Profile sahifasidagi har action tugmasining role bo'yicha to'g'ri ko'rinishi.
+    Kamida bitta False (negativ) holat bor — owner_operator uchun ""Apply for Company"" yashirin.
+    ","4833","test_profile_action_button_visibility[Update Password-owner_operator]","tests.permissions","2026-06-14","passed","2026-06-14","","test_action_permissions","",""
+"","30100","test_in_transit_filter_on_loads_page[load_owner]","tests.loads","2026-06-14","broken","2026-06-14","","test_loads","",""
+"","30094","test_open_profile_page[broker]","tests.profile","2026-06-14","broken","2026-06-14","","test_profile","",""
+"","7682","test_free_plan_metric_with_limit[chromium-usage_bookings_card-/ 5]","tests.usage","2026-06-14","passed","2026-06-14","","test_usage","",""
+"
+    Defense in depth — trip uchun.
+
+    1. Broker trip yaratadi (price=1200).
+    2. LoadOwner broker'ning trip edit URL'iga kirib price=99999 qilib save bosadi.
+    3. Broker login qilib, original price saqlanganini tasdiqlaydi.
+    ","32459","test_load_owner_save_does_not_modify_brokers_trip[chromium]","tests.permissions","2026-06-14","passed","2026-06-14","","test_cross_user_access","",""
+"","104","test_empty_email[chromium]","tests.smoke","2026-06-14","passed","2026-06-14","","test_login","",""
+"Verify that clicking 'Upgrade plan' navigates to the pricing/upgrade page.
+
+    Pre-condition: broker must already be at 5/5 bookings.
+    ","7744","test_bookings_modal_upgrade_plan[chromium]","tests.limits","2026-06-14","failed","2026-06-14","","test_bookings_limit_enforcement","",""
+"Add menyudagi har item'ning role bo'yicha ko'rinishini tekshiradi.","4818","test_add_menu_item_visibility[Transport-load_owner]","tests.permissions","2026-06-14","passed","2026-06-14","","test_add_menu_permissions","",""
+"
+    Login qilmagan user himoyalangan URL'ga goto qilsa,
+    /sign-in sahifasiga avtomatik redirect bo'lishi kerak.
+    ","2856","test_unauthenticated_redirected_to_signin[chromium-/trips/create]","tests.permissions","2026-06-14","passed","2026-06-14","","test_unauthenticated_access","",""
+"Har bir status filter (All/Pending/Accepted/...) sahifada ko'rinishi kerak.","5344","test_my_bids_filter_tab_visible[chromium-Pending]","tests.e2e","2026-06-14","passed","2026-06-14","","test_my_bids","",""
+"Orders sahifa: 'Orders' heading va jadval ustunlari (ORDER #, ROUTE, ...).","11050","test_orders_page_content[broker]","tests.permissions","2026-06-14","failed","2026-06-14","","test_tms_pages_content","",""
+"","33094","test_add_trip[broker]","tests.profile","2026-06-14","broken","2026-06-14","","test_trips","",""
+"Verify that clicking 'Close' dismisses the limit modal.","16895","test_carrier_fleet_modal_close[chromium]","tests.limits","2026-06-14","failed","2026-06-14","","test_carrier_fleet_limit","",""
+"","30087","test_my_trips_page[carrier]","tests.profile","2026-06-14","broken","2026-06-14","","test_profile","",""
+"
+    Profile sahifasidagi har action tugmasining role bo'yicha to'g'ri ko'rinishi.
+    Kamida bitta False (negativ) holat bor — owner_operator uchun ""Apply for Company"" yashirin.
+    ","7966","test_profile_action_button_visibility[Update Password-load_owner]","tests.permissions","2026-06-14","failed","2026-06-14","","test_action_permissions","",""
+"","13548","test_usage_page_accessible[owner_operator]","tests.usage","2026-06-14","passed","2026-06-14","","test_usage","",""
+"/my-bids sahifa ochiladi va URL aynan o'sha bo'lishi kerak.","4995","test_my_bids_page_accessible[owner_operator]","tests.e2e","2026-06-14","passed","2026-06-14","","test_my_bids","",""
+"","11703","test_create_load[broker]","tests.loads","2026-06-14","passed","2026-06-14","","test_loads","",""
+"
+    Direct URL'ga to'g'ridan-to'g'ri o'tib ko'rish:
+    - Ruxsat berilgan role: URL o'zgarmasdan qoladi
+    - Ruxsat berilmagan role: aniq /profile/root ga redirect bo'lishi kerak
+    ","7866","test_direct_url_permission[/tms/drivers-owner_operator]","tests.permissions","2026-06-14","failed","2026-06-14","","test_direct_url_permissions","",""
+"","0","test_clicking_place_a_bid_opens_form[chromium]","tests.loads","2026-06-14","broken","2026-06-14","","test_place_bid_flow","",""
+"","7448","test_free_plan_metric_with_limit[chromium-usage_fleet_size_card-/ 5]","tests.usage","2026-06-14","passed","2026-06-14","","test_usage","",""
+"","8316","test_edit_load[broker]","tests.loads","2026-06-14","failed","2026-06-14","","test_loads","",""
+"Verify that clicking 'Maybe later' or 'Close' dismisses the limit modal.","7806","test_oo_active_transport_modal_dismiss[chromium]","tests.limits","2026-06-14","skipped","2026-06-14","","test_oo_active_transport_limit","",""
+"
+    Direct URL'ga to'g'ridan-to'g'ri o'tib ko'rish:
+    - Ruxsat berilgan role: URL o'zgarmasdan qoladi
+    - Ruxsat berilmagan role: aniq /profile/root ga redirect bo'lishi kerak
+    ","5948","test_direct_url_permission[/loads/create-carrier]","tests.permissions","2026-06-14","passed","2026-06-14","","test_direct_url_permissions","",""
+"/received-bids sahifa ochiladi va URL aynan o'sha bo'lishi kerak.","4843","test_received_bids_page_accessible[broker]","tests.e2e","2026-06-14","passed","2026-06-14","","test_received_bids","",""
+"Har bir status filter (All/Pending/Accepted/...) sahifada ko'rinishi kerak.","9883","test_my_bids_filter_tab_visible[chromium-All]","tests.e2e","2026-06-14","failed","2026-06-14","","test_my_bids","",""
+"","30090","test_open_profile_page[owner_operator]","tests.profile","2026-06-14","broken","2026-06-14","","test_profile","",""
+"","30086","test_my_trucks_page[carrier]","tests.profile","2026-06-14","broken","2026-06-14","","test_profile","",""
+"","7758","test_delete_truck[carrier]","tests.profile","2026-06-14","failed","2026-06-14","","test_fleet","",""
+"Add menyudagi har item'ning role bo'yicha ko'rinishini tekshiradi.","2845","test_add_menu_item_visibility[Transport-carrier]","tests.permissions","2026-06-14","passed","2026-06-14","","test_add_menu_permissions","",""
+"Verify that clicking 'Upgrade plan' navigates to the pricing/upgrade page.","7896","test_carrier_bids_modal_upgrade_plan[chromium]","tests.limits","2026-06-14","failed","2026-06-14","","test_carrier_bids_limit","",""
+"
+    Direct URL'ga to'g'ridan-to'g'ri o'tib ko'rish:
+    - Ruxsat berilgan role: URL o'zgarmasdan qoladi
+    - Ruxsat berilmagan role: aniq /profile/root ga redirect bo'lishi kerak
+    ","3040","test_direct_url_permission[/tms/orders-load_owner]","tests.permissions","2026-06-14","passed","2026-06-14","","test_direct_url_permissions","",""
+"
+    Profile sahifasidagi har action tugmasining role bo'yicha to'g'ri ko'rinishi.
+    Kamida bitta False (negativ) holat bor — owner_operator uchun ""Apply for Company"" yashirin.
+    ","5801","test_profile_action_button_visibility[Enable 2FA-owner_operator]","tests.permissions","2026-06-14","passed","2026-06-14","","test_action_permissions","",""
+"","33026","test_edit_trip[owner_operator]","tests.profile","2026-06-14","broken","2026-06-14","","test_trips","",""
+"Owner creates load, bidder bids, owner accepts/rejects, bidder sees status.","30071","test_bid_lifecycle[chromium-Accept-Accepted-broker]","tests.e2e","2026-06-14","broken","2026-06-14","","test_e2e_bid_lifecycle","",""
+"","7631","test_edit_truck[broker]","tests.profile","2026-06-14","failed","2026-06-14","","test_fleet","",""
+"Add menyudagi har item'ning role bo'yicha ko'rinishini tekshiradi.","2991","test_add_menu_item_visibility[Transport-owner_operator]","tests.permissions","2026-06-14","passed","2026-06-14","","test_add_menu_permissions","",""
+"","30096","test_my_loads_page[broker]","tests.profile","2026-06-14","broken","2026-06-14","","test_profile","",""
+"
+    Verify that the carrier cannot invite more than EMPLOYEES_LIMIT employees
+    on the free plan and that a 'Limit reached' modal is shown on the
+    (EMPLOYEES_LIMIT+1)th attempt.
+
+    Steps:
+    1. Read the current employees counter from the Usage tab.
+    2. Fill up to the limit by inviting employees.
+    3. Confirm the counter reached the limit.
+    4. Attempt one more invitation and verify the modal.
+    ","7714","test_carrier_company_employees_limit_full_flow[chromium]","tests.limits","2026-06-14","skipped","2026-06-14","","test_carrier_company_employees_limit","",""
+"/received-bids sahifa ochiladi va URL aynan o'sha bo'lishi kerak.","4872","test_received_bids_page_accessible[load_owner]","tests.e2e","2026-06-14","passed","2026-06-14","","test_received_bids","",""
+"","18038","test_create_load[load_owner]","tests.loads","2026-06-14","passed","2026-06-14","","test_loads","",""
+"
+    Direct URL'ga to'g'ridan-to'g'ri o'tib ko'rish:
+    - Ruxsat berilgan role: URL o'zgarmasdan qoladi
+    - Ruxsat berilmagan role: aniq /profile/root ga redirect bo'lishi kerak
+    ","7926","test_direct_url_permission[/trips/create-load_owner]","tests.permissions","2026-06-14","failed","2026-06-14","","test_direct_url_permissions","",""
+"
+    Verify that the carrier cannot create more than ROLES_LIMIT company roles
+    on the free plan and that a 'Limit reached' modal is shown on the
+    (ROLES_LIMIT+1)th attempt.
+
+    Steps:
+    1. Read the current roles counter from the Usage tab.
+    2. Fill up to the limit by creating roles.
+    3. Confirm the counter reached the limit.
+    4. Attempt one more role creation and verify the modal.
+    ","7675","test_carrier_company_roles_limit_full_flow[chromium]","tests.limits","2026-06-14","skipped","2026-06-14","","test_carrier_company_roles_limit","",""
+"","6441","test_free_plan_metric_with_limit[chromium-usage_storage_used_card-/ Unlimited]","tests.usage","2026-06-14","passed","2026-06-14","","test_usage","",""
+"Verify that Owner Operator hits the 'Limit reached' modal on the 4th bid.","66964","test_oo_bids_limit_full_flow[chromium]","tests.limits","2026-06-14","broken","2026-06-14","","test_oo_bids_limit","",""
+"Actor finds available load, places bid, verifies in /my-bids.","62869","test_actor_places_bid_and_sees_in_my_bids[broker]","tests.e2e","2026-06-14","broken","2026-06-14","","test_e2e_simple_bid_flow","",""
+"","32682","test_delete_trip[broker]","tests.profile","2026-06-14","broken","2026-06-14","","test_trips","",""
+"Har bir status filter (All/Pending/Accepted/...) sahifada ko'rinishi kerak.","5609","test_my_bids_filter_tab_visible[chromium-On the way]","tests.e2e","2026-06-14","passed","2026-06-14","","test_my_bids","",""
+"Owner creates load, bidder bids, owner accepts/rejects, bidder sees status.","30076","test_bid_lifecycle[chromium-Accept-Accepted-owner_operator]","tests.e2e","2026-06-14","broken","2026-06-14","","test_e2e_bid_lifecycle","",""
+"Verify that clicking 'Maybe later' closes the bookings limit modal.
+
+    Pre-condition: broker must already be at 5/5 bookings.
+    ","7712","test_bookings_modal_maybe_later[chromium]","tests.limits","2026-06-14","failed","2026-06-14","","test_bookings_limit_enforcement","",""
+"
+    Defense in depth: edit sahifasi ochiq bo'lsa ham, backend SAVE ni
+    rad etishi va broker'ning ma'lumoti o'zgarmasligi kerak.
+
+    1. Broker yuk yaratadi (weight=20).
+    2. LoadOwner broker'ning edit URL'iga kirib weight=12345 qilib save bosadi.
+    3. Broker login qilib, original weight saqlanganini tasdiqlaydi.
+    ","32256","test_load_owner_save_does_not_modify_brokers_load[chromium]","tests.permissions","2026-06-14","passed","2026-06-14","","test_cross_user_access","",""
+"
+    Verify that the carrier cannot add more than FLEET_LIMIT trailers on the
+    free plan and that a 'Limit reached' modal is shown on the (FLEET_LIMIT+1)th
+    attempt.
+
+    Steps:
+    1. Read the current fleet size counter from the Usage tab.
+    2. Fill up to the limit by adding trailers.
+    3. Confirm the counter reached the limit.
+    4. Attempt one more trailer add and verify the modal.
+    ","18646","test_carrier_fleet_limit_full_flow[chromium]","tests.limits","2026-06-14","failed","2026-06-14","","test_carrier_fleet_limit","",""
+"/received-bids sahifa ochiladi va URL aynan o'sha bo'lishi kerak.","4846","test_received_bids_page_accessible[owner_operator]","tests.e2e","2026-06-14","passed","2026-06-14","","test_received_bids","",""
+"Filter bosilganda URL /my-bids da qoladi (sahifa tark etmaydi).","26976","test_my_bids_filter_click_keeps_url[chromium-Pending]","tests.e2e","2026-06-14","passed","2026-06-14","","test_my_bids","",""
+"","13119","test_delete_load[load_owner]","tests.loads","2026-06-14","passed","2026-06-14","","test_loads","",""
+"
+    Login qilmagan user himoyalangan URL'ga goto qilsa,
+    /sign-in sahifasiga avtomatik redirect bo'lishi kerak.
+    ","3445","test_unauthenticated_redirected_to_signin[chromium-/profile/root]","tests.permissions","2026-06-14","passed","2026-06-14","","test_unauthenticated_access","",""
+"
+    Direct URL'ga to'g'ridan-to'g'ri o'tib ko'rish:
+    - Ruxsat berilgan role: URL o'zgarmasdan qoladi
+    - Ruxsat berilmagan role: aniq /profile/root ga redirect bo'lishi kerak
+    ","3060","test_direct_url_permission[/trips/create-owner_operator]","tests.permissions","2026-06-14","passed","2026-06-14","","test_direct_url_permissions","",""
+"","6511","test_current_plan_is_free[chromium]","tests.usage","2026-06-14","passed","2026-06-14","","test_usage","",""
+"
+    Direct URL'ga to'g'ridan-to'g'ri o'tib ko'rish:
+    - Ruxsat berilgan role: URL o'zgarmasdan qoladi
+    - Ruxsat berilmagan role: aniq /profile/root ga redirect bo'lishi kerak
+    ","8017","test_direct_url_permission[/loads/create-owner_operator]","tests.permissions","2026-06-14","failed","2026-06-14","","test_direct_url_permissions","",""
+"Orders sahifa: 'Orders' heading va jadval ustunlari (ORDER #, ROUTE, ...).","6074","test_orders_page_content[owner_operator]","tests.permissions","2026-06-14","passed","2026-06-14","","test_tms_pages_content","",""
+"
+    When the broker is at the bid limit and places another bid,
+    clicking 'Upgrade plan' should navigate to the pricing/upgrade page.
+
+    Pre-condition: broker must already be at 20/20.
+    ","7675","test_limit_modal_upgrade_plan[chromium]","tests.limits","2026-06-14","failed","2026-06-14","","test_bid_limit_enforcement","",""
+"","30088","test_my_trucks_page[owner_operator]","tests.profile","2026-06-14","broken","2026-06-14","","test_profile","",""
+"
+    Direct URL'ga to'g'ridan-to'g'ri o'tib ko'rish:
+    - Ruxsat berilgan role: URL o'zgarmasdan qoladi
+    - Ruxsat berilmagan role: aniq /profile/root ga redirect bo'lishi kerak
+    ","2785","test_direct_url_permission[/tms/drivers-broker]","tests.permissions","2026-06-14","passed","2026-06-14","","test_direct_url_permissions","",""
+"
+    Profile sahifasidagi sidebar item'larini role bo'yicha tekshiradi.
+    Bitta testda 15 ta item — barcha xatolar yig'ilib bir martada chiqariladi.
+    ","5927","test_sidebar_visibility[owner_operator]","tests.permissions","2026-06-14","passed","2026-06-14","","test_sidebar_visibility","",""
+"Add menyudagi har item'ning role bo'yicha ko'rinishini tekshiradi.","2932","test_add_menu_item_visibility[Load-load_owner]","tests.permissions","2026-06-14","passed","2026-06-14","","test_add_menu_permissions","",""
+"Add menyudagi har item'ning role bo'yicha ko'rinishini tekshiradi.","2986","test_add_menu_item_visibility[Transport-broker]","tests.permissions","2026-06-14","passed","2026-06-14","","test_add_menu_permissions","",""
+"","5762","test_usage_page_accessible[broker]","tests.usage","2026-06-14","passed","2026-06-14","","test_usage","",""
+"","30091","test_open_profile_page[carrier]","tests.profile","2026-06-14","broken","2026-06-14","","test_profile","",""
+"","43007","test_edit_load[load_owner]","tests.loads","2026-06-14","broken","2026-06-14","","test_loads","",""
+"","42664","test_edit_trip[carrier]","tests.profile","2026-06-14","broken","2026-06-14","","test_trips","",""
+"","7786","test_edit_trailer[owner_operator]","tests.profile","2026-06-14","failed","2026-06-14","","test_fleet","",""
+"
+    Profile sahifasidagi har action tugmasining role bo'yicha to'g'ri ko'rinishi.
+    Kamida bitta False (negativ) holat bor — owner_operator uchun ""Apply for Company"" yashirin.
+    ","7778","test_profile_action_button_visibility[Enable 2FA-broker]","tests.permissions","2026-06-14","failed","2026-06-14","","test_action_permissions","",""
+"","30074","test_user_can_logout[load_owner]","tests.profile","2026-06-14","broken","2026-06-14","","test_profile","",""
+"
+    Direct URL'ga to'g'ridan-to'g'ri o'tib ko'rish:
+    - Ruxsat berilgan role: URL o'zgarmasdan qoladi
+    - Ruxsat berilmagan role: aniq /profile/root ga redirect bo'lishi kerak
+    ","8483","test_direct_url_permission[/tms/fleet-load_owner]","tests.permissions","2026-06-14","failed","2026-06-14","","test_direct_url_permissions","",""
+"Verify that clicking 'Upgrade plan' navigates to the upgrade page.","6378","test_load_owner_bids_modal_upgrade_plan[chromium]","tests.limits","2026-06-14","skipped","2026-06-14","","test_load_owner_bids_limit","",""
+"","8856","test_search_form_visible[carrier]","tests.loads","2026-06-14","passed","2026-06-14","","test_loads_search","",""
+"Har bir status filter (All/Pending/Accepted/...) sahifada ko'rinishi kerak.","10001","test_my_bids_filter_tab_visible[chromium-Accepted]","tests.e2e","2026-06-14","failed","2026-06-14","","test_my_bids","",""
+"","7846","test_usage_page_accessible[carrier]","tests.usage","2026-06-14","failed","2026-06-14","","test_usage","",""
+"Verify that clicking 'Upgrade plan' navigates to the upgrade page.","7516","test_load_owner_company_roles_modal_upgrade_plan[chromium]","tests.limits","2026-06-14","failed","2026-06-14","","test_load_owner_company_roles_limit","",""
+"/received-bids sahifa ochiladi va URL aynan o'sha bo'lishi kerak.","4885","test_received_bids_page_accessible[carrier]","tests.e2e","2026-06-14","passed","2026-06-14","","test_received_bids","",""
+"Verify that clicking 'Upgrade plan' in the modal navigates to the upgrade page.","7680","test_oo_active_transport_modal_upgrade_plan[chromium]","tests.limits","2026-06-14","skipped","2026-06-14","","test_oo_active_transport_limit","",""
+"","7748","test_search_by_from_city_returns_matching_loads[chromium]","tests.loads","2026-06-14","failed","2026-06-14","","test_loads_search","",""
+"Add menyudagi har item'ning role bo'yicha ko'rinishini tekshiradi.","4662","test_add_menu_item_visibility[Load-owner_operator]","tests.permissions","2026-06-14","passed","2026-06-14","","test_add_menu_permissions","",""
+"
+    Direct URL'ga to'g'ridan-to'g'ri o'tib ko'rish:
+    - Ruxsat berilgan role: URL o'zgarmasdan qoladi
+    - Ruxsat berilmagan role: aniq /profile/root ga redirect bo'lishi kerak
+    ","3303","test_direct_url_permission[/tms/fleet-broker]","tests.permissions","2026-06-14","passed","2026-06-14","","test_direct_url_permissions","",""
+"","2980","test_valid_login[chromium]","tests.smoke","2026-06-14","passed","2026-06-14","","test_login","",""
+"","7774","test_upgrade_plan_button_visible[chromium]","tests.usage","2026-06-14","failed","2026-06-14","","test_usage","",""
+"","12060","test_invite_user[broker]","tests.profile","2026-06-14","passed","2026-06-14","","test_users","",""
+"
+    Broker yuk yaratadi → LoadOwner login qilganda broker'ning yuki
+    ""My Loads"" ro'yxatida ko'rinmasligi kerak.
+    ","18136","test_load_owner_does_not_see_brokers_loads_in_list[chromium]","tests.permissions","2026-06-14","failed","2026-06-14","","test_cross_user_access","",""
+"","8548","test_missing_weight_blocks_next[chromium]","tests.validation","2026-06-14","passed","2026-06-14","","test_load_form_validation","",""
+"
+    Profile sahifasidagi har action tugmasining role bo'yicha to'g'ri ko'rinishi.
+    Kamida bitta False (negativ) holat bor — owner_operator uchun ""Apply for Company"" yashirin.
+    ","5618","test_profile_action_button_visibility[Verify Identity-owner_operator]","tests.permissions","2026-06-14","passed","2026-06-14","","test_action_permissions","",""
+"
+    Direct URL'ga to'g'ridan-to'g'ri o'tib ko'rish:
+    - Ruxsat berilgan role: URL o'zgarmasdan qoladi
+    - Ruxsat berilmagan role: aniq /profile/root ga redirect bo'lishi kerak
+    ","2829","test_direct_url_permission[/tms/fleet-owner_operator]","tests.permissions","2026-06-14","passed","2026-06-14","","test_direct_url_permissions","",""
+"Orders sahifa: 'Orders' heading va jadval ustunlari (ORDER #, ROUTE, ...).","11037","test_orders_page_content[load_owner]","tests.permissions","2026-06-14","failed","2026-06-14","","test_tms_pages_content","",""
+"
+    Create roles up to the company roles limit (1/1) and verify that
+    attempting to create a 2nd role triggers the 'Limit reached' modal.
+
+    Steps:
+    1. Read current role count from Usage page
+    2. Fill up to the limit by creating roles
+    3. Confirm counter reached the limit
+    4. Create one more role and verify the modal appears
+    ","6377","test_company_roles_limit_full_flow[chromium]","tests.limits","2026-06-14","skipped","2026-06-14","","test_company_roles_limit_enforcement","",""
+"","11922","test_delete_role[broker]","tests.profile","2026-06-14","failed","2026-06-14","","test_roles","",""
+"Owner creates load, bidder bids, owner accepts/rejects, bidder sees status.","30075","test_bid_lifecycle[chromium-Reject-Rejected-carrier]","tests.e2e","2026-06-14","broken","2026-06-14","","test_e2e_bid_lifecycle","",""
+"","30094","test_my_trips_page[broker]","tests.profile","2026-06-14","broken","2026-06-14","","test_profile","",""
+"","30098","test_in_contract_filter_on_loads_page[broker]","tests.loads","2026-06-14","broken","2026-06-14","","test_loads","",""
+"Orders sahifa: 'Orders' heading va jadval ustunlari (ORDER #, ROUTE, ...).","6089","test_orders_page_content[carrier]","tests.permissions","2026-06-14","passed","2026-06-14","","test_tms_pages_content","",""
+"","13076","test_resend_invitation[broker]","tests.profile","2026-06-14","passed","2026-06-14","","test_users","",""
+"","14821","test_create_trailer[owner_operator]","tests.profile","2026-06-14","passed","2026-06-14","","test_fleet","",""
+"
+    Profile sahifasidagi har action tugmasining role bo'yicha to'g'ri ko'rinishi.
+    Kamida bitta False (negativ) holat bor — owner_operator uchun ""Apply for Company"" yashirin.
+    ","11627","test_profile_action_button_visibility[Update Password-carrier]","tests.permissions","2026-06-14","passed","2026-06-14","","test_action_permissions","",""
+"Owner creates load, bidder bids, owner accepts/rejects, bidder sees status.","30071","test_bid_lifecycle[chromium-Accept-Accepted-carrier]","tests.e2e","2026-06-14","broken","2026-06-14","","test_e2e_bid_lifecycle","",""
+"
+    Direct URL'ga to'g'ridan-to'g'ri o'tib ko'rish:
+    - Ruxsat berilgan role: URL o'zgarmasdan qoladi
+    - Ruxsat berilmagan role: aniq /profile/root ga redirect bo'lishi kerak
+    ","3119","test_direct_url_permission[/tms/fleet-carrier]","tests.permissions","2026-06-14","passed","2026-06-14","","test_direct_url_permissions","",""
+"","16549","test_delete_truck[broker]","tests.profile","2026-06-14","passed","2026-06-14","","test_fleet","",""
+"","1982","test_invalid_login[chromium]","tests.smoke","2026-06-14","passed","2026-06-14","","test_login","",""
+"","12441","test_deactivate_and_reactivate_trailer[carrier]","tests.profile","2026-06-14","passed","2026-06-14","","test_fleet","",""
+"","5741","test_empty_form_blocks_next[chromium]","tests.validation","2026-06-14","passed","2026-06-14","","test_trip_form_validation","",""
+"/my-bids sahifa ochiladi va URL aynan o'sha bo'lishi kerak.","4932","test_my_bids_page_accessible[carrier]","tests.e2e","2026-06-14","passed","2026-06-14","","test_my_bids","",""
+"
+    Direct URL'ga to'g'ridan-to'g'ri o'tib ko'rish:
+    - Ruxsat berilgan role: URL o'zgarmasdan qoladi
+    - Ruxsat berilmagan role: aniq /profile/root ga redirect bo'lishi kerak
+    ","2931","test_direct_url_permission[/trips/create-broker]","tests.permissions","2026-06-14","passed","2026-06-14","","test_direct_url_permissions","",""
+"","8659","test_search_form_visible[owner_operator]","tests.loads","2026-06-14","passed","2026-06-14","","test_loads_search","",""
+"Verify that clicking 'Upgrade plan' navigates to the pricing/upgrade page.","68895","test_carrier_company_roles_modal_upgrade_plan[chromium]","tests.limits","2026-06-14","broken","2026-06-14","","test_carrier_company_roles_limit","",""
+"
+    Login qilmagan user himoyalangan URL'ga goto qilsa,
+    /sign-in sahifasiga avtomatik redirect bo'lishi kerak.
+    ","3411","test_unauthenticated_redirected_to_signin[chromium-/tms/fleet]","tests.permissions","2026-06-14","passed","2026-06-14","","test_unauthenticated_access","",""
+"","0","test_clicking_load_opens_detail_page[chromium]","tests.loads","2026-06-14","broken","2026-06-14","","test_place_bid_flow","",""
+"","30101","test_in_contract_filter_on_loads_page[load_owner]","tests.loads","2026-06-14","broken","2026-06-14","","test_loads","",""
+"
+    Profile sahifasidagi har action tugmasining role bo'yicha to'g'ri ko'rinishi.
+    Kamida bitta False (negativ) holat bor — owner_operator uchun ""Apply for Company"" yashirin.
+    ","5874","test_profile_action_button_visibility[Apply for Company-owner_operator]","tests.permissions","2026-06-14","passed","2026-06-14","","test_action_permissions","",""
+"Fleet sahifa: 'Fleet' heading, 'Add Truck' tugma, Trucks/Trailers tab'lari.","6115","test_fleet_page_content[carrier]","tests.permissions","2026-06-14","passed","2026-06-14","","test_tms_pages_content","",""
+"","7842","test_usage_page_accessible[load_owner]","tests.usage","2026-06-14","failed","2026-06-14","","test_usage","",""
+"","19","test_broker_can_login[chromium]","tests.smoke","2026-06-14","passed","2026-06-14","","test_role_logins","",""
+"
+    Direct URL'ga to'g'ridan-to'g'ri o'tib ko'rish:
+    - Ruxsat berilgan role: URL o'zgarmasdan qoladi
+    - Ruxsat berilmagan role: aniq /profile/root ga redirect bo'lishi kerak
+    ","3050","test_direct_url_permission[/loads/create-load_owner]","tests.permissions","2026-06-14","passed","2026-06-14","","test_direct_url_permissions","",""
+"","9036","test_missing_volume_blocks_next[chromium]","tests.validation","2026-06-14","passed","2026-06-14","","test_trip_form_validation","",""
+"
+    Direct URL'ga to'g'ridan-to'g'ri o'tib ko'rish:
+    - Ruxsat berilgan role: URL o'zgarmasdan qoladi
+    - Ruxsat berilmagan role: aniq /profile/root ga redirect bo'lishi kerak
+    ","3239","test_direct_url_permission[/tms/drivers-carrier]","tests.permissions","2026-06-14","passed","2026-06-14","","test_direct_url_permissions","",""
+"Verify that clicking 'Maybe later' closes the limit modal.","68906","test_carrier_company_roles_modal_maybe_later[chromium]","tests.limits","2026-06-14","broken","2026-06-14","","test_carrier_company_roles_limit","",""
+"","7563","test_edit_trailer[carrier]","tests.profile","2026-06-14","failed","2026-06-14","","test_fleet","",""
+"
+    When the broker is at the fleet limit and adds another trailer,
+    clicking 'Upgrade plan' should navigate to the pricing/upgrade page.
+
+    Pre-condition: broker must already be at 5/5.
+    ","6439","test_fleet_modal_upgrade_plan[chromium]","tests.limits","2026-06-14","failed","2026-06-14","","test_fleet_limit_enforcement","",""
+"
+    When the broker is at the roles limit and creates another role,
+    clicking 'Maybe later' on the modal should close it.
+
+    Pre-condition: broker must already be at 1/1.
+    ","6272","test_company_roles_modal_maybe_later[chromium]","tests.limits","2026-06-14","failed","2026-06-14","","test_company_roles_limit_enforcement","",""
+"
+    Direct URL'ga to'g'ridan-to'g'ri o'tib ko'rish:
+    - Ruxsat berilgan role: URL o'zgarmasdan qoladi
+    - Ruxsat berilmagan role: aniq /profile/root ga redirect bo'lishi kerak
+    ","3063","test_direct_url_permission[/tms/orders-carrier]","tests.permissions","2026-06-14","passed","2026-06-14","","test_direct_url_permissions","",""
+"","7961","test_filter_button_opens_panel[chromium]","tests.loads","2026-06-14","failed","2026-06-14","","test_loads_search","",""
+"","7773","test_create_role[broker]","tests.profile","2026-06-14","failed","2026-06-14","","test_roles","",""
+"
+    Verify that OO sees a 'Limit reached' modal when attempting
+    to create a 2nd trip after the active transport limit is reached.
+    ","0","test_oo_active_transport_limit_full_flow[chromium]","tests.limits","2026-06-14","skipped","2026-06-14","","test_oo_active_transport_limit","",""
+"","30091","test_my_trips_page[owner_operator]","tests.profile","2026-06-14","broken","2026-06-14","","test_profile","",""
+"
+    Profile sahifasidagi har action tugmasining role bo'yicha to'g'ri ko'rinishi.
+    Kamida bitta False (negativ) holat bor — owner_operator uchun ""Apply for Company"" yashirin.
+    ","14577","test_profile_action_button_visibility[Update Password-broker]","tests.permissions","2026-06-14","passed","2026-06-14","","test_action_permissions","",""
+"
+    Add trailers up to the fleet limit (5/5) and verify that
+    attempting to add a 6th triggers the 'Limit reached' modal.
+
+    Steps:
+    1. Read current fleet size from Usage page
+    2. Fill up to the limit by adding trailers
+    3. Confirm counter reached the limit
+    4. Add one more trailer and verify the modal appears
+    ","7027","test_fleet_limit_full_flow[chromium]","tests.limits","2026-06-14","skipped","2026-06-14","","test_fleet_limit_enforcement","",""
+"","30107","test_delivered_filter_on_loads_page[broker]","tests.loads","2026-06-14","broken","2026-06-14","","test_loads","",""
+"Verify that a 'Limit reached' modal appears when the broker exceeds
+    the free-plan bookings limit.
+
+    Steps:
+    1. Read the current bookings counter from the Usage tab.
+    2. Fill up to the limit (each iteration: load -> bid -> accept).
+    3. Confirm the counter reached the limit.
+    4. Attempt one more booking and verify the modal is shown.
+    ","7836","test_bookings_limit_full_flow[chromium]","tests.limits","2026-06-14","skipped","2026-06-14","","test_bookings_limit_enforcement","",""
+"","6674","test_free_plan_metric_with_limit[chromium-usage_contacts_viewed_card-/ Unlimited]","tests.usage","2026-06-14","passed","2026-06-14","","test_usage","",""
+"","32916","test_delete_trip[carrier]","tests.profile","2026-06-14","broken","2026-06-14","","test_trips","",""
+"
+    Direct URL'ga to'g'ridan-to'g'ri o'tib ko'rish:
+    - Ruxsat berilgan role: URL o'zgarmasdan qoladi
+    - Ruxsat berilmagan role: aniq /profile/root ga redirect bo'lishi kerak
+    ","3067","test_direct_url_permission[/tms/orders-owner_operator]","tests.permissions","2026-06-14","passed","2026-06-14","","test_direct_url_permissions","",""
+"","9467","test_create_truck[broker]","tests.profile","2026-06-14","passed","2026-06-14","","test_fleet","",""
+"","0","test_load_detail_shows_place_a_bid_button[chromium]","tests.loads","2026-06-14","broken","2026-06-14","","test_place_bid_flow","",""
+"Filter bosilganda URL /my-bids da qoladi (sahifa tark etmaydi).","27272","test_my_bids_filter_click_keeps_url[chromium-Delivered]","tests.e2e","2026-06-14","passed","2026-06-14","","test_my_bids","",""
+"","12803","test_cancel_invitation[carrier]","tests.profile","2026-06-14","passed","2026-06-14","","test_users","",""
+"","7762","test_create_role[carrier]","tests.profile","2026-06-14","failed","2026-06-14","","test_roles","",""
+"Verify that clicking 'Upgrade plan' navigates to the pricing/upgrade page.","17010","test_carrier_fleet_modal_upgrade_plan[chromium]","tests.limits","2026-06-14","failed","2026-06-14","","test_carrier_fleet_limit","",""
+"","7521","test_zero_volume_blocks_next[chromium]","tests.validation","2026-06-14","failed","2026-06-14","","test_trip_form_validation","",""
+"
+    Profile sahifasidagi sidebar item'larini role bo'yicha tekshiradi.
+    Bitta testda 15 ta item — barcha xatolar yig'ilib bir martada chiqariladi.
+    ","6147","test_sidebar_visibility[broker]","tests.permissions","2026-06-14","failed","2026-06-14","","test_sidebar_visibility","",""
+"Drivers sahifa: 'Drivers' heading, 'Add Driver' tugma, Drivers/Invite Driver tab'lari.","0","test_drivers_page_content[broker]","tests.permissions","2026-06-14","skipped","2026-06-14","","test_tms_pages_content","",""
+"Actor finds available load, places bid, verifies in /my-bids.","63000","test_actor_places_bid_and_sees_in_my_bids[carrier]","tests.e2e","2026-06-14","broken","2026-06-14","","test_e2e_simple_bid_flow","",""
+"","2992","test_search_form_visible[broker]","tests.loads","2026-06-14","passed","2026-06-14","","test_loads_search","",""
+"/my-bids sahifa ochiladi va URL aynan o'sha bo'lishi kerak.","5086","test_my_bids_page_accessible[broker]","tests.e2e","2026-06-14","passed","2026-06-14","","test_my_bids","",""
+"Broker'ning truck'i (ABC123321) carrier fleet'ida ko'rinmasligi kerak.","0","test_carrier_does_not_see_brokers_trucks_in_fleet[chromium]","tests.permissions","2026-06-14","skipped","2026-06-14","","test_tms_cross_user","",""
+"","34850","test_empty_form_blocks_next[chromium]","tests.validation","2026-06-14","broken","2026-06-14","","test_load_form_validation","",""
+"Drivers sahifa: 'Drivers' heading, 'Add Driver' tugma, Drivers/Invite Driver tab'lari.","0","test_drivers_page_content[carrier]","tests.permissions","2026-06-14","skipped","2026-06-14","","test_tms_pages_content","",""
+"Broker'ning driver email'i carrier drivers'ida ko'rinmasligi kerak.","0","test_carrier_does_not_see_brokers_drivers_in_list[chromium]","tests.permissions","2026-06-14","skipped","2026-06-14","","test_tms_cross_user","",""
+"/my-bids sahifa ochiladi va URL aynan o'sha bo'lishi kerak.","5031","test_my_bids_page_accessible[load_owner]","tests.e2e","2026-06-14","passed","2026-06-14","","test_my_bids","",""
+"","30098","test_in_transit_filter_on_loads_page[broker]","tests.loads","2026-06-14","broken","2026-06-14","","test_loads","",""
+"
+    Login qilmagan user himoyalangan URL'ga goto qilsa,
+    /sign-in sahifasiga avtomatik redirect bo'lishi kerak.
+    ","3462","test_unauthenticated_redirected_to_signin[chromium-/tms/orders]","tests.permissions","2026-06-14","passed","2026-06-14","","test_unauthenticated_access","",""
+"Add menyudagi har item'ning role bo'yicha ko'rinishini tekshiradi.","2650","test_add_menu_item_visibility[Load-broker]","tests.permissions","2026-06-14","passed","2026-06-14","","test_add_menu_permissions","",""
+"Verify that clicking 'Maybe later' closes the limit modal.","7714","test_carrier_bids_modal_maybe_later[chromium]","tests.limits","2026-06-14","failed","2026-06-14","","test_carrier_bids_limit","",""
+"","10469","test_create_trailer[carrier]","tests.profile","2026-06-14","passed","2026-06-14","","test_fleet","",""
+"","7826","test_free_plan_metric_with_limit[chromium-usage_team_members_card-/ Unlimited]","tests.usage","2026-06-14","failed","2026-06-14","","test_usage","",""
+"","19","test_owner_operator_can_login[chromium]","tests.smoke","2026-06-14","passed","2026-06-14","","test_role_logins","",""
+"Verify that clicking 'Upgrade plan' navigates to the pricing/upgrade page.","14426","test_carrier_company_employees_modal_upgrade_plan[chromium]","tests.limits","2026-06-14","passed","2026-06-14","","test_carrier_company_employees_limit","",""
+"","30090","test_user_can_logout[carrier]","tests.profile","2026-06-14","broken","2026-06-14","","test_profile","",""
+"","13408","test_create_truck[carrier]","tests.profile","2026-06-14","failed","2026-06-14","","test_fleet","",""
+"","33014","test_delete_trip[owner_operator]","tests.profile","2026-06-14","broken","2026-06-14","","test_trips","",""
+"","43700","test_edit_trip[broker]","tests.profile","2026-06-14","broken","2026-06-14","","test_trips","",""
+"
+    Profile sahifasidagi sidebar item'larini role bo'yicha tekshiradi.
+    Bitta testda 15 ta item — barcha xatolar yig'ilib bir martada chiqariladi.
+    ","6290","test_sidebar_visibility[carrier]","tests.permissions","2026-06-14","passed","2026-06-14","","test_sidebar_visibility","",""
+"","17220","test_cancel_invitation[broker]","tests.profile","2026-06-14","failed","2026-06-14","","test_users","",""
+"","30094","test_my_trucks_page[broker]","tests.profile","2026-06-14","broken","2026-06-14","","test_profile","",""
+"Verify that creating a 2nd role triggers the 'Limit reached' modal.","70657","test_load_owner_company_roles_limit_full_flow[chromium]","tests.limits","2026-06-14","skipped","2026-06-14","","test_load_owner_company_roles_limit","",""
+"
+    Direct URL'ga to'g'ridan-to'g'ri o'tib ko'rish:
+    - Ruxsat berilgan role: URL o'zgarmasdan qoladi
+    - Ruxsat berilmagan role: aniq /profile/root ga redirect bo'lishi kerak
+    ","3481","test_direct_url_permission[/tms/orders-broker]","tests.permissions","2026-06-14","passed","2026-06-14","","test_direct_url_permissions","",""
+"
+    Profile sahifasidagi sidebar item'larini role bo'yicha tekshiradi.
+    Bitta testda 15 ta item — barcha xatolar yig'ilib bir martada chiqariladi.
+    ","6126","test_sidebar_visibility[load_owner]","tests.permissions","2026-06-14","failed","2026-06-14","","test_sidebar_visibility","",""
+"","20","test_carrier_can_login[chromium]","tests.smoke","2026-06-14","passed","2026-06-14","","test_role_logins","",""
+"Owner creates load, bidder bids, owner accepts/rejects, bidder sees status.","30073","test_bid_lifecycle[chromium-Reject-Rejected-owner_operator]","tests.e2e","2026-06-14","broken","2026-06-14","","test_e2e_bid_lifecycle","",""
+"Actor finds available load, places bid, verifies in /my-bids.","63013","test_actor_places_bid_and_sees_in_my_bids[owner_operator]","tests.e2e","2026-06-14","broken","2026-06-14","","test_e2e_simple_bid_flow","",""
+"","13867","test_delete_trailer[carrier]","tests.profile","2026-06-14","passed","2026-06-14","","test_fleet","",""
+"
+    Profile sahifasidagi har action tugmasining role bo'yicha to'g'ri ko'rinishi.
+    Kamida bitta False (negativ) holat bor — owner_operator uchun ""Apply for Company"" yashirin.
+    ","5695","test_profile_action_button_visibility[Apply for Company-broker]","tests.permissions","2026-06-14","passed","2026-06-14","","test_action_permissions","",""
+"Har bir status filter (All/Pending/Accepted/...) sahifada ko'rinishi kerak.","4763","test_my_bids_filter_tab_visible[chromium-Rejected]","tests.e2e","2026-06-14","passed","2026-06-14","","test_my_bids","",""
+"
+    Bring broker to 20/20 bids and verify that bid #21 triggers
+    the 'Limit reached' modal.
+
+    Steps:
+    1. Read current bid count from Usage page
+    2. Fill up to the limit by creating loads and placing bids
+    3. Confirm counter reached the limit
+    4. Place one more bid and verify the modal appears
+    ","7694","test_bid_limit_full_flow[chromium]","tests.limits","2026-06-14","failed","2026-06-14","","test_bid_limit_enforcement","",""
+"
+    Direct URL'ga to'g'ridan-to'g'ri o'tib ko'rish:
+    - Ruxsat berilgan role: URL o'zgarmasdan qoladi
+    - Ruxsat berilmagan role: aniq /profile/root ga redirect bo'lishi kerak
+    ","3249","test_direct_url_permission[/trips/create-carrier]","tests.permissions","2026-06-14","passed","2026-06-14","","test_direct_url_permissions","",""
+"","8344","test_delete_load[broker]","tests.loads","2026-06-14","failed","2026-06-14","","test_loads","",""
+"
+    Verify that after placing 3 bids the 4th attempt shows a 'Limit reached' modal.
+
+    Steps:
+    1. Read the current bid count from Usage
+    2. Fill up to the limit (broker creates trips, load_owner places bids)
+    3. Confirm the counter reached BID_LIMIT
+    4. Attempt one more bid and verify the modal appears
+    ","69729","test_load_owner_bids_limit_full_flow[chromium]","tests.limits","2026-06-14","broken","2026-06-14","","test_load_owner_bids_limit","",""
+"","7709","test_deactivate_and_reactivate_trailer[owner_operator]","tests.profile","2026-06-14","failed","2026-06-14","","test_fleet","",""
+"","13050","test_add_trip[owner_operator]","tests.profile","2026-06-14","passed","2026-06-14","","test_trips","",""
+"
+    Multi-user E2E:
+    1. Load owner creates a load with a unique price
+    2. Carrier finds the load and places a bid
+    3. Load owner navigates to Received bids and verifies the bid is visible
+    ","60003","test_load_owner_sees_carrier_bid_in_received_bids[chromium]","tests.e2e","2026-06-14","broken","2026-06-14","","test_e2e_bid_accept_flow","",""
+"Filter bosilganda URL /my-bids da qoladi (sahifa tark etmaydi).","6716","test_my_bids_filter_click_keeps_url[chromium-Accepted]","tests.e2e","2026-06-14","passed","2026-06-14","","test_my_bids","",""
+"","7680","test_free_plan_metric_with_limit[chromium-usage_company_employees_card-/ 2]","tests.usage","2026-06-14","failed","2026-06-14","","test_usage","",""
+"","7505","test_free_plan_metric_with_limit[chromium-usage_company_roles_card-/ 1]","tests.usage","2026-06-14","passed","2026-06-14","","test_usage","",""
+"Owner creates load, bidder bids, owner accepts/rejects, bidder sees status.","30077","test_bid_lifecycle[chromium-Reject-Rejected-broker]","tests.e2e","2026-06-14","broken","2026-06-14","","test_e2e_bid_lifecycle","",""
+"
+    Verify that the carrier cannot place more than BID_LIMIT bids on the
+    free plan and that a 'Limit reached' modal is shown on the (BID_LIMIT+1)th
+    attempt.
+
+    Steps:
+    1. Read the current bids counter from the Usage tab.
+    2. Fill up to the limit (load_owner creates loads, carrier bids on them).
+    3. Confirm the counter reached the limit.
+    4. Attempt one more bid and verify the modal.
+    ","7768","test_carrier_bids_limit_full_flow[chromium]","tests.limits","2026-06-14","failed","2026-06-14","","test_carrier_bids_limit","",""
+"","10267","test_edit_trailer[broker]","tests.profile","2026-06-14","failed","2026-06-14","","test_fleet","",""
+"","110","test_empty_password[chromium]","tests.smoke","2026-06-14","passed","2026-06-14","","test_login","",""
+"Filter bosilganda URL /my-bids da qoladi (sahifa tark etmaydi).","26297","test_my_bids_filter_click_keeps_url[chromium-Rejected]","tests.e2e","2026-06-14","passed","2026-06-14","","test_my_bids","",""
+"
+    Profile sahifasidagi har action tugmasining role bo'yicha to'g'ri ko'rinishi.
+    Kamida bitta False (negativ) holat bor — owner_operator uchun ""Apply for Company"" yashirin.
+    ","5555","test_profile_action_button_visibility[Verify Identity-load_owner]","tests.permissions","2026-06-14","passed","2026-06-14","","test_action_permissions","",""
+"","30100","test_loads_page_is_accessible[broker]","tests.loads","2026-06-14","broken","2026-06-14","","test_loads","",""
+"","19","test_load_owner_can_login[chromium]","tests.smoke","2026-06-14","passed","2026-06-14","","test_role_logins","",""
+"","0","test_bid_form_note_accepts_input[chromium]","tests.loads","2026-06-14","broken","2026-06-14","","test_place_bid_submit","",""
+"
+    When the broker is at the fleet limit and adds another trailer,
+    clicking 'Close' on the modal should close it.
+
+    Pre-condition: broker must already be at 5/5.
+    ","6443","test_fleet_modal_close[chromium]","tests.limits","2026-06-14","failed","2026-06-14","","test_fleet_limit_enforcement","",""
+"","30088","test_open_profile_page[load_owner]","tests.profile","2026-06-14","broken","2026-06-14","","test_profile","",""
+"Verify that clicking 'Maybe later' closes the limit modal.","6451","test_oo_bids_modal_maybe_later[chromium]","tests.limits","2026-06-14","skipped","2026-06-14","","test_oo_bids_limit","",""
+"","30072","test_user_can_logout[broker]","tests.profile","2026-06-14","broken","2026-06-14","","test_profile","",""
+"
+    Profile sahifasidagi har action tugmasining role bo'yicha to'g'ri ko'rinishi.
+    Kamida bitta False (negativ) holat bor — owner_operator uchun ""Apply for Company"" yashirin.
+    ","5750","test_profile_action_button_visibility[Verify Identity-broker]","tests.permissions","2026-06-14","passed","2026-06-14","","test_action_permissions","",""
+"","30090","test_delivered_filter_on_loads_page[load_owner]","tests.loads","2026-06-14","broken","2026-06-14","","test_loads","",""
+"","9208","test_zero_weight_blocks_next[chromium]","tests.validation","2026-06-14","passed","2026-06-14","","test_load_form_validation","",""
+"Add menyudagi har item'ning role bo'yicha ko'rinishini tekshiradi.","5020","test_add_menu_item_visibility[Load-carrier]","tests.permissions","2026-06-14","passed","2026-06-14","","test_add_menu_permissions","",""
+"Broker'ning order'i (#ORD-...) carrier orders'ida ko'rinmasligi kerak.","0","test_carrier_does_not_see_brokers_orders[chromium]","tests.permissions","2026-06-14","skipped","2026-06-14","","test_tms_cross_user","",""
+"
+    Direct URL'ga to'g'ridan-to'g'ri o'tib ko'rish:
+    - Ruxsat berilgan role: URL o'zgarmasdan qoladi
+    - Ruxsat berilmagan role: aniq /profile/root ga redirect bo'lishi kerak
+    ","8024","test_direct_url_permission[/tms/drivers-load_owner]","tests.permissions","2026-06-14","failed","2026-06-14","","test_direct_url_permissions","",""
+"","7852","test_delete_trailer[broker]","tests.profile","2026-06-14","failed","2026-06-14","","test_fleet","",""
+"Verify that clicking 'Maybe later' closes the limit modal.","6481","test_load_owner_bids_modal_maybe_later[chromium]","tests.limits","2026-06-14","skipped","2026-06-14","","test_load_owner_bids_limit","",""

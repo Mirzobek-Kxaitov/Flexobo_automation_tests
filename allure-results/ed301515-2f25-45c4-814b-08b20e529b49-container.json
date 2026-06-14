@@ -1,0 +1,1 @@
+{"uuid": "2eb5c246-0f82-4463-a7cf-aea8af73f9a6", "children": ["23b73bb9-1ed3-4def-8b5d-6514a2cb461c"], "befores": [{"name": "free_broker", "status": "passed", "start": 1781422476774, "stop": 1781422476847}], "afters": [{"name": "free_broker::0", "status": "passed", "start": 1781422484533, "stop": 1781422484540}], "start": 1781422476774, "stop": 1781422484540}

@@ -1,0 +1,777 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.13, pytest-9.0.3, pluggy-1.6.0 -- /opt/hostedtoolcache/Python/3.12.13/x64/bin/python
+cachedir: .pytest_cache
+rootdir: /home/runner/work/Flexobo_automation_tests/Flexobo_automation_tests
+configfile: pytest.ini
+plugins: timeout-2.4.0, playwright-0.7.2, allure-pytest-2.15.3, base-url-2.1.0, rerunfailures-16.1
+timeout: 120.0s
+timeout method: signal
+timeout func_only: False
+collecting ... collected 28 items
+
+tests/e2e/test_e2e_bid_accept_flow.py::test_load_owner_sees_carrier_bid_in_received_bids[chromium] RERUN [  3%]
+tests/e2e/test_e2e_bid_accept_flow.py::test_load_owner_sees_carrier_bid_in_received_bids[chromium] FAILED [  3%]
+tests/e2e/test_e2e_bid_lifecycle.py::test_bid_lifecycle[chromium-Accept-Accepted-carrier] RERUN [  7%]
+tests/e2e/test_e2e_bid_lifecycle.py::test_bid_lifecycle[chromium-Accept-Accepted-carrier] FAILED [  7%]
+tests/e2e/test_my_bids.py::test_my_bids_filter_tab_visible[chromium-All] RERUN [ 10%]
+tests/e2e/test_my_bids.py::test_my_bids_filter_tab_visible[chromium-All] FAILED [ 10%]
+tests/e2e/test_my_bids.py::test_my_bids_filter_click_keeps_url[chromium-Pending] PASSED [ 14%]
+tests/e2e/test_e2e_bid_lifecycle.py::test_bid_lifecycle[chromium-Accept-Accepted-broker] RERUN [ 17%]
+tests/e2e/test_e2e_bid_lifecycle.py::test_bid_lifecycle[chromium-Accept-Accepted-broker] FAILED [ 17%]
+tests/e2e/test_my_bids.py::test_my_bids_filter_tab_visible[chromium-Pending] PASSED [ 21%]
+tests/e2e/test_my_bids.py::test_my_bids_filter_click_keeps_url[chromium-Accepted] PASSED [ 25%]
+tests/e2e/test_e2e_bid_lifecycle.py::test_bid_lifecycle[chromium-Accept-Accepted-owner_operator] RERUN [ 28%]
+tests/e2e/test_e2e_bid_lifecycle.py::test_bid_lifecycle[chromium-Accept-Accepted-owner_operator] FAILED [ 28%]
+tests/e2e/test_my_bids.py::test_my_bids_filter_tab_visible[chromium-Accepted] RERUN [ 32%]
+tests/e2e/test_my_bids.py::test_my_bids_filter_tab_visible[chromium-Accepted] FAILED [ 32%]
+tests/e2e/test_my_bids.py::test_my_bids_filter_click_keeps_url[chromium-Rejected] PASSED [ 35%]
+tests/e2e/test_e2e_bid_lifecycle.py::test_bid_lifecycle[chromium-Reject-Rejected-carrier] RERUN [ 39%]
+tests/e2e/test_e2e_bid_lifecycle.py::test_bid_lifecycle[chromium-Reject-Rejected-carrier] FAILED [ 39%]
+tests/e2e/test_my_bids.py::test_my_bids_filter_tab_visible[chromium-Rejected] RERUN [ 42%]
+tests/e2e/test_my_bids.py::test_my_bids_filter_tab_visible[chromium-Rejected] PASSED [ 42%]
+tests/e2e/test_my_bids.py::test_my_bids_filter_click_keeps_url[chromium-Delivered] RERUN [ 46%]
+tests/e2e/test_my_bids.py::test_my_bids_filter_click_keeps_url[chromium-Delivered] PASSED [ 46%]
+tests/e2e/test_e2e_bid_lifecycle.py::test_bid_lifecycle[chromium-Reject-Rejected-broker] RERUN [ 50%]
+tests/e2e/test_e2e_bid_lifecycle.py::test_bid_lifecycle[chromium-Reject-Rejected-broker] FAILED [ 50%]
+tests/e2e/test_my_bids.py::test_my_bids_filter_tab_visible[chromium-On the way] PASSED [ 53%]
+tests/e2e/test_e2e_bid_lifecycle.py::test_bid_lifecycle[chromium-Reject-Rejected-owner_operator] RERUN [ 57%]
+tests/e2e/test_e2e_bid_lifecycle.py::test_bid_lifecycle[chromium-Reject-Rejected-owner_operator] FAILED [ 57%]
+tests/e2e/test_my_bids.py::test_my_bids_filter_tab_visible[chromium-Delivered] PASSED [ 60%]
+tests/e2e/test_e2e_simple_bid_flow.py::test_actor_places_bid_and_sees_in_my_bids[carrier] RERUN [ 64%]
+tests/e2e/test_e2e_simple_bid_flow.py::test_actor_places_bid_and_sees_in_my_bids[carrier] FAILED [ 64%]
+tests/e2e/test_e2e_simple_bid_flow.py::test_actor_places_bid_and_sees_in_my_bids[broker] RERUN [ 67%]
+tests/e2e/test_e2e_simple_bid_flow.py::test_actor_places_bid_and_sees_in_my_bids[broker] FAILED [ 67%]
+tests/e2e/test_e2e_simple_bid_flow.py::test_actor_places_bid_and_sees_in_my_bids[owner_operator] RERUN [ 71%]
+tests/e2e/test_e2e_simple_bid_flow.py::test_actor_places_bid_and_sees_in_my_bids[owner_operator] FAILED [ 71%]
+tests/e2e/test_my_bids.py::test_my_bids_page_accessible[broker] PASSED   [ 75%]
+tests/e2e/test_my_bids.py::test_my_bids_page_accessible[load_owner] PASSED [ 78%]
+tests/e2e/test_my_bids.py::test_my_bids_page_accessible[carrier] PASSED  [ 82%]
+tests/e2e/test_my_bids.py::test_my_bids_page_accessible[owner_operator] PASSED [ 85%]
+tests/e2e/test_received_bids.py::test_received_bids_page_accessible[broker] PASSED [ 89%]
+tests/e2e/test_received_bids.py::test_received_bids_page_accessible[load_owner] PASSED [ 92%]
+tests/e2e/test_received_bids.py::test_received_bids_page_accessible[carrier] PASSED [ 96%]
+tests/e2e/test_received_bids.py::test_received_bids_page_accessible[owner_operator] PASSED [100%]
+
+=================================== FAILURES ===================================
+_________ test_load_owner_sees_carrier_bid_in_received_bids[chromium] __________
+
+logged_in_load_owner = <Page url='about:blank'>
+logged_in_carrier = <Page url='about:blank'>
+
+    @allure.feature("E2E Bid Flow")
+    @allure.story("Load owner sees carrier bid in Received bids")
+    @allure.severity(allure.severity_level.CRITICAL)
+    def test_load_owner_sees_carrier_bid_in_received_bids(
+        logged_in_load_owner: Page, logged_in_carrier: Page
+    ):
+        """
+        Multi-user E2E:
+        1. Load owner creates a load with a unique price
+        2. Carrier finds the load and places a bid
+        3. Load owner navigates to Received bids and verifies the bid is visible
+        """
+        owner = logged_in_load_owner
+        carrier = logged_in_carrier
+        owner.set_default_timeout(60000)
+        carrier.set_default_timeout(60000)
+    
+        thousands = UNIQUE_PRICE // 1000
+        remainder = UNIQUE_PRICE % 1000
+        price_pattern = re.compile(rf"USD[\s]+{thousands}[,\s]{remainder:03d}")
+    
+        with allure.step(f"Load owner creates a load with price {UNIQUE_PRICE}"):
+>           create_load(owner, UNIQUE_PRICE)
+
+tests/e2e/test_e2e_bid_accept_flow.py:42: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/helpers.py:106: in create_load
+    load_owner.get_by_test_id("global_add_button").click()
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/sync_api/_generated.py:15631: in click
+    self._sync(
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_locator.py:162: in click
+    return await self._frame._click(self._selector, strict=True, **params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_frame.py:566: in _click
+    await self._channel.send("click", self._timeout, locals_to_params(locals()))
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7ff966c5a000>
+cb = <function Channel.send.<locals>.<lambda> at 0x7ff966838040>
+is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        st: List[inspect.FrameInfo] = getattr(
+            task, "__pw_stack__", None
+        ) or inspect.stack(0)
+    
+        parsed_st = _extract_stack_trace_information_from_stack(st, is_internal, title)
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Locator.click: Timeout 60000ms exceeded.
+E           Call log:
+E             - waiting for get_by_test_id("global_add_button")
+
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: TimeoutError
+_____________ test_bid_lifecycle[chromium-Accept-Accepted-carrier] _____________
+
+request = <FixtureRequest for <Function test_bid_lifecycle[chromium-Accept-Accepted-carrier]>>
+logged_in_load_owner = <Page url='about:blank'>, bidder_role = 'carrier'
+action = 'Accept', expected_tab = 'Accepted'
+
+    @allure.feature("E2E Bid Lifecycle")
+    @allure.severity(allure.severity_level.CRITICAL)
+    @pytest.mark.parametrize("bidder_role", ["carrier", "broker", "owner_operator"])
+    @pytest.mark.parametrize("action,expected_tab", [
+        ("Accept", "Accepted"),
+        ("Reject", "Rejected"),
+    ])
+    def test_bid_lifecycle(
+        request, logged_in_load_owner: Page,
+        bidder_role: str, action: str, expected_tab: str,
+    ):
+        """Owner creates load, bidder bids, owner accepts/rejects, bidder sees status."""
+        owner = logged_in_load_owner
+        bidder: Page = request.getfixturevalue(f"logged_in_{bidder_role}")
+    
+        price = random.randint(10000, 49999)
+        price_pattern = price_regex(price)
+    
+>       create_load(owner, price)
+
+tests/e2e/test_e2e_bid_lifecycle.py:40: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/helpers.py:106: in create_load
+    load_owner.get_by_test_id("global_add_button").click()
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/sync_api/_generated.py:15631: in click
+    self._sync(
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_locator.py:162: in click
+    return await self._frame._click(self._selector, strict=True, **params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_frame.py:566: in _click
+    await self._channel.send("click", self._timeout, locals_to_params(locals()))
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7ff966c5a000>
+cb = <function Channel.send.<locals>.<lambda> at 0x7ff9668154e0>
+is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        st: List[inspect.FrameInfo] = getattr(
+            task, "__pw_stack__", None
+        ) or inspect.stack(0)
+    
+        parsed_st = _extract_stack_trace_information_from_stack(st, is_internal, title)
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.
+E           Call log:
+E             - waiting for get_by_test_id("global_add_button")
+
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: TimeoutError
+________________ test_my_bids_filter_tab_visible[chromium-All] _________________
+
+logged_in_broker = <Page url='https://app.flexobo-mock.site/my-bids'>
+filter_label = 'All'
+
+    @allure.feature("My Bids")
+    @allure.story("Status filter tabs visible")
+    @pytest.mark.parametrize("filter_label", BID_STATUS_FILTERS)
+    def test_my_bids_filter_tab_visible(logged_in_broker: Page, filter_label: str):
+        """Har bir status filter (All/Pending/Accepted/...) sahifada ko'rinishi kerak."""
+        page = logged_in_broker
+        page.goto(f"{APP_URL}/my-bids")
+        page.wait_for_load_state("domcontentloaded")
+        page.wait_for_timeout(2000)
+    
+>       expect(page.get_by_text(filter_label, exact=True).first).to_be_visible()
+E       AssertionError: Locator expected to be visible
+E       Actual value: None
+E       Error: element(s) not found 
+E       Call log:
+E         - Expect "to_be_visible" with timeout 5000ms
+E         - waiting for get_by_text("All", exact=True).first
+
+tests/e2e/test_my_bids.py:46: AssertionError
+_____________ test_bid_lifecycle[chromium-Accept-Accepted-broker] ______________
+
+request = <FixtureRequest for <Function test_bid_lifecycle[chromium-Accept-Accepted-broker]>>
+logged_in_load_owner = <Page url='about:blank'>, bidder_role = 'broker'
+action = 'Accept', expected_tab = 'Accepted'
+
+    @allure.feature("E2E Bid Lifecycle")
+    @allure.severity(allure.severity_level.CRITICAL)
+    @pytest.mark.parametrize("bidder_role", ["carrier", "broker", "owner_operator"])
+    @pytest.mark.parametrize("action,expected_tab", [
+        ("Accept", "Accepted"),
+        ("Reject", "Rejected"),
+    ])
+    def test_bid_lifecycle(
+        request, logged_in_load_owner: Page,
+        bidder_role: str, action: str, expected_tab: str,
+    ):
+        """Owner creates load, bidder bids, owner accepts/rejects, bidder sees status."""
+        owner = logged_in_load_owner
+        bidder: Page = request.getfixturevalue(f"logged_in_{bidder_role}")
+    
+        price = random.randint(10000, 49999)
+        price_pattern = price_regex(price)
+    
+>       create_load(owner, price)
+
+tests/e2e/test_e2e_bid_lifecycle.py:40: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/helpers.py:106: in create_load
+    load_owner.get_by_test_id("global_add_button").click()
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/sync_api/_generated.py:15631: in click
+    self._sync(
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_locator.py:162: in click
+    return await self._frame._click(self._selector, strict=True, **params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_frame.py:566: in _click
+    await self._channel.send("click", self._timeout, locals_to_params(locals()))
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7ff966c5a000>
+cb = <function Channel.send.<locals>.<lambda> at 0x7ff966950ea0>
+is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        st: List[inspect.FrameInfo] = getattr(
+            task, "__pw_stack__", None
+        ) or inspect.stack(0)
+    
+        parsed_st = _extract_stack_trace_information_from_stack(st, is_internal, title)
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.
+E           Call log:
+E             - waiting for get_by_test_id("global_add_button")
+
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: TimeoutError
+_________ test_bid_lifecycle[chromium-Accept-Accepted-owner_operator] __________
+
+request = <FixtureRequest for <Function test_bid_lifecycle[chromium-Accept-Accepted-owner_operator]>>
+logged_in_load_owner = <Page url='about:blank'>, bidder_role = 'owner_operator'
+action = 'Accept', expected_tab = 'Accepted'
+
+    @allure.feature("E2E Bid Lifecycle")
+    @allure.severity(allure.severity_level.CRITICAL)
+    @pytest.mark.parametrize("bidder_role", ["carrier", "broker", "owner_operator"])
+    @pytest.mark.parametrize("action,expected_tab", [
+        ("Accept", "Accepted"),
+        ("Reject", "Rejected"),
+    ])
+    def test_bid_lifecycle(
+        request, logged_in_load_owner: Page,
+        bidder_role: str, action: str, expected_tab: str,
+    ):
+        """Owner creates load, bidder bids, owner accepts/rejects, bidder sees status."""
+        owner = logged_in_load_owner
+        bidder: Page = request.getfixturevalue(f"logged_in_{bidder_role}")
+    
+        price = random.randint(10000, 49999)
+        price_pattern = price_regex(price)
+    
+>       create_load(owner, price)
+
+tests/e2e/test_e2e_bid_lifecycle.py:40: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/helpers.py:106: in create_load
+    load_owner.get_by_test_id("global_add_button").click()
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/sync_api/_generated.py:15631: in click
+    self._sync(
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_locator.py:162: in click
+    return await self._frame._click(self._selector, strict=True, **params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_frame.py:566: in _click
+    await self._channel.send("click", self._timeout, locals_to_params(locals()))
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7ff966c5a000>
+cb = <function Channel.send.<locals>.<lambda> at 0x7ff9667ea340>
+is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        st: List[inspect.FrameInfo] = getattr(
+            task, "__pw_stack__", None
+        ) or inspect.stack(0)
+    
+        parsed_st = _extract_stack_trace_information_from_stack(st, is_internal, title)
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.
+E           Call log:
+E             - waiting for get_by_test_id("global_add_button")
+
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: TimeoutError
+______________ test_my_bids_filter_tab_visible[chromium-Accepted] ______________
+
+logged_in_broker = <Page url='https://app.flexobo-mock.site/my-bids'>
+filter_label = 'Accepted'
+
+    @allure.feature("My Bids")
+    @allure.story("Status filter tabs visible")
+    @pytest.mark.parametrize("filter_label", BID_STATUS_FILTERS)
+    def test_my_bids_filter_tab_visible(logged_in_broker: Page, filter_label: str):
+        """Har bir status filter (All/Pending/Accepted/...) sahifada ko'rinishi kerak."""
+        page = logged_in_broker
+        page.goto(f"{APP_URL}/my-bids")
+        page.wait_for_load_state("domcontentloaded")
+        page.wait_for_timeout(2000)
+    
+>       expect(page.get_by_text(filter_label, exact=True).first).to_be_visible()
+E       AssertionError: Locator expected to be visible
+E       Actual value: None
+E       Error: element(s) not found 
+E       Call log:
+E         - Expect "to_be_visible" with timeout 5000ms
+E         - waiting for get_by_text("Accepted", exact=True).first
+
+tests/e2e/test_my_bids.py:46: AssertionError
+_____________ test_bid_lifecycle[chromium-Reject-Rejected-carrier] _____________
+
+request = <FixtureRequest for <Function test_bid_lifecycle[chromium-Reject-Rejected-carrier]>>
+logged_in_load_owner = <Page url='about:blank'>, bidder_role = 'carrier'
+action = 'Reject', expected_tab = 'Rejected'
+
+    @allure.feature("E2E Bid Lifecycle")
+    @allure.severity(allure.severity_level.CRITICAL)
+    @pytest.mark.parametrize("bidder_role", ["carrier", "broker", "owner_operator"])
+    @pytest.mark.parametrize("action,expected_tab", [
+        ("Accept", "Accepted"),
+        ("Reject", "Rejected"),
+    ])
+    def test_bid_lifecycle(
+        request, logged_in_load_owner: Page,
+        bidder_role: str, action: str, expected_tab: str,
+    ):
+        """Owner creates load, bidder bids, owner accepts/rejects, bidder sees status."""
+        owner = logged_in_load_owner
+        bidder: Page = request.getfixturevalue(f"logged_in_{bidder_role}")
+    
+        price = random.randint(10000, 49999)
+        price_pattern = price_regex(price)
+    
+>       create_load(owner, price)
+
+tests/e2e/test_e2e_bid_lifecycle.py:40: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/helpers.py:106: in create_load
+    load_owner.get_by_test_id("global_add_button").click()
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/sync_api/_generated.py:15631: in click
+    self._sync(
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_locator.py:162: in click
+    return await self._frame._click(self._selector, strict=True, **params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_frame.py:566: in _click
+    await self._channel.send("click", self._timeout, locals_to_params(locals()))
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7ff966c5a000>
+cb = <function Channel.send.<locals>.<lambda> at 0x7ff9666cb240>
+is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        st: List[inspect.FrameInfo] = getattr(
+            task, "__pw_stack__", None
+        ) or inspect.stack(0)
+    
+        parsed_st = _extract_stack_trace_information_from_stack(st, is_internal, title)
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.
+E           Call log:
+E             - waiting for get_by_test_id("global_add_button")
+
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: TimeoutError
+_____________ test_bid_lifecycle[chromium-Reject-Rejected-broker] ______________
+
+request = <FixtureRequest for <Function test_bid_lifecycle[chromium-Reject-Rejected-broker]>>
+logged_in_load_owner = <Page url='about:blank'>, bidder_role = 'broker'
+action = 'Reject', expected_tab = 'Rejected'
+
+    @allure.feature("E2E Bid Lifecycle")
+    @allure.severity(allure.severity_level.CRITICAL)
+    @pytest.mark.parametrize("bidder_role", ["carrier", "broker", "owner_operator"])
+    @pytest.mark.parametrize("action,expected_tab", [
+        ("Accept", "Accepted"),
+        ("Reject", "Rejected"),
+    ])
+    def test_bid_lifecycle(
+        request, logged_in_load_owner: Page,
+        bidder_role: str, action: str, expected_tab: str,
+    ):
+        """Owner creates load, bidder bids, owner accepts/rejects, bidder sees status."""
+        owner = logged_in_load_owner
+        bidder: Page = request.getfixturevalue(f"logged_in_{bidder_role}")
+    
+        price = random.randint(10000, 49999)
+        price_pattern = price_regex(price)
+    
+>       create_load(owner, price)
+
+tests/e2e/test_e2e_bid_lifecycle.py:40: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/helpers.py:106: in create_load
+    load_owner.get_by_test_id("global_add_button").click()
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/sync_api/_generated.py:15631: in click
+    self._sync(
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_locator.py:162: in click
+    return await self._frame._click(self._selector, strict=True, **params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_frame.py:566: in _click
+    await self._channel.send("click", self._timeout, locals_to_params(locals()))
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7ff966c5a000>
+cb = <function Channel.send.<locals>.<lambda> at 0x7ff96677c680>
+is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        st: List[inspect.FrameInfo] = getattr(
+            task, "__pw_stack__", None
+        ) or inspect.stack(0)
+    
+        parsed_st = _extract_stack_trace_information_from_stack(st, is_internal, title)
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.
+E           Call log:
+E             - waiting for get_by_test_id("global_add_button")
+
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: TimeoutError
+_________ test_bid_lifecycle[chromium-Reject-Rejected-owner_operator] __________
+
+request = <FixtureRequest for <Function test_bid_lifecycle[chromium-Reject-Rejected-owner_operator]>>
+logged_in_load_owner = <Page url='about:blank'>, bidder_role = 'owner_operator'
+action = 'Reject', expected_tab = 'Rejected'
+
+    @allure.feature("E2E Bid Lifecycle")
+    @allure.severity(allure.severity_level.CRITICAL)
+    @pytest.mark.parametrize("bidder_role", ["carrier", "broker", "owner_operator"])
+    @pytest.mark.parametrize("action,expected_tab", [
+        ("Accept", "Accepted"),
+        ("Reject", "Rejected"),
+    ])
+    def test_bid_lifecycle(
+        request, logged_in_load_owner: Page,
+        bidder_role: str, action: str, expected_tab: str,
+    ):
+        """Owner creates load, bidder bids, owner accepts/rejects, bidder sees status."""
+        owner = logged_in_load_owner
+        bidder: Page = request.getfixturevalue(f"logged_in_{bidder_role}")
+    
+        price = random.randint(10000, 49999)
+        price_pattern = price_regex(price)
+    
+>       create_load(owner, price)
+
+tests/e2e/test_e2e_bid_lifecycle.py:40: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/helpers.py:106: in create_load
+    load_owner.get_by_test_id("global_add_button").click()
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/sync_api/_generated.py:15631: in click
+    self._sync(
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_locator.py:162: in click
+    return await self._frame._click(self._selector, strict=True, **params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_frame.py:566: in _click
+    await self._channel.send("click", self._timeout, locals_to_params(locals()))
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7ff966c5a000>
+cb = <function Channel.send.<locals>.<lambda> at 0x7ff96679fe20>
+is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        st: List[inspect.FrameInfo] = getattr(
+            task, "__pw_stack__", None
+        ) or inspect.stack(0)
+    
+        parsed_st = _extract_stack_trace_information_from_stack(st, is_internal, title)
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.
+E           Call log:
+E             - waiting for get_by_test_id("global_add_button")
+
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: TimeoutError
+______________ test_actor_places_bid_and_sees_in_my_bids[carrier] ______________
+
+request = <FixtureRequest for <Function test_actor_places_bid_and_sees_in_my_bids[carrier]>>
+bidder_role = 'carrier'
+
+    @allure.feature("E2E Bid Flow")
+    @allure.severity(allure.severity_level.CRITICAL)
+    @pytest.mark.parametrize("bidder_role", ["carrier", "broker", "owner_operator"])
+    def test_actor_places_bid_and_sees_in_my_bids(request, bidder_role: str):
+        """Actor finds available load, places bid, verifies in /my-bids."""
+        page: Page = request.getfixturevalue(f"logged_in_{bidder_role}")
+        page.set_default_timeout(60000)
+    
+        navigate_to_loads(page)
+        dismiss_cookie_banner(page)
+>       page.locator("div").filter(has_text=re.compile(r"USD.*Fixed rate")).first.click()
+
+tests/e2e/test_e2e_simple_bid_flow.py:30: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/sync_api/_generated.py:15631: in click
+    self._sync(
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_locator.py:162: in click
+    return await self._frame._click(self._selector, strict=True, **params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_frame.py:566: in _click
+    await self._channel.send("click", self._timeout, locals_to_params(locals()))
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7ff966c5a000>
+cb = <function Channel.send.<locals>.<lambda> at 0x7ff9667add00>
+is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        st: List[inspect.FrameInfo] = getattr(
+            task, "__pw_stack__", None
+        ) or inspect.stack(0)
+    
+        parsed_st = _extract_stack_trace_information_from_stack(st, is_internal, title)
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Locator.click: Timeout 60000ms exceeded.
+E           Call log:
+E             - waiting for locator("div").filter(has_text=re.compile(r"USD.*Fixed rate")).first
+
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: TimeoutError
+______________ test_actor_places_bid_and_sees_in_my_bids[broker] _______________
+
+request = <FixtureRequest for <Function test_actor_places_bid_and_sees_in_my_bids[broker]>>
+bidder_role = 'broker'
+
+    @allure.feature("E2E Bid Flow")
+    @allure.severity(allure.severity_level.CRITICAL)
+    @pytest.mark.parametrize("bidder_role", ["carrier", "broker", "owner_operator"])
+    def test_actor_places_bid_and_sees_in_my_bids(request, bidder_role: str):
+        """Actor finds available load, places bid, verifies in /my-bids."""
+        page: Page = request.getfixturevalue(f"logged_in_{bidder_role}")
+        page.set_default_timeout(60000)
+    
+        navigate_to_loads(page)
+        dismiss_cookie_banner(page)
+>       page.locator("div").filter(has_text=re.compile(r"USD.*Fixed rate")).first.click()
+
+tests/e2e/test_e2e_simple_bid_flow.py:30: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/sync_api/_generated.py:15631: in click
+    self._sync(
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_locator.py:162: in click
+    return await self._frame._click(self._selector, strict=True, **params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_frame.py:566: in _click
+    await self._channel.send("click", self._timeout, locals_to_params(locals()))
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7ff966c5a000>
+cb = <function Channel.send.<locals>.<lambda> at 0x7ff965e72f20>
+is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        st: List[inspect.FrameInfo] = getattr(
+            task, "__pw_stack__", None
+        ) or inspect.stack(0)
+    
+        parsed_st = _extract_stack_trace_information_from_stack(st, is_internal, title)
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Locator.click: Timeout 60000ms exceeded.
+E           Call log:
+E             - waiting for locator("div").filter(has_text=re.compile(r"USD.*Fixed rate")).first
+
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: TimeoutError
+__________ test_actor_places_bid_and_sees_in_my_bids[owner_operator] ___________
+
+request = <FixtureRequest for <Function test_actor_places_bid_and_sees_in_my_bids[owner_operator]>>
+bidder_role = 'owner_operator'
+
+    @allure.feature("E2E Bid Flow")
+    @allure.severity(allure.severity_level.CRITICAL)
+    @pytest.mark.parametrize("bidder_role", ["carrier", "broker", "owner_operator"])
+    def test_actor_places_bid_and_sees_in_my_bids(request, bidder_role: str):
+        """Actor finds available load, places bid, verifies in /my-bids."""
+        page: Page = request.getfixturevalue(f"logged_in_{bidder_role}")
+        page.set_default_timeout(60000)
+    
+        navigate_to_loads(page)
+        dismiss_cookie_banner(page)
+>       page.locator("div").filter(has_text=re.compile(r"USD.*Fixed rate")).first.click()
+
+tests/e2e/test_e2e_simple_bid_flow.py:30: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/sync_api/_generated.py:15631: in click
+    self._sync(
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_locator.py:162: in click
+    return await self._frame._click(self._selector, strict=True, **params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_frame.py:566: in _click
+    await self._channel.send("click", self._timeout, locals_to_params(locals()))
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_connection.py:69: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7ff966c5a000>
+cb = <function Channel.send.<locals>.<lambda> at 0x7ff966782ac0>
+is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        st: List[inspect.FrameInfo] = getattr(
+            task, "__pw_stack__", None
+        ) or inspect.stack(0)
+    
+        parsed_st = _extract_stack_trace_information_from_stack(st, is_internal, title)
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Locator.click: Timeout 60000ms exceeded.
+E           Call log:
+E             - waiting for locator("div").filter(has_text=re.compile(r"USD.*Fixed rate")).first
+
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/playwright/_impl/_connection.py:559: TimeoutError
+=========================== short test summary info ============================
+FAILED tests/e2e/test_e2e_bid_accept_flow.py::test_load_owner_sees_carrier_bid_in_received_bids[chromium] - playwright._impl._errors.TimeoutError: Locator.click: Timeout 60000ms exceeded.
+Call log:
+  - waiting for get_by_test_id("global_add_button")
+FAILED tests/e2e/test_e2e_bid_lifecycle.py::test_bid_lifecycle[chromium-Accept-Accepted-carrier] - playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for get_by_test_id("global_add_button")
+FAILED tests/e2e/test_my_bids.py::test_my_bids_filter_tab_visible[chromium-All] - AssertionError: Locator expected to be visible
+Actual value: None
+Error: element(s) not found 
+Call log:
+  - Expect "to_be_visible" with timeout 5000ms
+  - waiting for get_by_text("All", exact=True).first
+FAILED tests/e2e/test_e2e_bid_lifecycle.py::test_bid_lifecycle[chromium-Accept-Accepted-broker] - playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for get_by_test_id("global_add_button")
+FAILED tests/e2e/test_e2e_bid_lifecycle.py::test_bid_lifecycle[chromium-Accept-Accepted-owner_operator] - playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for get_by_test_id("global_add_button")
+FAILED tests/e2e/test_my_bids.py::test_my_bids_filter_tab_visible[chromium-Accepted] - AssertionError: Locator expected to be visible
+Actual value: None
+Error: element(s) not found 
+Call log:
+  - Expect "to_be_visible" with timeout 5000ms
+  - waiting for get_by_text("Accepted", exact=True).first
+FAILED tests/e2e/test_e2e_bid_lifecycle.py::test_bid_lifecycle[chromium-Reject-Rejected-carrier] - playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for get_by_test_id("global_add_button")
+FAILED tests/e2e/test_e2e_bid_lifecycle.py::test_bid_lifecycle[chromium-Reject-Rejected-broker] - playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for get_by_test_id("global_add_button")
+FAILED tests/e2e/test_e2e_bid_lifecycle.py::test_bid_lifecycle[chromium-Reject-Rejected-owner_operator] - playwright._impl._errors.TimeoutError: Locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for get_by_test_id("global_add_button")
+FAILED tests/e2e/test_e2e_simple_bid_flow.py::test_actor_places_bid_and_sees_in_my_bids[carrier] - playwright._impl._errors.TimeoutError: Locator.click: Timeout 60000ms exceeded.
+Call log:
+  - waiting for locator("div").filter(has_text=re.compile(r"USD.*Fixed rate")).first
+FAILED tests/e2e/test_e2e_simple_bid_flow.py::test_actor_places_bid_and_sees_in_my_bids[broker] - playwright._impl._errors.TimeoutError: Locator.click: Timeout 60000ms exceeded.
+Call log:
+  - waiting for locator("div").filter(has_text=re.compile(r"USD.*Fixed rate")).first
+FAILED tests/e2e/test_e2e_simple_bid_flow.py::test_actor_places_bid_and_sees_in_my_bids[owner_operator] - playwright._impl._errors.TimeoutError: Locator.click: Timeout 60000ms exceeded.
+Call log:
+  - waiting for locator("div").filter(has_text=re.compile(r"USD.*Fixed rate")).first
+============= 12 failed, 16 passed, 14 rerun in 1123.63s (0:18:43) =============

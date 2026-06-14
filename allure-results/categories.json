@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Element topilmadi",
+    "matchedStatuses": [
+      "broken"
+    ],
+    "messageRegex": ".*TimeoutError.*"
+  },
+  {
+    "name": "Assertion xatosi",
+    "matchedStatuses": [
+      "failed"
+    ],
+    "messageRegex": ".*AssertionError.*"
+  },
+  {
+    "name": "Test muvaffaqiyatsiz",
+    "matchedStatuses": [
+      "failed"
+    ]
+  }
+]
